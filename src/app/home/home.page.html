@@ -1,20 +1,93 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="login-content">
+  <!-- Fondo con efecto de ciudad nocturna -->
+  <div class="city-background">
+    <div class="city-skyline"></div>
+  </div>
+  
+  <!-- Contenedor principal -->
+  <div class="login-container">
+    <!-- Logo y título -->
+    <div class="logo-section">
+      <div class="logo-wrapper">
+        <ion-icon name="car-sport-outline" class="taxi-icon"></ion-icon>
+      </div>
+      <h1 class="app-title">Taxi<span class="yellow-text">App</span></h1>
+      <p class="subtitle">Tu viaje comienza aquí</p>
+    </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <!-- Tarjeta de login -->
+    <div class="login-card">
+      <!-- Pestañas de login/registro -->
+      <div class="tabs-container">
+        <div class="tab active">Iniciar Sesión</div>
+        <div class="tab">Registrarse</div>
+      </div>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+      <!-- Formulario de login -->
+      <form class="login-form">
+        <!-- Campo de email -->
+        <div class="input-group">
+          <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="email" 
+            placeholder="Correo electrónico"
+            name="email">
+          </ion-input>
+        </div>
+
+        <!-- Campo de contraseña -->
+        <div class="input-group">
+          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="password" 
+            placeholder="Contraseña"
+            name="password">
+          </ion-input>
+          <ion-icon name="eye-off-outline" class="password-toggle"></ion-icon>
+        </div>
+
+        <!-- Opciones adicionales -->
+        <div class="options-row">
+          <div class="remember-me">
+            <ion-checkbox></ion-checkbox>
+            <span>Recordarme</span>
+          </div>
+          <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <!-- Botón de login -->
+        <ion-button expand="block" class="login-button">
+          Iniciar Sesión
+          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+
+        <!-- Botones de redes sociales -->
+        <div class="social-section">
+          <p class="social-text">O continúa con</p>
+          <div class="social-buttons">
+            <ion-button fill="clear" class="social-btn google">
+              <ion-icon name="logo-google"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" class="social-btn facebook">
+              <ion-icon name="logo-facebook"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" class="social-btn apple">
+              <ion-icon name="logo-apple"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+
+        <!-- Link de registro -->
+        <div class="register-link">
+          <p>¿No tienes cuenta? <a href="#">Regístrate aquí</a></p>
+        </div>
+
+        <!-- Mensaje de chofer -->
+        <div class="driver-message">
+          <ion-icon name="car-outline"></ion-icon>
+          <span>¿Eres chofer? <a href="#">Accede como conductor</a></span>
+        </div>
+      </form>
+    </div>
   </div>
 </ion-content>
