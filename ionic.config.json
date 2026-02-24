@@ -1,0 +1,7 @@
+{
+  "name": "Taxi",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
