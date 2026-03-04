@@ -15,23 +15,54 @@
       <p class="subtitle">Tu viaje comienza aquí</p>
     </div>
 
-    <!-- Tarjeta de login -->
-    <div class="login-card">
-      <!-- Pestañas de login/registro -->
+    <!-- Selector de tipo de usuario (CLIENTE / CHOFER) -->
+    <div class="user-type-selector">
+      <div class="user-type-tabs">
+        <div 
+          class="user-type-tab" 
+          [class.active]="userType === 'cliente'"
+          (click)="setUserType('cliente')">
+          <ion-icon name="person-outline"></ion-icon>
+          <span>Cliente</span>
+        </div>
+        <div 
+          class="user-type-tab" 
+          [class.active]="userType === 'chofer'"
+          (click)="setUserType('chofer')">
+          <ion-icon name="car-outline"></ion-icon>
+          <span>Chofer</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TARJETA PARA CLIENTE -->
+    <div class="login-card" *ngIf="userType === 'cliente'">
+      <!-- Pestañas de login/registro para cliente -->
       <div class="tabs-container">
-        <div class="tab active">Iniciar Sesión</div>
-        <div class="tab">Registrarse</div>
+        <div 
+          class="tab" 
+          [class.active]="activeTab === 'login'"
+          (click)="setActiveTab('login')">
+          Iniciar Sesión
+        </div>
+        <div 
+          class="tab" 
+          [class.active]="activeTab === 'registro'"
+          (click)="setActiveTab('registro')">
+          Registrarse
+        </div>
       </div>
 
-      <!-- Formulario de login -->
-      <form class="login-form">
+      <!-- FORMULARIO DE LOGIN PARA CLIENTE -->
+      <form class="login-form" *ngIf="activeTab === 'login'">
         <!-- Campo de email -->
         <div class="input-group">
           <ion-icon name="mail-outline" class="input-icon"></ion-icon>
           <ion-input 
             type="email" 
             placeholder="Correo electrónico"
-            name="email">
+            name="email"
+            [(ngModel)]="loginData.email">
           </ion-input>
         </div>
 
@@ -41,22 +72,29 @@
           <ion-input 
             type="password" 
             placeholder="Contraseña"
-            name="password">
+            name="password"
+            id="clientePassword"
+            [(ngModel)]="loginData.password">
           </ion-input>
-          <ion-icon name="eye-off-outline" class="password-toggle"></ion-icon>
+          <ion-icon 
+            name="eye-off-outline" 
+            class="password-toggle"
+            (click)="togglePassword('clientePassword', 'clienteEyeIcon')"
+            id="clienteEyeIcon">
+          </ion-icon>
         </div>
 
         <!-- Opciones adicionales -->
         <div class="options-row">
           <div class="remember-me">
-            <ion-checkbox></ion-checkbox>
+            <ion-checkbox [(ngModel)]="loginData.rememberMe" name="rememberMe"></ion-checkbox>
             <span>Recordarme</span>
           </div>
-          <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+          <a href="#" class="forgot-link" (click)="olvidePassword($event)">¿Olvidaste tu contraseña?</a>
         </div>
 
         <!-- Botón de login -->
-        <ion-button expand="block" class="login-button">
+        <ion-button expand="block" class="login-button" (click)="loginCliente()">
           Iniciar Sesión
           <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
         </ion-button>
@@ -65,13 +103,13 @@
         <div class="social-section">
           <p class="social-text">O continúa con</p>
           <div class="social-buttons">
-            <ion-button fill="clear" class="social-btn google">
+            <ion-button fill="clear" class="social-btn google" (click)="loginWithGoogle()">
               <ion-icon name="logo-google"></ion-icon>
             </ion-button>
-            <ion-button fill="clear" class="social-btn facebook">
+            <ion-button fill="clear" class="social-btn facebook" (click)="loginWithFacebook()">
               <ion-icon name="logo-facebook"></ion-icon>
             </ion-button>
-            <ion-button fill="clear" class="social-btn apple">
+            <ion-button fill="clear" class="social-btn apple" (click)="loginWithApple()">
               <ion-icon name="logo-apple"></ion-icon>
             </ion-button>
           </div>
@@ -79,13 +117,311 @@
 
         <!-- Link de registro -->
         <div class="register-link">
-          <p>¿No tienes cuenta? <a href="#">Regístrate aquí</a></p>
+          <p>¿No tienes cuenta? <a href="#" (click)="setActiveTab('registro'); $event.preventDefault()">Regístrate aquí</a></p>
+        </div>
+      </form>
+
+      <!-- FORMULARIO DE REGISTRO PARA CLIENTE -->
+      <form class="login-form" *ngIf="activeTab === 'registro'">
+        <!-- Nombre -->
+        <div class="input-group">
+          <ion-icon name="person-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="text" 
+            placeholder="Nombre"
+            name="nombre"
+            [(ngModel)]="registroData.nombre">
+          </ion-input>
         </div>
 
-        <!-- Mensaje de chofer -->
-        <div class="driver-message">
-          <ion-icon name="car-outline"></ion-icon>
-          <span>¿Eres chofer? <a href="#">Accede como conductor</a></span>
+        <!-- Apellido -->
+        <div class="input-group">
+          <ion-icon name="person-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="text" 
+            placeholder="Apellido"
+            name="apellido"
+            [(ngModel)]="registroData.apellido">
+          </ion-input>
+        </div>
+
+        <!-- Email -->
+        <div class="input-group">
+          <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="email" 
+            placeholder="Correo electrónico"
+            name="email"
+            [(ngModel)]="registroData.email">
+          </ion-input>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="input-group">
+          <ion-icon name="call-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="tel" 
+            placeholder="Teléfono"
+            name="telefono"
+            [(ngModel)]="registroData.telefono">
+          </ion-input>
+        </div>
+
+        <!-- Edad -->
+        <div class="input-group">
+          <ion-icon name="calendar-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="number" 
+            placeholder="Edad"
+            name="edad"
+            [(ngModel)]="registroData.edad">
+          </ion-input>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="input-group">
+          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="password" 
+            placeholder="Contraseña"
+            name="password"
+            id="clienteRegPassword"
+            [(ngModel)]="registroData.password">
+          </ion-input>
+          <ion-icon 
+            name="eye-off-outline" 
+            class="password-toggle"
+            (click)="togglePassword('clienteRegPassword', 'clienteRegEyeIcon')"
+            id="clienteRegEyeIcon">
+          </ion-icon>
+        </div>
+
+        <!-- Confirmar contraseña -->
+        <div class="input-group">
+          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="password" 
+            placeholder="Confirmar contraseña"
+            name="confirmPassword"
+            id="clienteRegConfirmPassword"
+            [(ngModel)]="registroData.confirmPassword">
+          </ion-input>
+          <ion-icon 
+            name="eye-off-outline" 
+            class="password-toggle"
+            (click)="togglePassword('clienteRegConfirmPassword', 'clienteRegConfirmEyeIcon')"
+            id="clienteRegConfirmEyeIcon">
+          </ion-icon>
+        </div>
+
+        <!-- Términos y condiciones -->
+        <div class="terms-row">
+          <ion-checkbox [(ngModel)]="registroData.aceptaTerminos" name="aceptaTerminos"></ion-checkbox>
+          <span class="terms-text">Acepto los <a href="#">términos y condiciones</a></span>
+        </div>
+
+        <!-- Botón de registro -->
+        <ion-button expand="block" class="login-button" (click)="registrarCliente()">
+          Registrarse
+          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+
+        <!-- Link de login -->
+        <div class="register-link">
+          <p>¿Ya tienes cuenta? <a href="#" (click)="setActiveTab('login'); $event.preventDefault()">Inicia sesión</a></p>
+        </div>
+      </form>
+    </div>
+
+    <!-- TARJETA PARA CHOFER -->
+    <div class="login-card" *ngIf="userType === 'chofer'">
+      <!-- Pestañas de login/registro para chofer -->
+      <div class="tabs-container">
+        <div 
+          class="tab" 
+          [class.active]="activeTabChofer === 'login'"
+          (click)="setActiveTabChofer('login')">
+          Iniciar Sesión
+        </div>
+        <div 
+          class="tab" 
+          [class.active]="activeTabChofer === 'registro'"
+          (click)="setActiveTabChofer('registro')">
+          Registrarse
+        </div>
+      </div>
+
+      <!-- FORMULARIO DE LOGIN PARA CHOFER -->
+      <form class="login-form" *ngIf="activeTabChofer === 'login'">
+        <!-- Campo de email -->
+        <div class="input-group">
+          <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="email" 
+            placeholder="Correo electrónico"
+            name="email"
+            [(ngModel)]="loginChoferData.email">
+          </ion-input>
+        </div>
+
+        <!-- Campo de contraseña -->
+        <div class="input-group">
+          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="password" 
+            placeholder="Contraseña"
+            name="password"
+            id="choferPassword"
+            [(ngModel)]="loginChoferData.password">
+          </ion-input>
+          <ion-icon 
+            name="eye-off-outline" 
+            class="password-toggle"
+            (click)="togglePassword('choferPassword', 'choferEyeIcon')"
+            id="choferEyeIcon">
+          </ion-icon>
+        </div>
+
+        <!-- Opciones adicionales -->
+        <div class="options-row">
+          <div class="remember-me">
+            <ion-checkbox [(ngModel)]="loginChoferData.rememberMe" name="rememberMe"></ion-checkbox>
+            <span>Recordarme</span>
+          </div>
+          <a href="#" class="forgot-link" (click)="olvidePassword($event)">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <!-- Botón de login -->
+        <ion-button expand="block" class="login-button" (click)="loginChofer()">
+          Iniciar Sesión como Chofer
+          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+
+        <!-- Link de registro -->
+        <div class="register-link">
+          <p>¿No eres chofer? <a href="#" (click)="setActiveTabChofer('registro'); $event.preventDefault()">Regístrate aquí</a></p>
+        </div>
+      </form>
+
+      <!-- FORMULARIO DE REGISTRO PARA CHOFER -->
+      <form class="login-form" *ngIf="activeTabChofer === 'registro'">
+        <!-- Nombre -->
+        <div class="input-group">
+          <ion-icon name="person-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="text" 
+            placeholder="Nombre"
+            name="nombre"
+            [(ngModel)]="registroChoferData.nombre">
+          </ion-input>
+        </div>
+
+        <!-- Apellido -->
+        <div class="input-group">
+          <ion-icon name="person-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="text" 
+            placeholder="Apellido"
+            name="apellido"
+            [(ngModel)]="registroChoferData.apellido">
+          </ion-input>
+        </div>
+
+        <!-- Email -->
+        <div class="input-group">
+          <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="email" 
+            placeholder="Correo electrónico"
+            name="email"
+            [(ngModel)]="registroChoferData.email">
+          </ion-input>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="input-group">
+          <ion-icon name="call-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="tel" 
+            placeholder="Teléfono"
+            name="telefono"
+            [(ngModel)]="registroChoferData.telefono">
+          </ion-input>
+        </div>
+
+        <!-- Licencia -->
+        <div class="input-group">
+          <ion-icon name="card-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="text" 
+            placeholder="Número de licencia"
+            name="licencia"
+            [(ngModel)]="registroChoferData.licencia">
+          </ion-input>
+        </div>
+
+        <!-- Experiencia -->
+        <div class="input-group">
+          <ion-icon name="star-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="number" 
+            placeholder="Años de experiencia"
+            name="experiencia"
+            [(ngModel)]="registroChoferData.experiencia">
+          </ion-input>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="input-group">
+          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="password" 
+            placeholder="Contraseña"
+            name="password"
+            id="choferRegPassword"
+            [(ngModel)]="registroChoferData.password">
+          </ion-input>
+          <ion-icon 
+            name="eye-off-outline" 
+            class="password-toggle"
+            (click)="togglePassword('choferRegPassword', 'choferRegEyeIcon')"
+            id="choferRegEyeIcon">
+          </ion-icon>
+        </div>
+
+        <!-- Confirmar contraseña -->
+        <div class="input-group">
+          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="password" 
+            placeholder="Confirmar contraseña"
+            name="confirmPassword"
+            id="choferRegConfirmPassword"
+            [(ngModel)]="registroChoferData.confirmPassword">
+          </ion-input>
+          <ion-icon 
+            name="eye-off-outline" 
+            class="password-toggle"
+            (click)="togglePassword('choferRegConfirmPassword', 'choferRegConfirmEyeIcon')"
+            id="choferRegConfirmEyeIcon">
+          </ion-icon>
+        </div>
+
+        <!-- Términos y condiciones -->
+        <div class="terms-row">
+          <ion-checkbox [(ngModel)]="registroChoferData.aceptaTerminos" name="aceptaTerminos"></ion-checkbox>
+          <span class="terms-text">Acepto los <a href="#">términos y condiciones</a></span>
+        </div>
+
+        <!-- Botón de registro -->
+        <ion-button expand="block" class="login-button" (click)="registrarChofer()">
+          Registrarse como Chofer
+          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+
+        <!-- Link de login -->
+        <div class="register-link">
+          <p>¿Ya tienes cuenta? <a href="#" (click)="setActiveTabChofer('login'); $event.preventDefault()">Inicia sesión</a></p>
         </div>
       </form>
     </div>

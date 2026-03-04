@@ -2,12 +2,12 @@ import {
   isRTL
 } from "./chunk-IUXA2G6D.js";
 import {
+  createGesture
+} from "./chunk-6U2AQA2C.js";
+import {
   clamp
 } from "./chunk-4554YRK6.js";
 import "./chunk-2H3NLAAY.js";
-import {
-  createGesture
-} from "./chunk-6U2AQA2C.js";
 import "./chunk-QHQP2P2Z.js";
 
 // node_modules/@ionic/core/components/swipe-back.js
@@ -78,4 +78,4 @@ export {
    * (C) Ionic http://ionicframework.com - MIT License
    *)
 */
-//# sourceMappingURL=swipe-back-TL5XF5LG.js.map
+//# sourceMappingURL=swipe-back-E5COORU7.js.map
