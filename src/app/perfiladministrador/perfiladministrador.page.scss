@@ -2,17 +2,17 @@
 
 /* Estilos personalizados para el panel admin */
 .resumen-dta {
-  background: var(--ion-background-color, #ffffff);
+  background: #E6E1DB; /* Beige claro de la paleta */
   border-radius: 24px;
   padding: 20px;
   margin-bottom: 28px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(31, 31, 31, 0.08); /* Sombra en negro de la paleta */
 }
 
 .resumen-dta h2 {
   font-size: 1.3rem;
   font-weight: 600;
-  color: var(--ion-color-dark);
+  color: #1F1F1F; /* Negro de la paleta */
   display: flex;
   align-items: center;
   gap: 10px;
@@ -21,7 +21,7 @@
 
 .resumen-dta h2 ion-icon {
   font-size: 1.6rem;
-  color: var(--ion-color-warning);
+  color: #FFC31F; /* Amarillo principal */
 }
 
 .stats-grid {
@@ -31,25 +31,25 @@
 }
 
 .stat-card {
-  background: var(--ion-color-light);
+  background: #FFFFFF; /* Blanco puro */
   border-radius: 20px;
   padding: 18px 16px;
   display: flex;
   align-items: center;
   gap: 14px;
   transition: all 0.2s ease;
-  border: 1px solid var(--ion-color-light-shade);
+  border: 1px solid #4B4847; /* Gris oscuro para bordes */
 }
 
 .stat-card:hover {
-  background: var(--ion-color-light-tint);
-  border-color: var(--ion-color-warning);
+  background: #E6E1DB; /* Beige claro al hacer hover */
+  border-color: #FFC31F; /* Amarillo */
 }
 
 .stat-icon {
   width: 52px;
   height: 52px;
-  background: var(--ion-background-color);
+  background: #E6E1DB; /* Beige claro */
   border-radius: 18px;
   display: flex;
   align-items: center;
@@ -58,18 +58,18 @@
 
 .stat-icon ion-icon {
   font-size: 2rem;
-  color: var(--ion-color-warning);
+  color: #FFC31F; /* Amarillo */
 }
 
 .stat-content h3 {
   font-size: 1.8rem;
   font-weight: 700;
-  color: var(--ion-color-dark);
+  color: #1F1F1F; /* Negro */
   line-height: 1.2;
 }
 
 .stat-content p {
-  color: var(--ion-color-medium);
+  color: #4B4847; /* Gris oscuro */
   font-weight: 500;
   font-size: 0.9rem;
   text-transform: uppercase;
@@ -91,13 +91,13 @@
 .section-title h2 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--ion-color-dark);
+  color: #1F1F1F; /* Negro */
 }
 
 .section-title ion-icon {
   font-size: 1.8rem;
-  color: var(--ion-color-warning);
-  background: var(--ion-color-dark);
+  color: #FFC31F; /* Amarillo */
+  background: #1F1F1F; /* Negro */
   padding: 8px;
   border-radius: 14px;
 }
@@ -109,11 +109,11 @@
 }
 
 .pantalla-card {
-  background: var(--ion-background-color);
+  background: #E6E1DB; /* Beige claro */
   border-radius: 24px;
   padding: 18px 16px 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-  border: 1px solid var(--ion-color-light-shade);
+  box-shadow: 0 4px 10px rgba(31, 31, 31, 0.05);
+  border: 1px solid #4B4847; /* Gris oscuro */
   transition: transform 0.15s, border-color 0.15s;
   display: flex;
   flex-direction: column;
@@ -121,8 +121,8 @@
 
 .pantalla-card:hover {
   transform: translateY(-4px);
-  border-color: var(--ion-color-warning);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  border-color: #FFC31F; /* Amarillo */
+  box-shadow: 0 12px 24px rgba(255, 195, 31, 0.1); /* Sombra amarilla sutil */
 }
 
 .pantalla-header {
@@ -134,8 +134,8 @@
 
 .pantalla-header ion-icon {
   font-size: 1.8rem;
-  color: var(--ion-color-dark);
-  background: var(--ion-color-light);
+  color: #1F1F1F; /* Negro */
+  background: #FFFFFF; /* Blanco */
   padding: 10px;
   border-radius: 16px;
 }
@@ -143,7 +143,7 @@
 .pantalla-header h3 {
   font-size: 1.3rem;
   font-weight: 600;
-  color: var(--ion-color-dark);
+  color: #1F1F1F; /* Negro */
   margin: 0;
 }
 
@@ -156,9 +156,9 @@
 
 .pantalla-list li {
   padding: 8px 0;
-  border-bottom: 1px dashed var(--ion-color-light-shade);
+  border-bottom: 1px dashed #4B4847; /* Gris oscuro */
   font-size: 0.95rem;
-  color: var(--ion-color-dark-shade);
+  color: #1F1F1F; /* Negro */
   display: flex;
   align-items: center;
   gap: 10px;
@@ -169,14 +169,14 @@
 }
 
 .pantalla-list li ion-icon {
-  color: var(--ion-color-warning);
+  color: #FFC31F; /* Amarillo */
   font-size: 1rem;
   min-width: 20px;
 }
 
 .badge-licencia {
-  background: var(--ion-color-success-tint);
-  color: var(--ion-color-success);
+  background: rgba(255, 195, 31, 0.2); /* Amarillo con opacidad */
+  color: #EB8107; /* Naranja de la paleta para el texto */
   padding: 4px 10px;
   border-radius: 30px;
   font-size: 0.8rem;
@@ -185,16 +185,16 @@
 }
 
 .mini-note {
-  color: var(--ion-color-medium);
+  color: #4B4847; /* Gris oscuro */
   font-size: 0.85rem;
   margin-top: 8px;
-  border-top: 1px solid var(--ion-color-light-shade);
+  border-top: 1px solid #4B4847; /* Gris oscuro */
   padding-top: 8px;
 }
 
 .highlight {
-  border-left: 4px solid var(--ion-color-warning);
-  background: var(--ion-color-warning-tint);
+  border-left: 4px solid #FFC31F; /* Amarillo */
+  background: rgba(255, 195, 31, 0.05); /* Fondo amarillo muy sutil */
 }
 
 .action-buttons {
@@ -214,9 +214,87 @@
   height: 54px;
 }
 
+/* Estilos específicos para botones personalizados */
+.btn-custom.primary {
+  --background: #FFC31F; /* Amarillo */
+  --background-hover: #EB8107; /* Naranja para hover */
+  --color: #1F1F1F; /* Texto negro */
+}
+
+.btn-custom.secondary {
+  --background: #1F1F1F; /* Negro */
+  --background-hover: #4B4847; /* Gris oscuro para hover */
+  --color: #E6E1DB; /* Texto beige claro */
+}
+
+.btn-custom.outline {
+  --background: transparent;
+  --color: #1F1F1F; /* Negro */
+  --border-color: #FFC31F; /* Borde amarillo */
+  --border-width: 2px;
+  --border-style: solid;
+}
+
 .btn-custom ion-icon {
   font-size: 1.3rem;
   margin-right: 8px;
+  color: currentColor;
+}
+
+/* Tablas o listados (por si los necesitas) */
+.data-table {
+  width: 100%;
+  background: #E6E1DB; /* Beige claro */
+  border-radius: 20px;
+  border: 1px solid #4B4847;
+  overflow: hidden;
+}
+
+.data-table th {
+  background: #1F1F1F; /* Negro */
+  color: #E6E1DB; /* Beige claro */
+  font-weight: 600;
+  padding: 15px;
+  text-align: left;
+}
+
+.data-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #4B4847;
+  color: #1F1F1F;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover td {
+  background: rgba(255, 195, 31, 0.05); /* Hover sutil amarillo */
+}
+
+/* Badges de estado */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-badge.active {
+  background: rgba(255, 195, 31, 0.2); /* Amarillo suave */
+  color: #EB8107; /* Naranja */
+}
+
+.status-badge.inactive {
+  background: rgba(75, 72, 71, 0.2); /* Gris con opacidad */
+  color: #4B4847; /* Gris oscuro */
+}
+
+.status-badge.pending {
+  background: rgba(255, 195, 31, 0.15); /* Amarillo más suave */
+  color: #FFC31F; /* Amarillo */
+  border: 1px solid #FFC31F;
 }
 
 /* responsive */

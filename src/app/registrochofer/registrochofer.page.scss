@@ -1,5 +1,5 @@
 .register-chofer-content {
-  --background: #1a1a2e;
+  --background: #1F1F1F; /* Negro de la paleta */
 
   .city-background {
     position: absolute;
@@ -7,14 +7,16 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: linear-gradient(135deg, #1F1F1F 0%, #4B4847 50%, #4B4847 100%);
+    /* Degradado usando negro y gris oscuro */
     
     .city-skyline {
       position: absolute;
       bottom: 0;
       width: 100%;
       height: 150px;
-      background: linear-gradient(transparent 0%, rgba(255, 193, 7, 0.1) 100%);
+      background: linear-gradient(transparent 0%, rgba(255, 195, 31, 0.1) 100%);
+      /* Brillo sutil amarillo en la base */
       
       &::before {
         content: "";
@@ -23,10 +25,10 @@
         width: 100%;
         height: 100%;
         background-image: 
-          linear-gradient(90deg, #ffc107 2px, transparent 2px),
-          linear-gradient(0deg, #ffc107 1px, transparent 1px);
+          linear-gradient(90deg, #FFC31F 2px, transparent 2px),
+          linear-gradient(0deg, #FFC31F 1px, transparent 1px);
         background-size: 50px 50px;
-        opacity: 0.1;
+        opacity: 0.15;
       }
     }
   }
@@ -51,33 +53,33 @@
       width: 80px;
       height: 80px;
       margin: 0 auto 10px;
-      background: rgba(255, 193, 7, 0.1);
+      background: rgba(255, 195, 31, 0.1); /* Amarillo con opacidad */
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2px solid #ffc107;
-      box-shadow: 0 0 30px rgba(255, 193, 7, 0.3);
+      border: 2px solid #FFC31F; /* Amarillo principal */
+      box-shadow: 0 0 30px rgba(255, 195, 31, 0.3); /* Sombra amarilla */
 
       .taxi-icon {
         font-size: 40px;
-        color: #ffc107;
+        color: #FFC31F; /* Amarillo */
       }
     }
 
     .app-title {
       font-size: 28px;
       font-weight: 700;
-      color: white;
+      color: #E6E1DB; /* Beige claro */
       margin: 0;
       
       .yellow-text {
-        color: #ffc107;
+        color: #FFC31F; /* Amarillo */
       }
     }
 
     .subtitle {
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(230, 225, 219, 0.7); /* Beige con opacidad */
       margin: 5px 0 0;
       font-size: 14px;
     }
@@ -86,11 +88,11 @@
   .register-card {
     width: 100%;
     max-width: 450px;
-    background: rgba(255, 255, 255, 0.95);
+    background: #E6E1DB; /* Beige claro como fondo de tarjeta */
     backdrop-filter: blur(10px);
     border-radius: 30px;
     padding: 25px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 20px 40px rgba(31, 31, 31, 0.4); /* Sombra en negro */
     animation: fadeInUp 0.8s ease;
     max-height: 85vh;
     overflow-y: auto;
@@ -100,12 +102,12 @@
     }
 
     &::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.05);
+      background: rgba(75, 72, 71, 0.1); /* Gris con opacidad */
       border-radius: 10px;
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #ffc107;
+      background: #FFC31F; /* Amarillo */
       border-radius: 10px;
     }
   }
@@ -115,14 +117,14 @@
     margin-bottom: 20px;
     
     h2 {
-      color: #1a1a2e;
+      color: #1F1F1F; /* Negro */
       font-size: 24px;
       font-weight: 700;
       margin: 0 0 5px;
     }
     
     p {
-      color: #666;
+      color: #4B4847; /* Gris oscuro */
       font-size: 14px;
       margin: 0;
     }
@@ -130,22 +132,22 @@
 
   /* Badge de chofer */
   .driver-badge {
-    background: rgba(255, 193, 7, 0.1);
+    background: rgba(255, 195, 31, 0.1); /* Amarillo con opacidad */
     border-radius: 25px;
     padding: 8px 15px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     margin: 0 auto 20px;
-    border: 1px dashed #ffc107;
+    border: 1px dashed #FFC31F; /* Amarillo */
     
     ion-icon {
-      color: #ffc107;
+      color: #FFC31F; /* Amarillo */
       font-size: 18px;
     }
     
     span {
-      color: #ffc107;
+      color: #FFC31F; /* Amarillo */
       font-size: 13px;
       font-weight: 600;
     }
@@ -154,7 +156,7 @@
   .input-group {
     display: flex;
     align-items: center;
-    background: #f5f5f5;
+    background: #FFFFFF; /* Blanco puro */
     border-radius: 15px;
     padding: 5px 15px;
     margin-bottom: 15px;
@@ -162,14 +164,14 @@
     transition: all 0.3s ease;
 
     &:focus-within {
-      border-color: #ffc107;
+      border-color: #FFC31F; /* Amarillo */
       background: white;
-      box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2);
+      box-shadow: 0 5px 15px rgba(255, 195, 31, 0.2); /* Sombra amarilla */
     }
 
     .input-icon {
       font-size: 20px;
-      color: #999;
+      color: #4B4847; /* Gris oscuro */
       margin-right: 10px;
       min-width: 24px;
     }
@@ -178,19 +180,19 @@
       --padding-start: 0;
       --padding-end: 0;
       --background: transparent;
-      --color: #333;
-      --placeholder-color: #999;
-      --placeholder-opacity: 1;
+      --color: #1F1F1F; /* Negro */
+      --placeholder-color: #4B4847; /* Gris oscuro */
+      --placeholder-opacity: 0.7;
     }
 
     .password-toggle {
       font-size: 20px;
-      color: #999;
+      color: #4B4847; /* Gris oscuro */
       cursor: pointer;
       transition: color 0.3s ease;
       
       &:hover {
-        color: #ffc107;
+        color: #FFC31F; /* Amarillo */
       }
     }
   }
@@ -211,7 +213,7 @@
   .custom-select {
     display: flex;
     align-items: center;
-    background: #f5f5f5;
+    background: #FFFFFF; /* Blanco */
     border-radius: 15px;
     padding: 5px 15px;
     margin-bottom: 15px;
@@ -219,7 +221,7 @@
     
     ion-icon {
       font-size: 20px;
-      color: #999;
+      color: #4B4847; /* Gris oscuro */
       margin-right: 10px;
     }
     
@@ -227,19 +229,19 @@
       --padding-start: 0;
       --padding-end: 0;
       width: 100%;
-      --color: #333;
-      --placeholder-color: #999;
-      --placeholder-opacity: 1;
+      --color: #1F1F1F; /* Negro */
+      --placeholder-color: #4B4847; /* Gris oscuro */
+      --placeholder-opacity: 0.7;
     }
   }
 
   /* Sección de documentos */
   .documents-section {
-    background: rgba(255, 193, 7, 0.05);
+    background: rgba(255, 195, 31, 0.05); /* Amarillo muy suave */
     border-radius: 15px;
     padding: 15px;
     margin: 20px 0;
-    border: 1px solid rgba(255, 193, 7, 0.2);
+    border: 1px solid rgba(255, 195, 31, 0.2); /* Borde amarillo sutil */
     
     .section-title {
       display: flex;
@@ -248,12 +250,12 @@
       margin-bottom: 15px;
       
       ion-icon {
-        color: #ffc107;
+        color: #FFC31F; /* Amarillo */
         font-size: 20px;
       }
       
       span {
-        color: #1a1a2e;
+        color: #1F1F1F; /* Negro */
         font-weight: 600;
         font-size: 14px;
       }
@@ -265,15 +267,15 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    background: white;
+    background: #FFFFFF; /* Blanco */
     border-radius: 12px;
     padding: 10px 15px;
     margin-bottom: 10px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #4B4847; /* Gris oscuro */
     
     ion-icon {
       font-size: 24px;
-      color: #ffc107;
+      color: #FFC31F; /* Amarillo */
     }
     
     .file-info {
@@ -282,21 +284,22 @@
       .file-name {
         font-size: 13px;
         font-weight: 600;
-        color: #333;
+        color: #1F1F1F; /* Negro */
         margin-bottom: 2px;
       }
       
       .file-size {
         font-size: 11px;
-        color: #999;
+        color: #4B4847; /* Gris oscuro */
       }
     }
     
     .upload-btn {
       --padding-start: 10px;
       --padding-end: 10px;
-      --color: #ffc107;
+      --color: #FFC31F; /* Amarillo */
       font-size: 12px;
+      --background-hover: rgba(255, 195, 31, 0.1);
     }
   }
 
@@ -307,23 +310,25 @@
     gap: 10px;
     margin: 20px 0;
     padding: 10px;
-    background: rgba(255, 193, 7, 0.05);
+    background: rgba(255, 195, 31, 0.05); /* Fondo amarillo muy suave */
     border-radius: 12px;
 
     ion-checkbox {
       --size: 20px;
-      --checkbox-background-checked: #ffc107;
-      --border-color-checked: #ffc107;
+      --checkbox-background-checked: #FFC31F; /* Amarillo */
+      --border-color-checked: #FFC31F; /* Amarillo */
+      --border-color: #4B4847; /* Gris oscuro */
+      --checkmark-color: #1F1F1F; /* Negro para el checkmark */
       margin-top: 2px;
     }
 
     .terms-text {
       font-size: 13px;
-      color: #666;
+      color: #4B4847; /* Gris oscuro */
       line-height: 1.4;
       
       a {
-        color: #ffc107;
+        color: #FFC31F; /* Amarillo */
         text-decoration: none;
         font-weight: 600;
         
@@ -336,9 +341,9 @@
 
   /* Botón de registro */
   .register-button {
-    --background: #ffc107;
-    --background-hover: #ffb300;
-    --color: #1a1a2e;
+    --background: #FFC31F; /* Amarillo */
+    --background-hover: #EB8107; /* Naranja para hover */
+    --color: #1F1F1F; /* Negro */
     --border-radius: 15px;
     --padding-top: 18px;
     --padding-bottom: 18px;
@@ -349,7 +354,7 @@
     letter-spacing: 1px;
     
     &::part(native) {
-      box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+      box-shadow: 0 10px 20px rgba(255, 195, 31, 0.3); /* Sombra amarilla */
     }
     
     &:active {
@@ -362,15 +367,15 @@
     text-align: center;
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid #4B4847; /* Gris oscuro */
     
     p {
-      color: #666;
+      color: #4B4847; /* Gris oscuro */
       font-size: 14px;
       margin: 0;
       
       a {
-        color: #ffc107;
+        color: #FFC31F; /* Amarillo */
         text-decoration: none;
         font-weight: 600;
         margin-left: 5px;
@@ -384,7 +389,7 @@
 
   /* Mensajes de error */
   .error-message {
-    color: #ff3b30;
+    color: #EB8107; /* Naranja de la paleta para errores */
     font-size: 12px;
     margin-top: -10px;
     margin-bottom: 10px;
@@ -395,6 +400,7 @@
     
     ion-icon {
       font-size: 14px;
+      color: #EB8107; /* Naranja */
     }
   }
 }
