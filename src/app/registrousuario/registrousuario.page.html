@@ -1,0 +1,188 @@
+<ion-content [fullscreen]="true" class="register-usuario-content">
+  <!-- Fondo con efecto de ciudad nocturna -->
+  <div class="city-background">
+    <div class="city-skyline"></div>
+  </div>
+  
+  <!-- Contenedor principal -->
+  <div class="register-container">
+    <!-- Logo y título -->
+    <div class="logo-section">
+      <div class="logo-wrapper">
+        <ion-icon name="person-outline" class="taxi-icon"></ion-icon>
+      </div>
+      <h1 class="app-title">Taxi<span class="yellow-text">App</span></h1>
+      <p class="subtitle">Registro de Usuarios</p>
+    </div>
+
+    <!-- Tarjeta de registro -->
+    <div class="register-card">
+      <div class="form-title">
+        <h2>Crear Cuenta</h2>
+        <p>Completa tus datos personales</p>
+      </div>
+
+      <!-- Badge de usuario -->
+      <div class="user-badge">
+        <ion-icon name="person-outline"></ion-icon>
+        <span>Nuevo Usuario</span>
+      </div>
+
+      <form #registroForm="ngForm" (ngSubmit)="registrarUsuario()">
+        <!-- Nombre y Apellido (NOT NULL) -->
+        <div class="input-row">
+          <div class="input-group" [class.error]="nombre.invalid && nombre.touched">
+            <ion-icon name="person-outline" class="input-icon"></ion-icon>
+            <ion-input 
+              type="text" 
+              placeholder="Nombre *"
+              name="nombre"
+              #nombre="ngModel"
+              [(ngModel)]="usuarioData.nombre"
+              required>
+            </ion-input>
+          </div>
+          
+          <div class="input-group" [class.error]="apellido.invalid && apellido.touched">
+            <ion-input 
+              type="text" 
+              placeholder="Apellido *"
+              name="apellido"
+              #apellido="ngModel"
+              [(ngModel)]="usuarioData.apellido"
+              required>
+            </ion-input>
+          </div>
+        </div>
+
+        <!-- Correo (UNIQUE NOT NULL) -->
+        <div class="input-group" [class.error]="correo.invalid && correo.touched">
+          <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="email" 
+            placeholder="Correo electrónico *"
+            name="correo"
+            #correo="ngModel"
+            [(ngModel)]="usuarioData.correo"
+            required
+            email>
+          </ion-input>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="input-group">
+          <ion-icon name="call-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="tel" 
+            placeholder="Teléfono"
+            name="telefono"
+            #telefono="ngModel"
+            [(ngModel)]="usuarioData.telefono"
+            maxlength="15">
+          </ion-input>
+        </div>
+
+        <!-- Edad (CHECK edad >= 18) -->
+        <div class="input-group" [class.error]="edad.invalid && edad.touched">
+          <ion-icon name="calendar-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="number" 
+            placeholder="Edad * (mínimo 18 años)"
+            name="edad"
+            #edad="ngModel"
+            [(ngModel)]="usuarioData.edad"
+            required
+            min="18">
+          </ion-input>
+        </div>
+
+        <!-- Mensaje de error para edad -->
+        @if (edad.invalid && edad.touched) {
+          <div class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <span>Debes ser mayor de 18 años</span>
+          </div>
+        }
+
+        <!-- Contraseña (NOT NULL) -->
+        <div class="input-group" [class.error]="contrasena.invalid && contrasena.touched">
+          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="password" 
+            placeholder="Contraseña *"
+            name="contrasena"
+            id="usuarioPassword"
+            #contrasena="ngModel"
+            [(ngModel)]="usuarioData.contrasena"
+            required
+            minlength="6">
+          </ion-input>
+          <ion-icon 
+            name="eye-off-outline" 
+            class="password-toggle"
+            (click)="togglePassword('usuarioPassword', 'usuarioEyeIcon')"
+            id="usuarioEyeIcon">
+          </ion-icon>
+        </div>
+
+        <!-- Confirmar Contraseña -->
+        <div class="input-group" [class.error]="confirmContrasena.invalid && confirmContrasena.touched">
+          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="password" 
+            placeholder="Confirmar contraseña *"
+            name="confirmContrasena"
+            id="usuarioConfirmPassword"
+            #confirmContrasena="ngModel"
+            [(ngModel)]="usuarioData.confirmContrasena"
+            required
+            minlength="6">
+          </ion-input>
+          <ion-icon 
+            name="eye-off-outline" 
+            class="password-toggle"
+            (click)="togglePassword('usuarioConfirmPassword', 'usuarioConfirmEyeIcon')"
+            id="usuarioConfirmEyeIcon">
+          </ion-icon>
+        </div>
+
+        <!-- Validación de contraseñas coincidentes -->
+        @if (usuarioData.contrasena && usuarioData.confirmContrasena && usuarioData.contrasena !== usuarioData.confirmContrasena) {
+          <div class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <span>Las contraseñas no coinciden</span>
+          </div>
+        }
+
+        <!-- Términos y condiciones -->
+        <div class="terms-row">
+          <ion-checkbox 
+            name="aceptaTerminos"
+            [(ngModel)]="usuarioData.aceptaTerminos"
+            #aceptaTerminos="ngModel"
+            required>
+          </ion-checkbox>
+          <span class="terms-text">
+            Acepto los <a href="#">Términos y Condiciones</a> y la 
+            <a href="#">Política de Privacidad</a>
+          </span>
+        </div>
+
+        <!-- Botón de registro -->
+        <ion-button 
+          expand="block" 
+          class="register-button" 
+          type="submit"
+          [disabled]="registroForm.invalid || usuarioData.contrasena !== usuarioData.confirmContrasena">
+          Registrarme
+          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+
+        <!-- Enlace para iniciar sesión -->
+        <div class="login-link">
+          <p>¿Ya tienes cuenta? <a href="#" (click)="irALogin($event)">Inicia Sesión</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</ion-content>

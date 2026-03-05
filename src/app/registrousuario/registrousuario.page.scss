@@ -1,4 +1,4 @@
-.register-chofer-content {
+.register-usuario-content {
   --background: #1a1a2e;
 
   .city-background {
@@ -85,15 +85,13 @@
 
   .register-card {
     width: 100%;
-    max-width: 450px;
+    max-width: 420px;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 30px;
     padding: 25px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     animation: fadeInUp 0.8s ease;
-    max-height: 85vh;
-    overflow-y: auto;
 
     &::-webkit-scrollbar {
       width: 5px;
@@ -128,8 +126,8 @@
     }
   }
 
-  /* Badge de chofer */
-  .driver-badge {
+  /* Badge de usuario */
+  .user-badge {
     background: rgba(255, 193, 7, 0.1);
     border-radius: 25px;
     padding: 8px 15px;
@@ -204,99 +202,6 @@
     .input-group {
       flex: 1;
       margin-bottom: 0;
-    }
-  }
-
-  /* Select personalizado */
-  .custom-select {
-    display: flex;
-    align-items: center;
-    background: #f5f5f5;
-    border-radius: 15px;
-    padding: 5px 15px;
-    margin-bottom: 15px;
-    border: 1px solid transparent;
-    
-    ion-icon {
-      font-size: 20px;
-      color: #999;
-      margin-right: 10px;
-    }
-    
-    ion-select {
-      --padding-start: 0;
-      --padding-end: 0;
-      width: 100%;
-      --color: #333;
-      --placeholder-color: #999;
-      --placeholder-opacity: 1;
-    }
-  }
-
-  /* Sección de documentos */
-  .documents-section {
-    background: rgba(255, 193, 7, 0.05);
-    border-radius: 15px;
-    padding: 15px;
-    margin: 20px 0;
-    border: 1px solid rgba(255, 193, 7, 0.2);
-    
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 15px;
-      
-      ion-icon {
-        color: #ffc107;
-        font-size: 20px;
-      }
-      
-      span {
-        color: #1a1a2e;
-        font-weight: 600;
-        font-size: 14px;
-      }
-    }
-  }
-
-  /* Upload de archivos */
-  .file-upload {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: white;
-    border-radius: 12px;
-    padding: 10px 15px;
-    margin-bottom: 10px;
-    border: 1px solid #e0e0e0;
-    
-    ion-icon {
-      font-size: 24px;
-      color: #ffc107;
-    }
-    
-    .file-info {
-      flex: 1;
-      
-      .file-name {
-        font-size: 13px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 2px;
-      }
-      
-      .file-size {
-        font-size: 11px;
-        color: #999;
-      }
-    }
-    
-    .upload-btn {
-      --padding-start: 10px;
-      --padding-end: 10px;
-      --color: #ffc107;
-      font-size: 12px;
     }
   }
 

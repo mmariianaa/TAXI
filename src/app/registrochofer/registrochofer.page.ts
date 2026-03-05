@@ -2,17 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient} from '@angular/common/http';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonIcon, IonCheckbox, IonInput, IonSelectOption, IonSelect } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-registrochofer',
   templateUrl: './registrochofer.page.html',
   styleUrls: ['./registrochofer.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonInput, IonCheckbox, IonIcon, IonButton,
     CommonModule,
-    FormsModule,
-  ]
+    FormsModule, IonSelectOption, IonSelect, IonContent]
 })
 export class RegistrochoferPage implements OnInit {
 

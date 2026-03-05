@@ -20,139 +20,119 @@ import {
   ]
 })
 export class HomePage {
-  // Tipo de usuario: 'cliente' o 'chofer'
-  userType: string = 'cliente';
+  userType: string = 'cliente'; // 'cliente' o 'chofer'
   
-  // Pestañas para cliente
-  activeTab: string = 'login';
-  
-  // Pestañas para chofer
-  activeTabChofer: string = 'login';
-
-  // Datos de login para cliente
+  // Datos para login de cliente
   loginData = {
     email: '',
     password: '',
     rememberMe: false
   };
-
-  // Datos de registro para cliente
-  registroData = {
-    nombre: '',
-    apellido: '',
-    email: '',
-    telefono: '',
-    edad: null,
-    password: '',
-    confirmPassword: '',
-    aceptaTerminos: false
-  };
-
-  // Datos de login para chofer
+  
+  // Datos para login de chofer
   loginChoferData = {
     email: '',
     password: '',
     rememberMe: false
   };
 
-  // Datos de registro para chofer
-  registroChoferData = {
-    nombre: '',
-    apellido: '',
-    email: '',
-    telefono: '',
-    licencia: '',
-    experiencia: null,
-    password: '',
-    confirmPassword: '',
-    aceptaTerminos: false
+  // Credenciales quemadas para demostración
+  private credencialesCliente = {
+    email: 'cliente@test.com',
+    password: '123456'
   };
 
-  private apiUrl = 'http://localhost:3000/api';
+  private credencialesChofer = {
+    email: 'chofer@test.com',
+    password: '123456'
+  };
 
-  constructor(
-    private router: Router,
-    private http: HttpClient
-  ) {}
+  constructor(private router: Router) {}
 
-  // Cambiar entre Cliente y Chofer
   setUserType(type: string) {
     this.userType = type;
   }
 
-  // Cambiar pestañas de cliente
-  setActiveTab(tab: string) {
-    this.activeTab = tab;
-  }
-
-  // Cambiar pestañas de chofer
-  setActiveTabChofer(tab: string) {
-    this.activeTabChofer = tab;
-  }
-
-  // Login de cliente
-  loginCliente() {
-    console.log('Login cliente:', this.loginData);
-    // Aquí va la lógica de login
-    // this.http.post(`${this.apiUrl}/login/cliente`, this.loginData)
-  }
-
-  // Login de chofer
-  loginChofer() {
-    console.log('Login chofer:', this.loginChoferData);
-    // Aquí va la lógica de login
-    // this.http.post(`${this.apiUrl}/login/chofer`, this.loginChoferData)
-  }
-
-  // Registro de cliente
-  registrarCliente() {
-    console.log('Registro cliente:', this.registroData);
-    // Aquí va la lógica de registro
-    // this.http.post(`${this.apiUrl}/registro/cliente`, this.registroData)
-  }
-
-  // Registro de chofer
-  registrarChofer() {
-    console.log('Registro chofer:', this.registroChoferData);
-    // Aquí va la lógica de registro
-    // this.http.post(`${this.apiUrl}/registro/chofer`, this.registroChoferData)
-  }
-
-  // Recuperar contraseña
-  olvidePassword(event: Event) {
-    event.preventDefault();
-    console.log('Recuperar contraseña');
-    // Aquí va la lógica para recuperar contraseña
-  }
-
-  // Login con Google
-  loginWithGoogle() {
-    console.log('Login con Google');
-  }
-
-  // Login con Facebook
-  loginWithFacebook() {
-    console.log('Login con Facebook');
-  }
-
-  // Login con Apple
-  loginWithApple() {
-    console.log('Login con Apple');
-  }
-
-  // Mostrar/ocultar contraseña
   togglePassword(inputId: string, iconId: string) {
     const input = document.getElementById(inputId) as HTMLInputElement;
-    const icon = document.getElementById(iconId) as HTMLIonIconElement;
+    const icon = document.getElementById(iconId) as HTMLElement;
     
-    if (input && icon) {
-      if (input.type === 'password') {
-        input.type = 'text';
-        icon.name = 'eye-outline';
-      } else {
-        input.type = 'password';
-        icon.name = 'eye-off-outline';
-      }
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.setAttribute('name', 'eye-outline');
+    } else {
+      input.type = 'password';
+      icon.setAttribute('name', 'eye-off-outline');
     }
+  }
+
+  olvidePassword(event: Event) {
+    event.preventDefault();
+    // Aquí puedes agregar la lógica para recuperar contraseña
+    console.log('Recuperar contraseña');
+  }
+
+  irARegistroCliente(event: Event) {
+    event.preventDefault();
+    this.router.navigate(['/registrousuario']);
+  }
+
+  irARegistroChofer(event: Event) {
+    event.preventDefault();
+    this.router.navigate(['/registrochofer']);
+  }
+
+  loginCliente() {
+    // Validar que los campos no estén vacíos
+    if (!this.loginData.email || !this.loginData.password) {
+      this.mostrarMensaje('Por favor completa todos los campos');
+      return;
+    }
+
+    // Validar credenciales (ejemplo con credenciales quemadas)
+    if (this.loginData.email === this.credencialesCliente.email && 
+        this.loginData.password === this.credencialesCliente.password) {
+      
+      console.log('Inicio de sesión exitoso como cliente', this.loginData);
+      
+      // Aquí puedes guardar datos del usuario en localStorage o un servicio
+      localStorage.setItem('userType', 'cliente');
+      localStorage.setItem('userEmail', this.loginData.email);
+      
+      // Redirigir a la vista de usuario
+      this.router.navigate(['/vista-usuario']);
+    } else {
+      this.mostrarMensaje('Credenciales incorrectas. Usa cliente@test.com / 123456');
+    }
+  }
+
+  loginChofer() {
+    // Validar que los campos no estén vacíos
+    if (!this.loginChoferData.email || !this.loginChoferData.password) {
+      this.mostrarMensaje('Por favor completa todos los campos');
+      return;
+    }
+
+    // Validar credenciales (ejemplo con credenciales quemadas)
+    if (this.loginChoferData.email === this.credencialesChofer.email && 
+        this.loginChoferData.password === this.credencialesChofer.password) {
+      
+      console.log('Inicio de sesión exitoso como chofer', this.loginChoferData);
+      
+      // Aquí puedes guardar datos del usuario en localStorage o un servicio
+      localStorage.setItem('userType', 'chofer');
+      localStorage.setItem('userEmail', this.loginChoferData.email);
+      
+      // Redirigir a la vista de chofer
+      this.router.navigate(['/vista-chofer']);
+    } else {
+      this.mostrarMensaje('Credenciales incorrectas. Usa chofer@test.com / 123456');
+    }
+  }
+
+  private mostrarMensaje(mensaje: string) {
+    // Aquí puedes implementar un toast o alert
+    console.log(mensaje);
+    alert(mensaje); // Temporal, luego puedes cambiar por un Toast de Ionic
   }
 }

@@ -1,37 +1,254 @@
-<div class="registro-container">
-  <h2>🚖 Registro de Chofer</h2>
-  <form (ngSubmit)="registrarChofer()" #choferForm="ngForm">
-
-    <div class="form-group">
-      <label for="nombre">Nombre</label>
-      <input type="text" id="nombre" name="nombre" [(ngModel)]="chofer.nombre" required />
+<ion-content [fullscreen]="true" class="register-chofer-content">
+  <!-- Fondo con efecto de ciudad nocturna -->
+  <div class="city-background">
+    <div class="city-skyline"></div>
+  </div>
+  
+  <!-- Contenedor principal -->
+  <div class="register-container">
+    <!-- Logo y título -->
+    <div class="logo-section">
+      <div class="logo-wrapper">
+        <ion-icon name="car-sport-outline" class="taxi-icon"></ion-icon>
+      </div>
+      <h1 class="app-title">Taxi<span class="yellow-text">App</span></h1>
+      <p class="subtitle">Registro de Conductores</p>
     </div>
 
-    <div class="form-group">
-      <label for="apellido">Apellido</label>
-      <input type="text" id="apellido" name="apellido" [(ngModel)]="chofer.apellido" required />
-    </div>
+    <!-- Tarjeta de registro -->
+    <div class="register-card">
+      <div class="form-title">
+        <h2>Conviértete en Chofer</h2>
+        <p>Completa tus datos para comenzar</p>
+      </div>
 
-    <div class="form-group">
-      <label for="edad">Edad</label>
-      <input type="number" id="edad" name="edad" [(ngModel)]="chofer.edad" min="18" required />
-    </div>
+      <!-- Badge de chofer -->
+      <div class="driver-badge">
+        <ion-icon name="car-outline"></ion-icon>
+        <span>Registro de Conductor Profesional</span>
+      </div>
 
-    <div class="form-group">
-      <label for="correo">Correo</label>
-      <input type="email" id="correo" name="correo" [(ngModel)]="chofer.correo" required />
-    </div>
+      <form>
+        <!-- Nombre y apellido -->
+        <div class="input-row">
+          <div class="input-group">
+            <ion-icon name="person-outline" class="input-icon"></ion-icon>
+            <ion-input 
+              type="text" 
+              placeholder="Nombre"
+              name="nombre">
+            </ion-input>
+          </div>
+          
+          <div class="input-group">
+            <ion-input 
+              type="text" 
+              placeholder="Apellido"
+              name="apellido">
+            </ion-input>
+          </div>
+        </div>
 
-    <div class="form-group">
-      <label for="telefono">Teléfono</label>
-      <input type="text" id="telefono" name="telefono" [(ngModel)]="chofer.telefono" />
-    </div>
+        <!-- Email -->
+        <div class="input-group">
+          <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="email" 
+            placeholder="Correo electrónico"
+            name="email">
+          </ion-input>
+        </div>
 
-    <div class="form-group">
-      <label for="contrasena">Contraseña</label>
-      <input type="password" id="contrasena" name="contrasena" [(ngModel)]="chofer.contrasena" required />
-    </div>
+        <!-- Teléfono -->
+        <div class="input-group">
+          <ion-icon name="call-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="tel" 
+            placeholder="Teléfono"
+            name="telefono">
+          </ion-input>
+        </div>
 
-    <button type="submit" class="btn-registrar">Registrar Chofer</button>
-  </form>
-</div>
+        <!-- Tipo y número de documento -->
+        <div class="input-row">
+          <div class="custom-select">
+            <ion-icon name="card-outline"></ion-icon>
+            <ion-select placeholder="Tipo Doc.">
+              <ion-select-option value="cc">CC</ion-select-option>
+              <ion-select-option value="ce">CE</ion-select-option>
+              <ion-select-option value="pasaporte">Pasaporte</ion-select-option>
+            </ion-select>
+          </div>
+          
+          <div class="input-group">
+            <ion-input 
+              type="text" 
+              placeholder="Número de documento">
+            </ion-input>
+          </div>
+        </div>
+
+        <!-- Información del vehículo -->
+        <div class="input-row">
+          <div class="input-group">
+            <ion-icon name="car-outline" class="input-icon"></ion-icon>
+            <ion-input 
+              type="text" 
+              placeholder="Marca del vehículo">
+            </ion-input>
+          </div>
+          
+          <div class="input-group">
+            <ion-input 
+              type="text" 
+              placeholder="Modelo">
+            </ion-input>
+          </div>
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <ion-icon name="color-palette-outline" class="input-icon"></ion-icon>
+            <ion-input 
+              type="text" 
+              placeholder="Color">
+            </ion-input>
+          </div>
+          
+          <div class="input-group">
+            <ion-icon name="barcode-outline" class="input-icon"></ion-icon>
+            <ion-input 
+              type="text" 
+              placeholder="Placa">
+            </ion-input>
+          </div>
+        </div>
+
+        <!-- Licencia y experiencia -->
+        <div class="input-row">
+          <div class="input-group">
+            <ion-icon name="id-card-outline" class="input-icon"></ion-icon>
+            <ion-input 
+              type="text" 
+              placeholder="Número de licencia">
+            </ion-input>
+          </div>
+          
+          <div class="input-group">
+            <ion-icon name="star-outline" class="input-icon"></ion-icon>
+            <ion-input 
+              type="number" 
+              placeholder="Años exp.">
+            </ion-input>
+          </div>
+        </div>
+
+        <!-- Sección de documentos -->
+        <div class="documents-section">
+          <div class="section-title">
+            <ion-icon name="document-text-outline"></ion-icon>
+            <span>Documentos requeridos</span>
+          </div>
+
+          <!-- Licencia de conducción -->
+          <div class="file-upload">
+            <ion-icon name="id-card-outline"></ion-icon>
+            <div class="file-info">
+              <div class="file-name">Licencia de conducción</div>
+              <div class="file-size">PDF o imagen</div>
+            </div>
+            <ion-button fill="clear" class="upload-btn">
+              <ion-icon name="cloud-upload-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+
+          <!-- SOAT -->
+          <div class="file-upload">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+            <div class="file-info">
+              <div class="file-name">SOAT vigente</div>
+              <div class="file-size">PDF o imagen</div>
+            </div>
+            <ion-button fill="clear" class="upload-btn">
+              <ion-icon name="cloud-upload-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+
+          <!-- Revisión técnico-mecánica -->
+          <div class="file-upload">
+            <ion-icon name="build-outline"></ion-icon>
+            <div class="file-info">
+              <div class="file-name">Revisión técnico-mecánica</div>
+              <div class="file-size">PDF o imagen</div>
+            </div>
+            <ion-button fill="clear" class="upload-btn">
+              <ion-icon name="cloud-upload-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+
+          <!-- Foto del vehículo -->
+          <div class="file-upload">
+            <ion-icon name="camera-outline"></ion-icon>
+            <div class="file-info">
+              <div class="file-name">Foto del vehículo</div>
+              <div class="file-size">JPG o PNG</div>
+            </div>
+            <ion-button fill="clear" class="upload-btn">
+              <ion-icon name="cloud-upload-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="input-group">
+          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="password" 
+            placeholder="Contraseña"
+            id="choferPassword">
+          </ion-input>
+          <ion-icon 
+            name="eye-off-outline" 
+            class="password-toggle"
+            id="choferEyeIcon">
+          </ion-icon>
+        </div>
+
+        <!-- Confirmar contraseña -->
+        <div class="input-group">
+          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+          <ion-input 
+            type="password" 
+            placeholder="Confirmar contraseña"
+            id="choferConfirmPassword">
+          </ion-input>
+          <ion-icon 
+            name="eye-off-outline" 
+            class="password-toggle"
+            id="choferConfirmEyeIcon">
+          </ion-icon>
+        </div>
+
+        <!-- Términos y condiciones -->
+        <div class="terms-row">
+          <ion-checkbox></ion-checkbox>
+          <span class="terms-text">
+            Acepto los <a href="#">Términos y Condiciones</a> y la 
+            <a href="#">Política de Privacidad</a> para conductores
+          </span>
+        </div>
+
+        <!-- Botón de registro -->
+        <ion-button expand="block" class="register-button" type="submit">
+          Registrarme como Chofer
+          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+
+        <!-- Enlace para iniciar sesión -->
+        <div class="login-link">
+          <p>¿Ya eres chofer? <a href="#">Inicia Sesión</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</ion-content>
