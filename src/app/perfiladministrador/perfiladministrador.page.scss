@@ -1,0 +1,241 @@
+/* admin-panel.page.css */
+
+/* Estilos personalizados para el panel admin */
+.resumen-dta {
+  background: var(--ion-background-color, #ffffff);
+  border-radius: 24px;
+  padding: 20px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.resumen-dta h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.resumen-dta h2 ion-icon {
+  font-size: 1.6rem;
+  color: var(--ion-color-warning);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.stat-card {
+  background: var(--ion-color-light);
+  border-radius: 20px;
+  padding: 18px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.2s ease;
+  border: 1px solid var(--ion-color-light-shade);
+}
+
+.stat-card:hover {
+  background: var(--ion-color-light-tint);
+  border-color: var(--ion-color-warning);
+}
+
+.stat-icon {
+  width: 52px;
+  height: 52px;
+  background: var(--ion-background-color);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-icon ion-icon {
+  font-size: 2rem;
+  color: var(--ion-color-warning);
+}
+
+.stat-content h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+  line-height: 1.2;
+}
+
+.stat-content p {
+  color: var(--ion-color-medium);
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 4px;
+}
+
+.gestion-section {
+  margin-bottom: 28px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.section-title h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+.section-title ion-icon {
+  font-size: 1.8rem;
+  color: var(--ion-color-warning);
+  background: var(--ion-color-dark);
+  padding: 8px;
+  border-radius: 14px;
+}
+
+.pantalla-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.pantalla-card {
+  background: var(--ion-background-color);
+  border-radius: 24px;
+  padding: 18px 16px 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--ion-color-light-shade);
+  transition: transform 0.15s, border-color 0.15s;
+  display: flex;
+  flex-direction: column;
+}
+
+.pantalla-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--ion-color-warning);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.pantalla-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.pantalla-header ion-icon {
+  font-size: 1.8rem;
+  color: var(--ion-color-dark);
+  background: var(--ion-color-light);
+  padding: 10px;
+  border-radius: 16px;
+}
+
+.pantalla-header h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  margin: 0;
+}
+
+.pantalla-list {
+  list-style: none;
+  margin: 8px 0 14px 0;
+  padding: 0;
+  flex: 1;
+}
+
+.pantalla-list li {
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--ion-color-light-shade);
+  font-size: 0.95rem;
+  color: var(--ion-color-dark-shade);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pantalla-list li:last-child {
+  border-bottom: none;
+}
+
+.pantalla-list li ion-icon {
+  color: var(--ion-color-warning);
+  font-size: 1rem;
+  min-width: 20px;
+}
+
+.badge-licencia {
+  background: var(--ion-color-success-tint);
+  color: var(--ion-color-success);
+  padding: 4px 10px;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.mini-note {
+  color: var(--ion-color-medium);
+  font-size: 0.85rem;
+  margin-top: 8px;
+  border-top: 1px solid var(--ion-color-light-shade);
+  padding-top: 8px;
+}
+
+.highlight {
+  border-left: 4px solid var(--ion-color-warning);
+  background: var(--ion-color-warning-tint);
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 32px 0 24px;
+  justify-content: flex-start;
+}
+
+.btn-custom {
+  --border-radius: 50px;
+  --padding-start: 24px;
+  --padding-end: 24px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  height: 54px;
+}
+
+.btn-custom ion-icon {
+  font-size: 1.3rem;
+  margin-right: 8px;
+}
+
+/* responsive */
+@media (max-width: 992px) {
+  .stats-grid, .pantalla-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .stats-grid, .pantalla-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .btn-custom {
+    width: 100%;
+  }
+}
