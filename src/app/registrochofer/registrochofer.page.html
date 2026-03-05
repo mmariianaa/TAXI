@@ -28,7 +28,7 @@
         <span>Registro de Conductor Profesional</span>
       </div>
 
-      <form>
+      <form #registroForm="ngForm" (ngSubmit)="registrarChofer()">
         <!-- Nombre y apellido -->
         <div class="input-row">
           <div class="input-group">
@@ -36,7 +36,9 @@
             <ion-input 
               type="text" 
               placeholder="Nombre"
-              name="nombre">
+              [(ngModel)]="chofer.nombre"
+              name="nombre"
+              required>
             </ion-input>
           </div>
           
@@ -44,7 +46,9 @@
             <ion-input 
               type="text" 
               placeholder="Apellido"
-              name="apellido">
+              [(ngModel)]="chofer.apellido"
+              name="apellido"
+              required>
             </ion-input>
           </div>
         </div>
@@ -55,7 +59,9 @@
           <ion-input 
             type="email" 
             placeholder="Correo electrónico"
-            name="email">
+            [(ngModel)]="chofer.correo"
+            name="correo"
+            required>
           </ion-input>
         </div>
 
@@ -65,6 +71,7 @@
           <ion-input 
             type="tel" 
             placeholder="Teléfono"
+            [(ngModel)]="chofer.telefono"
             name="telefono">
           </ion-input>
         </div>
@@ -73,7 +80,10 @@
         <div class="input-row">
           <div class="custom-select">
             <ion-icon name="card-outline"></ion-icon>
-            <ion-select placeholder="Tipo Doc.">
+            <ion-select 
+              placeholder="Tipo Doc."
+              [(ngModel)]="chofer.tipo_documento"
+              name="tipo_documento">
               <ion-select-option value="cc">CC</ion-select-option>
               <ion-select-option value="ce">CE</ion-select-option>
               <ion-select-option value="pasaporte">Pasaporte</ion-select-option>
@@ -83,7 +93,9 @@
           <div class="input-group">
             <ion-input 
               type="text" 
-              placeholder="Número de documento">
+              placeholder="Número de documento"
+              [(ngModel)]="chofer.numero_documento"
+              name="numero_documento">
             </ion-input>
           </div>
         </div>
@@ -94,14 +106,18 @@
             <ion-icon name="car-outline" class="input-icon"></ion-icon>
             <ion-input 
               type="text" 
-              placeholder="Marca del vehículo">
+              placeholder="Marca del vehículo"
+              [(ngModel)]="chofer.marca_vehiculo"
+              name="marca_vehiculo">
             </ion-input>
           </div>
           
           <div class="input-group">
             <ion-input 
               type="text" 
-              placeholder="Modelo">
+              placeholder="Modelo"
+              [(ngModel)]="chofer.modelo_vehiculo"
+              name="modelo_vehiculo">
             </ion-input>
           </div>
         </div>
@@ -111,7 +127,9 @@
             <ion-icon name="color-palette-outline" class="input-icon"></ion-icon>
             <ion-input 
               type="text" 
-              placeholder="Color">
+              placeholder="Color"
+              [(ngModel)]="chofer.color_vehiculo"
+              name="color_vehiculo">
             </ion-input>
           </div>
           
@@ -119,18 +137,23 @@
             <ion-icon name="barcode-outline" class="input-icon"></ion-icon>
             <ion-input 
               type="text" 
-              placeholder="Placa">
+              placeholder="Placa"
+              [(ngModel)]="chofer.placa"
+              name="placa">
             </ion-input>
           </div>
         </div>
 
-        <!-- Licencia y experiencia -->
+        <!-- Licencia y experiencia (CAMPOS REQUERIDOS) -->
         <div class="input-row">
           <div class="input-group">
             <ion-icon name="id-card-outline" class="input-icon"></ion-icon>
             <ion-input 
               type="text" 
-              placeholder="Número de licencia">
+              placeholder="Número de licencia"
+              [(ngModel)]="chofer.licencia"
+              name="licencia"
+              required>
             </ion-input>
           </div>
           
@@ -138,7 +161,9 @@
             <ion-icon name="star-outline" class="input-icon"></ion-icon>
             <ion-input 
               type="number" 
-              placeholder="Años exp.">
+              placeholder="Años exp."
+              [(ngModel)]="chofer.experiencia"
+              name="experiencia">
             </ion-input>
           </div>
         </div>
@@ -205,13 +230,10 @@
           <ion-input 
             type="password" 
             placeholder="Contraseña"
-            id="choferPassword">
+            [(ngModel)]="chofer.contrasena"
+            name="contrasena"
+            required>
           </ion-input>
-          <ion-icon 
-            name="eye-off-outline" 
-            class="password-toggle"
-            id="choferEyeIcon">
-          </ion-icon>
         </div>
 
         <!-- Confirmar contraseña -->
@@ -220,18 +242,15 @@
           <ion-input 
             type="password" 
             placeholder="Confirmar contraseña"
-            id="choferConfirmPassword">
+            [(ngModel)]="confirmarContrasena"
+            name="confirmarContrasena"
+            required>
           </ion-input>
-          <ion-icon 
-            name="eye-off-outline" 
-            class="password-toggle"
-            id="choferConfirmEyeIcon">
-          </ion-icon>
         </div>
 
         <!-- Términos y condiciones -->
         <div class="terms-row">
-          <ion-checkbox></ion-checkbox>
+          <ion-checkbox [(ngModel)]="terminosAceptados" name="terminos"></ion-checkbox>
           <span class="terms-text">
             Acepto los <a href="#">Términos y Condiciones</a> y la 
             <a href="#">Política de Privacidad</a> para conductores
@@ -239,7 +258,11 @@
         </div>
 
         <!-- Botón de registro -->
-        <ion-button expand="block" class="register-button" type="submit">
+        <ion-button 
+          expand="block" 
+          class="register-button" 
+          type="submit"
+          [disabled]="!registroForm.form.valid">
           Registrarme como Chofer
           <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
         </ion-button>

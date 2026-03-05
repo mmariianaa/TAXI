@@ -1,10 +1,11 @@
-
 const express = require('express')
 const app = express()
 const port = 3000
 const DB = require('./database')
 const conexion = DB.connDB
+const cors = require('cors')
 app.use(express.json()) // Middleware para parsear JSON en el cuerpo de las solicitudes
+app.use(cors()) // Middleware para habilitar CORS
 app.get('/ojo', (req, res) => {
   res.send('priera pagina de este coso ')
 })
@@ -17,19 +18,37 @@ app.get('/getTodosChoferes', (req, res) => {
             res.json(rows);
         }
     });
+    
 });
+// server.js
 app.post('/api/registrochofer', async (req, res) => {
     try {
-        const { nombre, apellido, email, telefono, password, licencia, experiencia } = req.body;
+        const { 
+            nombre, 
+            apellido, 
+            correo,  // Cambiado de email a correo
+            telefono, 
+            contrasena,  // Cambiado de password a contrasena
+            licencia, 
+            experiencia,
+            // Campos del vehículo (si los agregas después)
+            marca_vehiculo,
+            modelo_vehiculo,
+            color_vehiculo,
+            placa
+        } = req.body;
         
         // Validar campos requeridos
-        if (!nombre || !apellido || !email || !password || !licencia) {
-            return res.status(400).json({ error: 'Faltan campos requeridos' });
+        if (!nombre || !apellido || !correo || !contrasena || !licencia) {
+            return res.status(400).json({ 
+                error: 'Faltan campos requeridos',
+                required: ['nombre', 'apellido', 'correo', 'contrasena', 'licencia']
+            });
         }
 
-        // Verificar si el email ya existe
-        const checkEmail = 'SELECT * FROM Usuario WHERE correo = ?';
-        db.query(checkEmail, [email], async (err, results) => {
+        // Verificar si el correo ya existe
+        const checkEmail = 'SELECT * FROM usuario WHERE correo = ?';
+        conexion.query(checkEmail, [correo], async (err, results) => {
             if (err) {
                 console.error('Error verificando email:', err);
                 return res.status(500).json({ error: 'Error en el servidor' });
@@ -40,8 +59,8 @@ app.post('/api/registrochofer', async (req, res) => {
             }
 
             // Verificar si la licencia ya existe
-            const checkLicencia = 'SELECT * FROM Chofer WHERE licencia = ?';
-            db.query(checkLicencia, [licencia], async (err, results) => {
+            const checkLicencia = 'SELECT * FROM chofer WHERE licencia = ?';
+            conexion.query(checkLicencia, [licencia], async (err, results) => {
                 if (err) {
                     console.error('Error verificando licencia:', err);
                     return res.status(500).json({ error: 'Error en el servidor' });
@@ -51,12 +70,9 @@ app.post('/api/registrochofer', async (req, res) => {
                     return res.status(400).json({ error: 'La licencia ya está registrada' });
                 }
 
-                // Encriptar contraseña
-                const hashedPassword = await bcrypt.hash(password, 10);
-
                 // Insertar en tabla Chofer primero
                 const queryChofer = 'INSERT INTO Chofer (licencia, estado) VALUES (?, ?)';
-                db.query(queryChofer, [licencia, 'parar'], (err, choferResult) => {
+                conexion.query(queryChofer, [licencia, 'parar'], (err, choferResult) => {
                     if (err) {
                         console.error('Error registrando chofer:', err);
                         return res.status(500).json({ error: 'Error al registrar chofer' });
@@ -66,7 +82,14 @@ app.post('/api/registrochofer', async (req, res) => {
                     const queryUsuario = `INSERT INTO Usuario (nombre, apellido, correo, telefono, contrasena, id_chofer) 
                                         VALUES (?, ?, ?, ?, ?, ?)`;
                     
-                    db.query(queryUsuario, [nombre, apellido, email, telefono, hashedPassword, choferResult.insertId], (err, userResult) => {
+                    conexion.query(queryUsuario, [
+                        nombre, 
+                        apellido, 
+                        correo, 
+                        telefono || '',
+                        contrasena,
+                        choferResult.insertId
+                    ], (err, userResult) => {
                         if (err) {
                             console.error('Error registrando usuario chofer:', err);
                             return res.status(500).json({ error: 'Error al registrar usuario chofer' });
@@ -87,10 +110,9 @@ app.post('/api/registrochofer', async (req, res) => {
     }
 });
 
-
+// Este espacio es para el registro de usuarios pasajeros, pero lo dejaremos para después ya que es un poco más complejo por la relación con los choferes y los viajes.
 
 app.listen(port, () => {
   console.log(`este ejemplo esta corriendo en el puerto  ${port} y se llama ojo, tambien en
     http://127.0.0.1:3000/ojo para correr en pagina`)
 })
-
