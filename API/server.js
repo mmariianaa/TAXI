@@ -173,26 +173,22 @@ app.post('/api/registrochofer', async (req, res) => {
     }
 });
 
-// ============================================
-// ENDPOINT REGISTRO USUARIO
-// ============================================
+
+// ENDPOINT REGISTRO USUARIO (CORREGIDO - SIN DOCUMENTOS)
 app.post('/api/registrousuario', async (req, res) => {
     try {
         const { 
-            nombre, apellido, edad, tipo_documento, numero_documento,
+            nombre, apellido, edad,  // ✅ ESTÁ BIEN
             correo, telefono, contrasena
         } = req.body;
         
         // Validar campos requeridos
-        if (!nombre || !apellido || !edad || !tipo_documento || !numero_documento || 
-            !correo || !contrasena) {
+        if (!nombre || !apellido || !edad || !correo || !contrasena) {
             return res.status(400).json({ 
                 error: 'Faltan campos requeridos',
-                required: ['nombre', 'apellido', 'edad', 'tipo_documento', 'numero_documento', 
-                          'correo', 'contrasena']
+                required: ['nombre', 'apellido', 'edad', 'correo', 'contrasena']
             });
         }
-
         // Validar que edad sea mayor o igual a 18
         if (edad < 18) {
             return res.status(400).json({ 
@@ -212,48 +208,32 @@ app.post('/api/registrousuario', async (req, res) => {
                 return res.status(400).json({ error: 'El correo ya está registrado' });
             }
 
-            // Verificar si el documento ya existe
-            const checkDocumento = 'SELECT * FROM Usuario WHERE numero_documento = ?';
-            conexion.query(checkDocumento, [numero_documento], async (err, results) => {
+            // Insertar en tabla Usuario (SIN tipo_documento ni numero_documento)
+            const queryUsuario = `INSERT INTO Usuario 
+                (nombre, apellido, edad, correo, telefono, contrasena) 
+                VALUES (?, ?, ?, ?, ?, ?)`;
+            
+            conexion.query(queryUsuario, [
+                nombre, 
+                apellido, 
+                edad,
+                correo, 
+                telefono || null,
+                contrasena
+            ], (err, userResult) => {
                 if (err) {
-                    console.error('Error verificando documento:', err);
-                    return res.status(500).json({ error: 'Error en el servidor' });
-                }
-                
-                if (results.length > 0) {
-                    return res.status(400).json({ error: 'El número de documento ya está registrado' });
-                }
-
-                // Insertar en tabla Usuario
-                const queryUsuario = `INSERT INTO Usuario 
-                    (nombre, apellido, edad, tipo_documento, numero_documento, 
-                     correo, telefono, contrasena) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-                
-                conexion.query(queryUsuario, [
-                    nombre, 
-                    apellido, 
-                    edad,
-                    tipo_documento,
-                    numero_documento,
-                    correo, 
-                    telefono || null,
-                    contrasena
-                ], (err, userResult) => {
-                    if (err) {
-                        console.error('Error registrando usuario:', err);
-                        
-                        if (err.code === 'ER_CHECK_CONSTRAINT_VIOLATED') {
-                            return res.status(400).json({ error: 'La edad debe ser mayor o igual a 18 años' });
-                        }
-                        
-                        return res.status(500).json({ error: 'Error al registrar usuario' });
+                    console.error('Error registrando usuario:', err);
+                    
+                    if (err.code === 'ER_CHECK_CONSTRAINT_VIOLATED') {
+                        return res.status(400).json({ error: 'La edad debe ser mayor o igual a 18 años' });
                     }
                     
-                    res.status(201).json({ 
-                        message: 'Usuario registrado exitosamente',
-                        id_usuario: userResult.insertId
-                    });
+                    return res.status(500).json({ error: 'Error al registrar usuario' });
+                }
+                
+                res.status(201).json({ 
+                    message: 'Usuario registrado exitosamente',
+                    id_usuario: userResult.insertId
                 });
             });
         });
