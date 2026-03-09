@@ -1,0 +1,346 @@
+// Variables de colores
+$dark-gray: #1F1F1F;
+$medium-gray: #4B4847;
+$light-beige: #E6E1DB;
+$primary-yellow: #FFC31F;
+$secondary-orange: #EB8107;
+
+.perfil-chofer-content {
+  --background: #{$dark-gray};
+  
+  .city-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(180deg, rgba($dark-gray, 0.9) 0%, $dark-gray 100%);
+    z-index: 0;
+    
+    .city-skyline {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 60px;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba($light-beige, 0.1) 0px,
+        rgba($light-beige, 0.1) 20px,
+        transparent 20px,
+        transparent 40px
+      );
+      mask-image: linear-gradient(to right, transparent, black, transparent);
+    }
+  }
+
+  .perfil-container {
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+  }
+
+  .header-perfil {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    .back-btn {
+      --color: #{$light-beige};
+      --padding-start: 0;
+      --padding-end: 0;
+      font-size: 16px;
+      font-weight: 500;
+      
+      ion-icon {
+        font-size: 20px;
+        margin-right: 4px;
+      }
+    }
+    
+    .notif-icon {
+      color: $light-beige;
+      font-size: 24px;
+    }
+  }
+
+  .foto-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    
+    .foto-wrapper {
+      position: relative;
+      margin-bottom: 8px;
+      
+      .foto-perfil {
+        width: 100px;
+        height: 100px;
+        border: 3px solid $primary-yellow;
+        box-shadow: 0 4px 15px rgba($primary-yellow, 0.3);
+        
+        img {
+          object-fit: cover;
+        }
+      }
+      
+      .editar-foto {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: $primary-yellow;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid $dark-gray;
+        cursor: pointer;
+        
+        ion-icon {
+          color: $dark-gray;
+          font-size: 16px;
+        }
+      }
+    }
+    
+    .toque-cambiar {
+      color: rgba($light-beige, 0.5);
+      font-size: 12px;
+      margin: 0 0 10px 0;
+    }
+    
+    .nombre-chofer {
+      color: $light-beige;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      text-align: center;
+    }
+    
+    .estadisticas {
+      color: $primary-yellow;
+      font-size: 16px;
+      margin: 0;
+    }
+  }
+
+  .perfil-card {
+    background: rgba($medium-gray, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 20px;
+    border: 1px solid rgba($light-beige, 0.1);
+  }
+
+  .seccion-perfil {
+    margin-bottom: 30px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    .seccion-titulo {
+      color: $primary-yellow;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 20px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba($light-beige, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .campo-dato {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      .campo-etiqueta {
+        color: rgba($light-beige, 0.6);
+        font-size: 14px;
+      }
+      
+      .campo-valor {
+        color: $light-beige;
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .documento-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba($light-beige, 0.05);
+    
+    &:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    
+    .documento-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      
+      ion-icon {
+        color: $primary-yellow;
+        font-size: 20px;
+      }
+      
+      span {
+        color: $light-beige;
+        font-size: 14px;
+      }
+    }
+    
+    .documento-acciones {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      
+      .documento-estado {
+        font-size: 13px;
+        white-space: nowrap;
+        
+        &.vigente {
+          color: $primary-yellow;
+        }
+        
+        &.por-vencer {
+          color: $secondary-orange;
+        }
+        
+        &.vencido {
+          color: #ff3b30;
+        }
+      }
+      
+      .ver-btn {
+        --color: #{$light-beige};
+        --padding-start: 8px;
+        --padding-end: 8px;
+        font-size: 12px;
+        margin: 0;
+        height: 30px;
+        
+        &:hover {
+          --color: #{$primary-yellow};
+        }
+      }
+    }
+  }
+
+  .accion-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    
+    ion-icon {
+      color: $primary-yellow;
+      font-size: 18px;
+    }
+    
+    .cambiar-link {
+      color: $light-beige;
+      text-decoration: none;
+      font-size: 14px;
+      
+      &:hover {
+        color: $primary-yellow;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .terminos-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    
+    .check-icon {
+      color: $primary-yellow;
+      font-size: 22px;
+      margin-top: 2px;
+    }
+    
+    .terminos-texto {
+      p {
+        color: $light-beige;
+        font-size: 15px;
+        margin: 0 0 4px 0;
+      }
+      
+      small {
+        color: rgba($light-beige, 0.5);
+        font-size: 12px;
+      }
+    }
+  }
+
+  .cerrar-sesion {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba($light-beige, 0.1);
+    
+    .cerrar-sesion-btn {
+      --background: transparent;
+      --border-color: #{$secondary-orange};
+      --border-width: 1px;
+      --border-style: solid;
+      --color: #{$light-beige};
+      --border-radius: 12px;
+      --padding-top: 15px;
+      --padding-bottom: 15px;
+      
+      ion-icon {
+        color: $secondary-orange;
+      }
+      
+      &:hover {
+        --background: rgba($secondary-orange, 0.1);
+      }
+    }
+  }
+
+  // Ajustes para iOS
+  .ios & {
+    .header-perfil {
+      padding-top: 20px;
+    }
+  }
+}
+
+// Personalización del scroll
+::-webkit-scrollbar {
+  width: 6px;
+  
+  &-track {
+    background: rgba($dark-gray, 0.5);
+  }
+  
+  &-thumb {
+    background: $primary-yellow;
+    border-radius: 3px;
+    
+    &:hover {
+      background: $secondary-orange;
+    }
+  }
+}

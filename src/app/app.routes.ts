@@ -21,5 +21,17 @@ export const routes: Routes = [
     path: 'perfiladministrador',
     loadComponent: () => import('./perfiladministrador/perfiladministrador.page').then( m => m.PerfiladministradorPage)
   },
+  {
+    path: 'perfil-chofer',
+    loadComponent: () => import('./perfil-chofer/perfil-chofer.page').then( m => m.PerfilChoferPage)
+  },
+  {
+    path: 'viajenotificacion-chofer',
+    loadComponent: () => import('./viajenotificacion-chofer/viajenotificacion-chofer.page').then( m => m.ViajenotificacionChoferPage)
+  },
+  {
+    path: 'historial-chofer',
+    loadComponent: () => import('./historial-chofer/historial-chofer.page').then( m => m.HistorialChoferPage)
+  },
 
 ];
