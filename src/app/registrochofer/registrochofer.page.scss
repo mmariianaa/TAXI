@@ -427,3 +427,22 @@
     transform: translateY(0);
   }
 }
+.file-selected {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 8px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  
+  ion-icon {
+    font-size: 18px;
+  }
+  
+  span {
+    color: #2e7d32;
+  }
+}
