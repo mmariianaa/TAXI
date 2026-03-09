@@ -1,12 +1,9 @@
 <ion-content [fullscreen]="true" class="register-chofer-content">
-  <!-- Fondo con efecto de ciudad nocturna -->
   <div class="city-background">
     <div class="city-skyline"></div>
   </div>
   
-  <!-- Contenedor principal -->
   <div class="register-container">
-    <!-- Logo y título -->
     <div class="logo-section">
       <div class="logo-wrapper">
         <ion-icon name="car-sport-outline" class="taxi-icon"></ion-icon>
@@ -15,236 +12,259 @@
       <p class="subtitle">Registro de Conductores</p>
     </div>
 
-    <!-- Tarjeta de registro -->
     <div class="register-card">
       <div class="form-title">
         <h2>Conviértete en Chofer</h2>
         <p>Completa tus datos para comenzar</p>
       </div>
 
-      <!-- Badge de chofer -->
       <div class="driver-badge">
         <ion-icon name="car-outline"></ion-icon>
         <span>Registro de Conductor Profesional</span>
       </div>
 
-      <form>
-        <!-- Nombre y apellido -->
-        <div class="input-row">
-          <div class="input-group">
-            <ion-icon name="person-outline" class="input-icon"></ion-icon>
-            <ion-input 
-              type="text" 
-              placeholder="Nombre"
-              name="nombre">
-            </ion-input>
-          </div>
+      <form #registroForm="ngForm" (ngSubmit)="registrarChofer()">
+        <!-- DATOS PERSONALES -->
+        <div class="form-section">
+          <h3 class="section-subtitle">
+            <ion-icon name="person-outline"></ion-icon> Datos Personales
+          </h3>
           
-          <div class="input-group">
-            <ion-input 
-              type="text" 
-              placeholder="Apellido"
-              name="apellido">
-            </ion-input>
+          <div class="input-row">
+            <div class="input-group">
+              <ion-icon name="person-outline" class="input-icon"></ion-icon>
+              <ion-input 
+                type="text" 
+                placeholder="Nombre *"
+                [(ngModel)]="chofer.nombre"
+                name="nombre"
+                required>
+              </ion-input>
+            </div>
+            
+            <div class="input-group">
+              <ion-input 
+                type="text" 
+                placeholder="Apellido *"
+                [(ngModel)]="chofer.apellido"
+                name="apellido"
+                required>
+              </ion-input>
+            </div>
           </div>
-        </div>
 
-        <!-- Email -->
-        <div class="input-group">
-          <ion-icon name="mail-outline" class="input-icon"></ion-icon>
-          <ion-input 
-            type="email" 
-            placeholder="Correo electrónico"
-            name="email">
-          </ion-input>
-        </div>
-
-        <!-- Teléfono -->
-        <div class="input-group">
-          <ion-icon name="call-outline" class="input-icon"></ion-icon>
-          <ion-input 
-            type="tel" 
-            placeholder="Teléfono"
-            name="telefono">
-          </ion-input>
-        </div>
-
-        <!-- Tipo y número de documento -->
-        <div class="input-row">
-          <div class="custom-select">
-            <ion-icon name="card-outline"></ion-icon>
-            <ion-select placeholder="Tipo Doc.">
-              <ion-select-option value="cc">CC</ion-select-option>
-              <ion-select-option value="ce">CE</ion-select-option>
-              <ion-select-option value="pasaporte">Pasaporte</ion-select-option>
-            </ion-select>
-          </div>
-          
           <div class="input-group">
-            <ion-input 
-              type="text" 
-              placeholder="Número de documento">
-            </ion-input>
-          </div>
-        </div>
-
-        <!-- Información del vehículo -->
-        <div class="input-row">
-          <div class="input-group">
-            <ion-icon name="car-outline" class="input-icon"></ion-icon>
-            <ion-input 
-              type="text" 
-              placeholder="Marca del vehículo">
-            </ion-input>
-          </div>
-          
-          <div class="input-group">
-            <ion-input 
-              type="text" 
-              placeholder="Modelo">
-            </ion-input>
-          </div>
-        </div>
-
-        <div class="input-row">
-          <div class="input-group">
-            <ion-icon name="color-palette-outline" class="input-icon"></ion-icon>
-            <ion-input 
-              type="text" 
-              placeholder="Color">
-            </ion-input>
-          </div>
-          
-          <div class="input-group">
-            <ion-icon name="barcode-outline" class="input-icon"></ion-icon>
-            <ion-input 
-              type="text" 
-              placeholder="Placa">
-            </ion-input>
-          </div>
-        </div>
-
-        <!-- Licencia y experiencia -->
-        <div class="input-row">
-          <div class="input-group">
-            <ion-icon name="id-card-outline" class="input-icon"></ion-icon>
-            <ion-input 
-              type="text" 
-              placeholder="Número de licencia">
-            </ion-input>
-          </div>
-          
-          <div class="input-group">
-            <ion-icon name="star-outline" class="input-icon"></ion-icon>
+            <ion-icon name="calendar-outline" class="input-icon"></ion-icon>
             <ion-input 
               type="number" 
-              placeholder="Años exp.">
+              placeholder="Edad * (mínimo 18 años)"
+              [(ngModel)]="chofer.edad"
+              name="edad"
+              required
+              min="18">
+            </ion-input>
+          </div>
+
+          <div class="input-group">
+            <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+            <ion-input 
+              type="email" 
+              placeholder="Correo electrónico *"
+              [(ngModel)]="chofer.correo"
+              name="correo"
+              required
+              email>
+            </ion-input>
+          </div>
+
+          <div class="input-group">
+            <ion-icon name="call-outline" class="input-icon"></ion-icon>
+            <ion-input 
+              type="tel" 
+              placeholder="Teléfono"
+              [(ngModel)]="chofer.telefono"
+              name="telefono">
+            </ion-input>
+          </div>
+
+          <div class="input-row">
+            <div class="custom-select">
+              <ion-icon name="card-outline"></ion-icon>
+              <ion-select 
+                placeholder="Tipo Doc. *"
+                [(ngModel)]="chofer.tipo_documento"
+                name="tipo_documento"
+                required>
+                <ion-select-option value="CC">CC</ion-select-option>
+                <ion-select-option value="CE">CE</ion-select-option>
+                <ion-select-option value="Pasaporte">Pasaporte</ion-select-option>
+              </ion-select>
+            </div>
+            
+            <div class="input-group">
+              <ion-input 
+                type="text" 
+                placeholder="Número de documento *"
+                [(ngModel)]="chofer.numero_documento"
+                name="numero_documento"
+                required>
+              </ion-input>
+            </div>
+          </div>
+        </div>
+
+        <!-- DATOS DEL VEHÍCULO -->
+        <div class="form-section">
+          <h3 class="section-subtitle">
+            <ion-icon name="car-outline"></ion-icon> Datos del Vehículo
+          </h3>
+          
+          <div class="input-row">
+            <div class="input-group">
+              <ion-icon name="car-outline" class="input-icon"></ion-icon>
+              <ion-input 
+                type="text" 
+                placeholder="Marca del vehículo *"
+                [(ngModel)]="chofer.marca_vehiculo"
+                name="marca_vehiculo"
+                required>
+              </ion-input>
+            </div>
+            
+            <div class="input-group">
+              <ion-input 
+                type="text" 
+                placeholder="Modelo *"
+                [(ngModel)]="chofer.modelo_vehiculo"
+                name="modelo_vehiculo"
+                required>
+              </ion-input>
+            </div>
+          </div>
+
+          <div class="input-row">
+            <div class="input-group">
+              <ion-icon name="color-palette-outline" class="input-icon"></ion-icon>
+              <ion-input 
+                type="text" 
+                placeholder="Color *"
+                [(ngModel)]="chofer.color_vehiculo"
+                name="color_vehiculo"
+                required>
+              </ion-input>
+            </div>
+            
+            <div class="input-group">
+              <ion-icon name="barcode-outline" class="input-icon"></ion-icon>
+              <ion-input 
+                type="text" 
+                placeholder="Placa *"
+                [(ngModel)]="chofer.placa"
+                name="placa"
+                required
+                maxlength="6">
+              </ion-input>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <ion-icon name="people-outline" class="input-icon"></ion-icon>
+            <ion-input 
+              type="number" 
+              placeholder="Capacidad de pasajeros *"
+              [(ngModel)]="chofer.capacidad"
+              name="capacidad"
+              required
+              min="1"
+              max="10">
             </ion-input>
           </div>
         </div>
 
-        <!-- Sección de documentos -->
-        <div class="documents-section">
-          <div class="section-title">
-            <ion-icon name="document-text-outline"></ion-icon>
-            <span>Documentos requeridos</span>
-          </div>
-
-          <!-- Licencia de conducción -->
-          <div class="file-upload">
-            <ion-icon name="id-card-outline"></ion-icon>
-            <div class="file-info">
-              <div class="file-name">Licencia de conducción</div>
-              <div class="file-size">PDF o imagen</div>
+        <!-- DATOS PROFESIONALES -->
+        <div class="form-section">
+          <h3 class="section-subtitle">
+            <ion-icon name="briefcase-outline"></ion-icon> Datos Profesionales
+          </h3>
+          
+          <div class="input-row">
+            <div class="input-group">
+              <ion-icon name="id-card-outline" class="input-icon"></ion-icon>
+              <ion-input 
+                type="text" 
+                placeholder="Número de licencia *"
+                [(ngModel)]="chofer.licencia"
+                name="licencia"
+                required>
+              </ion-input>
             </div>
-            <ion-button fill="clear" class="upload-btn">
-              <ion-icon name="cloud-upload-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-          </div>
-
-          <!-- SOAT -->
-          <div class="file-upload">
-            <ion-icon name="shield-checkmark-outline"></ion-icon>
-            <div class="file-info">
-              <div class="file-name">SOAT vigente</div>
-              <div class="file-size">PDF o imagen</div>
+            
+            <div class="input-group">
+              <ion-icon name="star-outline" class="input-icon"></ion-icon>
+              <ion-input 
+                type="number" 
+                placeholder="Años exp."
+                [(ngModel)]="chofer.experiencia"
+                name="experiencia"
+                min="0">
+              </ion-input>
             </div>
-            <ion-button fill="clear" class="upload-btn">
-              <ion-icon name="cloud-upload-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-          </div>
-
-          <!-- Revisión técnico-mecánica -->
-          <div class="file-upload">
-            <ion-icon name="build-outline"></ion-icon>
-            <div class="file-info">
-              <div class="file-name">Revisión técnico-mecánica</div>
-              <div class="file-size">PDF o imagen</div>
-            </div>
-            <ion-button fill="clear" class="upload-btn">
-              <ion-icon name="cloud-upload-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-          </div>
-
-          <!-- Foto del vehículo -->
-          <div class="file-upload">
-            <ion-icon name="camera-outline"></ion-icon>
-            <div class="file-info">
-              <div class="file-name">Foto del vehículo</div>
-              <div class="file-size">JPG o PNG</div>
-            </div>
-            <ion-button fill="clear" class="upload-btn">
-              <ion-icon name="cloud-upload-outline" slot="icon-only"></ion-icon>
-            </ion-button>
           </div>
         </div>
 
-        <!-- Contraseña -->
-        <div class="input-group">
-          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-          <ion-input 
-            type="password" 
-            placeholder="Contraseña"
-            id="choferPassword">
-          </ion-input>
-          <ion-icon 
-            name="eye-off-outline" 
-            class="password-toggle"
-            id="choferEyeIcon">
-          </ion-icon>
+        <!-- SEGURIDAD -->
+        <div class="form-section">
+          <h3 class="section-subtitle">
+            <ion-icon name="lock-closed-outline"></ion-icon> Seguridad
+          </h3>
+          
+          <div class="input-group">
+            <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+            <ion-input 
+              type="password" 
+              placeholder="Contraseña *"
+              [(ngModel)]="chofer.contrasena"
+              name="contrasena"
+              required
+              minlength="6">
+            </ion-input>
+          </div>
+
+          <div class="input-group">
+            <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+            <ion-input 
+              type="password" 
+              placeholder="Confirmar contraseña *"
+              [(ngModel)]="confirmarContrasena"
+              name="confirmarContrasena"
+              required>
+            </ion-input>
+          </div>
+          @if (chofer.contrasena && confirmarContrasena && chofer.contrasena !== confirmarContrasena) {
+            <div class="error-message">
+              <ion-icon name="alert-circle-outline"></ion-icon>
+              <span>Las contraseñas no coinciden</span>
+            </div>
+          }
         </div>
 
-        <!-- Confirmar contraseña -->
-        <div class="input-group">
-          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-          <ion-input 
-            type="password" 
-            placeholder="Confirmar contraseña"
-            id="choferConfirmPassword">
-          </ion-input>
-          <ion-icon 
-            name="eye-off-outline" 
-            class="password-toggle"
-            id="choferConfirmEyeIcon">
-          </ion-icon>
-        </div>
-
-        <!-- Términos y condiciones -->
         <div class="terms-row">
-          <ion-checkbox></ion-checkbox>
+          <ion-checkbox [(ngModel)]="terminosAceptados" name="terminos" required></ion-checkbox>
           <span class="terms-text">
             Acepto los <a href="#">Términos y Condiciones</a> y la 
             <a href="#">Política de Privacidad</a> para conductores
           </span>
         </div>
 
-        <!-- Botón de registro -->
-        <ion-button expand="block" class="register-button" type="submit">
+        <ion-button 
+          expand="block" 
+          class="register-button" 
+          type="submit"
+          [disabled]="!registroForm.form.valid || !terminosAceptados || chofer.contrasena !== confirmarContrasena">
           Registrarme como Chofer
           <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
         </ion-button>
 
-        <!-- Enlace para iniciar sesión -->
         <div class="login-link">
           <p>¿Ya eres chofer? <a href="#">Inicia Sesión</a></p>
         </div>

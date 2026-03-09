@@ -1,12 +1,9 @@
 <ion-content [fullscreen]="true" class="register-usuario-content">
-  <!-- Fondo con efecto de ciudad nocturna -->
   <div class="city-background">
     <div class="city-skyline"></div>
   </div>
   
-  <!-- Contenedor principal -->
   <div class="register-container">
-    <!-- Logo y título -->
     <div class="logo-section">
       <div class="logo-wrapper">
         <ion-icon name="person-outline" class="taxi-icon"></ion-icon>
@@ -15,23 +12,20 @@
       <p class="subtitle">Registro de Usuarios</p>
     </div>
 
-    <!-- Tarjeta de registro -->
     <div class="register-card">
       <div class="form-title">
         <h2>Crear Cuenta</h2>
         <p>Completa tus datos personales</p>
       </div>
 
-      <!-- Badge de usuario -->
       <div class="user-badge">
         <ion-icon name="person-outline"></ion-icon>
         <span>Nuevo Usuario</span>
       </div>
 
       <form #registroForm="ngForm" (ngSubmit)="registrarUsuario()">
-        <!-- Nombre y Apellido (NOT NULL) -->
         <div class="input-row">
-          <div class="input-group" [class.error]="nombre.invalid && nombre.touched">
+          <div class="input-group">
             <ion-icon name="person-outline" class="input-icon"></ion-icon>
             <ion-input 
               type="text" 
@@ -43,7 +37,7 @@
             </ion-input>
           </div>
           
-          <div class="input-group" [class.error]="apellido.invalid && apellido.touched">
+          <div class="input-group">
             <ion-input 
               type="text" 
               placeholder="Apellido *"
@@ -54,9 +48,7 @@
             </ion-input>
           </div>
         </div>
-
-        <!-- Correo (UNIQUE NOT NULL) -->
-        <div class="input-group" [class.error]="correo.invalid && correo.touched">
+        <div class="input-group">
           <ion-icon name="mail-outline" class="input-icon"></ion-icon>
           <ion-input 
             type="email" 
@@ -69,7 +61,6 @@
           </ion-input>
         </div>
 
-        <!-- Teléfono -->
         <div class="input-group">
           <ion-icon name="call-outline" class="input-icon"></ion-icon>
           <ion-input 
@@ -82,8 +73,7 @@
           </ion-input>
         </div>
 
-        <!-- Edad (CHECK edad >= 18) -->
-        <div class="input-group" [class.error]="edad.invalid && edad.touched">
+        <div class="input-group">
           <ion-icon name="calendar-outline" class="input-icon"></ion-icon>
           <ion-input 
             type="number" 
@@ -95,8 +85,6 @@
             min="18">
           </ion-input>
         </div>
-
-        <!-- Mensaje de error para edad -->
         @if (edad.invalid && edad.touched) {
           <div class="error-message">
             <ion-icon name="alert-circle-outline"></ion-icon>
@@ -104,49 +92,31 @@
           </div>
         }
 
-        <!-- Contraseña (NOT NULL) -->
-        <div class="input-group" [class.error]="contrasena.invalid && contrasena.touched">
+        <div class="input-group">
           <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
           <ion-input 
             type="password" 
             placeholder="Contraseña *"
             name="contrasena"
-            id="usuarioPassword"
             #contrasena="ngModel"
             [(ngModel)]="usuarioData.contrasena"
             required
             minlength="6">
           </ion-input>
-          <ion-icon 
-            name="eye-off-outline" 
-            class="password-toggle"
-            (click)="togglePassword('usuarioPassword', 'usuarioEyeIcon')"
-            id="usuarioEyeIcon">
-          </ion-icon>
         </div>
 
-        <!-- Confirmar Contraseña -->
-        <div class="input-group" [class.error]="confirmContrasena.invalid && confirmContrasena.touched">
+        <div class="input-group">
           <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
           <ion-input 
             type="password" 
             placeholder="Confirmar contraseña *"
             name="confirmContrasena"
-            id="usuarioConfirmPassword"
             #confirmContrasena="ngModel"
             [(ngModel)]="usuarioData.confirmContrasena"
             required
             minlength="6">
           </ion-input>
-          <ion-icon 
-            name="eye-off-outline" 
-            class="password-toggle"
-            (click)="togglePassword('usuarioConfirmPassword', 'usuarioConfirmEyeIcon')"
-            id="usuarioConfirmEyeIcon">
-          </ion-icon>
         </div>
-
-        <!-- Validación de contraseñas coincidentes -->
         @if (usuarioData.contrasena && usuarioData.confirmContrasena && usuarioData.contrasena !== usuarioData.confirmContrasena) {
           <div class="error-message">
             <ion-icon name="alert-circle-outline"></ion-icon>
@@ -154,7 +124,6 @@
           </div>
         }
 
-        <!-- Términos y condiciones -->
         <div class="terms-row">
           <ion-checkbox 
             name="aceptaTerminos"
@@ -168,7 +137,6 @@
           </span>
         </div>
 
-        <!-- Botón de registro -->
         <ion-button 
           expand="block" 
           class="register-button" 
@@ -178,7 +146,6 @@
           <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
         </ion-button>
 
-        <!-- Enlace para iniciar sesión -->
         <div class="login-link">
           <p>¿Ya tienes cuenta? <a href="#" (click)="irALogin($event)">Inicia Sesión</a></p>
         </div>
