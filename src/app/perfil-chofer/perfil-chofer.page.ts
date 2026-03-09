@@ -13,8 +13,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./perfil-chofer.page.scss'],
   standalone: true,
   imports: [
-    IonButton, IonIcon, IonContent, IonAvatar, 
-    IonItem, IonLabel, IonList, IonListHeader, CommonModule
+    IonButton, IonIcon, IonContent, IonAvatar, CommonModule
   ],
 })
 export class PerfilChoferPage implements OnInit {
