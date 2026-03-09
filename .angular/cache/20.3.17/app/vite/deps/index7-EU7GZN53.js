@@ -1,10 +1,10 @@
 import {
-  doc
-} from "./chunk-QEE7QVES.js";
-import {
   pointerCoord
 } from "./chunk-4554YRK6.js";
 import "./chunk-2H3NLAAY.js";
+import {
+  doc
+} from "./chunk-QEE7QVES.js";
 import "./chunk-QHQP2P2Z.js";
 
 // node_modules/@ionic/core/components/index7.js
@@ -149,4 +149,4 @@ export {
    * (C) Ionic http://ionicframework.com - MIT License
    *)
 */
-//# sourceMappingURL=index7-D6UT5TLT.js.map
+//# sourceMappingURL=index7-EU7GZN53.js.map
