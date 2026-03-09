@@ -12,9 +12,7 @@ app.get('/ojo', (req, res) => {
   res.send('primera pagina de este coso ')
 })
 
-// ============================================
-// ENDPOINT REGISTRO CHOFER
-// ============================================
+// REGISTRO DEL CHOFER
 app.post('/api/registrochofer', async (req, res) => {
     try {
         const { 
@@ -174,11 +172,11 @@ app.post('/api/registrochofer', async (req, res) => {
 });
 
 
-// ENDPOINT REGISTRO USUARIO (CORREGIDO - SIN DOCUMENTOS)
+//REGISTRO DEL USUARIO NORMAL
 app.post('/api/registrousuario', async (req, res) => {
     try {
         const { 
-            nombre, apellido, edad,  // ✅ ESTÁ BIEN
+            nombre, apellido, edad,
             correo, telefono, contrasena
         } = req.body;
         
@@ -189,6 +187,7 @@ app.post('/api/registrousuario', async (req, res) => {
                 required: ['nombre', 'apellido', 'edad', 'correo', 'contrasena']
             });
         }
+
         // Validar que edad sea mayor o igual a 18
         if (edad < 18) {
             return res.status(400).json({ 
@@ -208,15 +207,17 @@ app.post('/api/registrousuario', async (req, res) => {
                 return res.status(400).json({ error: 'El correo ya está registrado' });
             }
 
-            // Insertar en tabla Usuario (SIN tipo_documento ni numero_documento)
+            // Insertar en tabla Usuario (INCLUYENDO VALORES POR DEFECTO)
             const queryUsuario = `INSERT INTO Usuario 
-                (nombre, apellido, edad, correo, telefono, contrasena) 
-                VALUES (?, ?, ?, ?, ?, ?)`;
+                (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
             
             conexion.query(queryUsuario, [
                 nombre, 
                 apellido, 
                 edad,
+                'CC',                 // 👈 valor por defecto para tipo_documento
+                'SIN_DOCUMENTO',      // 👈 valor por defecto para numero_documento
                 correo, 
                 telefono || null,
                 contrasena
@@ -228,7 +229,7 @@ app.post('/api/registrousuario', async (req, res) => {
                         return res.status(400).json({ error: 'La edad debe ser mayor o igual a 18 años' });
                     }
                     
-                    return res.status(500).json({ error: 'Error al registrar usuario' });
+                    return res.status(500).json({ error: 'Error al registrar usuario: ' + err.message });
                 }
                 
                 res.status(201).json({ 
@@ -242,7 +243,6 @@ app.post('/api/registrousuario', async (req, res) => {
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
-
 // ============================================
 // ENDPOINTS CONSULTA
 // ============================================

@@ -48,6 +48,32 @@
             </ion-input>
           </div>
         </div>
+
+        <div class="input-row">
+          <div class="custom-select">
+            <ion-icon name="card-outline"></ion-icon>
+            <ion-select 
+              placeholder="Tipo Doc. *"
+              [(ngModel)]="usuarioData.tipo_documento"
+              name="tipo_documento"
+              required>
+              <ion-select-option value="CC">CC</ion-select-option>
+              <ion-select-option value="CE">CE</ion-select-option>
+              <ion-select-option value="Pasaporte">Pasaporte</ion-select-option>
+            </ion-select>
+          </div>
+          
+          <div class="input-group">
+            <ion-input 
+              type="text" 
+              placeholder="Número de documento *"
+              [(ngModel)]="usuarioData.numero_documento"
+              name="numero_documento"
+              required>
+            </ion-input>
+          </div>
+        </div>
+
         <div class="input-group">
           <ion-icon name="mail-outline" class="input-icon"></ion-icon>
           <ion-input 

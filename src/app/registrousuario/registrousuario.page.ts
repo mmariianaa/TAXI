@@ -1,89 +1,157 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { NgForm } from '@angular/forms';
-import { IonContent, IonIcon, IonInput, IonCheckbox, IonButton } from "@ionic/angular/standalone";
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { IonContent, IonButton, IonIcon, IonCheckbox, IonInput, IonSelectOption, IonSelect } from '@ionic/angular/standalone';
+import { lastValueFrom } from 'rxjs';
+
 @Component({
-  selector: 'app-registro-usuario',
+  selector: 'app-registrousuario',
   templateUrl: './registrousuario.page.html',
   styleUrls: ['./registrousuario.page.scss'],
-  imports: [IonButton, IonCheckbox, IonInput, IonIcon, IonContent, FormsModule],
-
+  standalone: true,
+  imports: [
+    IonInput, 
+    IonCheckbox, 
+    IonIcon, 
+    IonButton,
+    CommonModule,
+    FormsModule, 
+    IonSelectOption, 
+    IonSelect, 
+    IonContent
+  ]
 })
 export class RegistrousuarioPage {
-  // Objeto con los campos exactos de la BD
   usuarioData = {
     nombre: '',
     apellido: '',
-    edad: null,
+    tipo_documento: 'CC',
+    numero_documento: '',
     correo: '',
     telefono: '',
+    edad: null as number | null,
     contrasena: '',
     confirmContrasena: '',
     aceptaTerminos: false
   };
 
-  constructor(private router: Router) {}
+  constructor(private http: HttpClient) {}
 
-  togglePassword(inputId: string, iconId: string) {
-    const input = document.getElementById(inputId) as HTMLInputElement;
-    const icon = document.getElementById(iconId) as HTMLElement;
-    
-    if (input.type === 'password') {
-      input.type = 'text';
-      icon.setAttribute('name', 'eye-outline');
-    } else {
-      input.type = 'password';
-      icon.setAttribute('name', 'eye-off-outline');
+  async registrarUsuario() {
+    if (!this.validarFormulario()) {
+      return;
+    }
+
+    try {
+      const datosEnvio = {
+        nombre: this.usuarioData.nombre,
+        apellido: this.usuarioData.apellido,
+        tipo_documento: this.usuarioData.tipo_documento,
+        numero_documento: this.usuarioData.numero_documento,
+        correo: this.usuarioData.correo,
+        telefono: this.usuarioData.telefono || null,
+        edad: this.usuarioData.edad,
+        contrasena: this.usuarioData.contrasena
+      };
+
+      console.log('Enviando datos:', datosEnvio);
+
+      const response = await lastValueFrom(
+        this.http.post('http://localhost:3000/api/registrousuario', datosEnvio)
+      );
+      
+      console.log('Respuesta:', response);
+      alert('✅ Usuario registrado exitosamente');
+      this.resetFormulario();
+      
+    } catch (error: any) {
+      console.error('Error completo:', error);
+      
+      let mensajeError = 'Error al registrar usuario ❌';
+      
+      if (error.error && error.error.error) {
+        mensajeError = error.error.error;
+      } else if (error.status === 400) {
+        mensajeError = 'Datos incompletos o incorrectos';
+      } else if (error.status === 500) {
+        mensajeError = 'Error en el servidor';
+      }
+      
+      alert(mensajeError);
     }
   }
 
-  registrarUsuario() {
-    // Validar edad mínima
-    if (this.usuarioData.edad && this.usuarioData.edad < 18) {
-      this.mostrarMensaje('Debes ser mayor de 18 años para registrarte');
-      return;
+  validarFormulario(): boolean {
+    if (!this.usuarioData.nombre || !this.usuarioData.apellido) {
+      alert('Por favor completa nombre y apellido');
+      return false;
     }
 
-    // Validar que las contraseñas coincidan
+    if (!this.usuarioData.tipo_documento || !this.usuarioData.numero_documento) {
+      alert('Por favor completa tipo y número de documento');
+      return false;
+    }
+
+    if (!this.usuarioData.edad) {
+      alert('Por favor ingresa tu edad');
+      return false;
+    }
+
+    if (this.usuarioData.edad < 18) {
+      alert('Debes ser mayor de 18 años');
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!this.usuarioData.correo || !emailRegex.test(this.usuarioData.correo)) {
+      alert('Ingresa un correo electrónico válido');
+      return false;
+    }
+
+    if (this.usuarioData.telefono) {
+      const phoneRegex = /^[0-9]{7,15}$/;
+      if (!phoneRegex.test(this.usuarioData.telefono)) {
+        alert('El teléfono debe contener solo números (7-15 dígitos)');
+        return false;
+      }
+    }
+
+    if (!this.usuarioData.contrasena || this.usuarioData.contrasena.length < 6) {
+      alert('La contraseña debe tener al menos 6 caracteres');
+      return false;
+    }
+
     if (this.usuarioData.contrasena !== this.usuarioData.confirmContrasena) {
-      this.mostrarMensaje('Las contraseñas no coinciden');
-      return;
+      alert('Las contraseñas no coinciden');
+      return false;
     }
 
-    // Validar términos y condiciones
     if (!this.usuarioData.aceptaTerminos) {
-      this.mostrarMensaje('Debes aceptar los términos y condiciones');
-      return;
+      alert('Debes aceptar los términos y condiciones');
+      return false;
     }
 
-    // Aquí iría la llamada a tu servicio para guardar en BD
-    console.log('Datos a guardar en BD:', {
-      nombre: this.usuarioData.nombre,
-      apellido: this.usuarioData.apellido,
-      edad: this.usuarioData.edad,
-      correo: this.usuarioData.correo,
-      telefono: this.usuarioData.telefono,
-      contrasena: this.usuarioData.contrasena // Recuerda hashearla antes de enviar
-    });
+    return true;
+  }
 
-    // Simulación de registro exitoso
-    this.mostrarMensaje('Registro exitoso! Redirigiendo...');
-    
-    // Redirigir al login después de 2 segundos
-    setTimeout(() => {
-      this.router.navigate(['/home']);
-    }, 2000);
+  resetFormulario() {
+    this.usuarioData = {
+      nombre: '',
+      apellido: '',
+      tipo_documento: 'CC',
+      numero_documento: '',
+      correo: '',
+      telefono: '',
+      edad: null,
+      contrasena: '',
+      confirmContrasena: '',
+      aceptaTerminos: false
+    };
   }
 
   irALogin(event: Event) {
     event.preventDefault();
-    this.router.navigate(['/home']);
-  }
-
-  private mostrarMensaje(mensaje: string) {
-    // Puedes implementar un Toast de Ionic aquí
-    console.log(mensaje);
-    alert(mensaje);
+    console.log('Navegar a login');
   }
 }
