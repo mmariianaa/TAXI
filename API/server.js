@@ -4,13 +4,35 @@ const port = 3000
 const DB = require('./database')
 const conexion = DB.connDB
 const cors = require('cors')
+const bcrypt = require('bcrypt') // Recomiendo instalar: npm install bcrypt
+
 app.use(express.json()) // Middleware para parsear JSON en el cuerpo de las solicitudes
 app.use(cors()) // Middleware para habilitar CORS
+
 app.get('/ojo', (req, res) => {
-  res.send('priera pagina de este coso ')
+  res.send('primera pagina de este coso ')
 })
+
 app.get('/getTodosChoferes', (req, res) => {
-    conexion.query('SELECT * FROM Chofer', (error, rows) => {
+    const query = `
+        SELECT 
+            c.*,
+            u.nombre,
+            u.apellido,
+            u.correo,
+            u.telefono,
+            u.tipo_documento,
+            u.numero_documento,
+            t.marca,
+            t.modelo,
+            t.color,
+            t.placa,
+            t.capacidad
+        FROM Chofer c
+        LEFT JOIN Usuario u ON c.id_chofer = u.id_chofer
+        LEFT JOIN Taxi t ON c.id_taxi = t.id_taxi
+    `
+    conexion.query(query, (error, rows) => {
         if (error) {
             console.error('Error al obtener los choferes: ', error);     
             res.status(500).json({ error: 'Error al obtener los choferes' });
@@ -18,37 +40,52 @@ app.get('/getTodosChoferes', (req, res) => {
             res.json(rows);
         }
     });
-    
 });
 
-// server.js
+// Registro de chofer completo
 app.post('/api/registrochofer', async (req, res) => {
     try {
         const { 
+            // Datos personales
             nombre, 
             apellido, 
+            edad,
+            tipo_documento,
+            numero_documento,
             correo, 
             telefono, 
-            contrasena, 
-            licencia, 
-            experiencia,
-            // Campos del vehículo (estos se van a agregar después, por ahora los dejamos como opcionales)
+            contrasena,
+            foto,
+            
+            // Datos del vehículo
             marca_vehiculo,
             modelo_vehiculo,
             color_vehiculo,
-            placa
+            placa,
+            capacidad,
+            
+            // Datos profesionales
+            licencia, 
+            experiencia,
+            
+            // Documentos (rutas de archivos)
+            documentos
         } = req.body;
         
         // Validar campos requeridos
-        if (!nombre || !apellido || !correo || !contrasena || !licencia) {
+        if (!nombre || !apellido || !edad || !tipo_documento || !numero_documento || 
+            !correo || !contrasena || !licencia || !marca_vehiculo || !modelo_vehiculo || 
+            !color_vehiculo || !placa || !capacidad) {
             return res.status(400).json({ 
                 error: 'Faltan campos requeridos',
-                required: ['nombre', 'apellido', 'correo', 'contrasena', 'licencia']
+                required: ['nombre', 'apellido', 'edad', 'tipo_documento', 'numero_documento', 
+                          'correo', 'contrasena', 'licencia', 'marca_vehiculo', 'modelo_vehiculo', 
+                          'color_vehiculo', 'placa', 'capacidad']
             });
         }
 
         // Verificar si el correo ya existe
-        const checkEmail = 'SELECT * FROM usuario WHERE correo = ?';
+        const checkEmail = 'SELECT * FROM Usuario WHERE correo = ?';
         conexion.query(checkEmail, [correo], async (err, results) => {
             if (err) {
                 console.error('Error verificando email:', err);
@@ -59,47 +96,150 @@ app.post('/api/registrochofer', async (req, res) => {
                 return res.status(400).json({ error: 'El email ya está registrado' });
             }
 
-            // Verificar si la licencia ya existe
-            const checkLicencia = 'SELECT * FROM chofer WHERE licencia = ?';
-            conexion.query(checkLicencia, [licencia], async (err, results) => {
+            // Verificar si el número de documento ya existe
+            const checkDocumento = 'SELECT * FROM Usuario WHERE numero_documento = ?';
+            conexion.query(checkDocumento, [numero_documento], async (err, results) => {
                 if (err) {
-                    console.error('Error verificando licencia:', err);
+                    console.error('Error verificando documento:', err);
                     return res.status(500).json({ error: 'Error en el servidor' });
                 }
                 
                 if (results.length > 0) {
-                    return res.status(400).json({ error: 'La licencia ya está registrada' });
+                    return res.status(400).json({ error: 'El número de documento ya está registrado' });
                 }
 
-                // Insertar en tabla Chofer primero
-                const queryChofer = 'INSERT INTO Chofer (licencia, estado) VALUES (?, ?)';
-                conexion.query(queryChofer, [licencia, 'parar'], (err, choferResult) => {
+                // Verificar si la licencia ya existe
+                const checkLicencia = 'SELECT * FROM Chofer WHERE licencia = ?';
+                conexion.query(checkLicencia, [licencia], async (err, results) => {
                     if (err) {
-                        console.error('Error registrando chofer:', err);
-                        return res.status(500).json({ error: 'Error al registrar chofer' });
+                        console.error('Error verificando licencia:', err);
+                        return res.status(500).json({ error: 'Error en el servidor' });
+                    }
+                    
+                    if (results.length > 0) {
+                        return res.status(400).json({ error: 'La licencia ya está registrada' });
                     }
 
-                    // Insertar en tabla Usuario con referencia al chofer
-                    const queryUsuario = `INSERT INTO Usuario (nombre, apellido, correo, telefono, contrasena, id_chofer) 
-                                        VALUES (?, ?, ?, ?, ?, ?)`;
-                    
-                    conexion.query(queryUsuario, [
-                        nombre, 
-                        apellido, 
-                        correo, 
-                        telefono || '',
-                        contrasena,
-                        choferResult.insertId
-                    ], (err, userResult) => {
+                    // Verificar si la placa ya existe
+                    const checkPlaca = 'SELECT * FROM Taxi WHERE placa = ?';
+                    conexion.query(checkPlaca, [placa], async (err, results) => {
                         if (err) {
-                            console.error('Error registrando usuario chofer:', err);
-                            return res.status(500).json({ error: 'Error al registrar usuario chofer' });
+                            console.error('Error verificando placa:', err);
+                            return res.status(500).json({ error: 'Error en el servidor' });
                         }
                         
-                        res.status(201).json({ 
-                            message: 'Chofer registrado exitosamente',
-                            id_chofer: choferResult.insertId,
-                            id_usuario: userResult.insertId
+                        if (results.length > 0) {
+                            return res.status(400).json({ error: 'La placa ya está registrada' });
+                        }
+
+                        // Encriptar contraseña (recomendado)
+                        // const hashedPassword = await bcrypt.hash(contrasena, 10);
+                        const hashedPassword = contrasena; // Temporal, hasta instalar bcrypt
+
+                        // INICIAR TRANSACCIÓN
+                        conexion.beginTransaction(async (err) => {
+                            if (err) {
+                                return res.status(500).json({ error: 'Error al iniciar transacción' });
+                            }
+
+                            try {
+                                // 1. Insertar en Taxi
+                                const queryTaxi = `INSERT INTO Taxi (marca, modelo, color, placa, capacidad) 
+                                                 VALUES (?, ?, ?, ?, ?)`;
+                                
+                                const taxiResult = await new Promise((resolve, reject) => {
+                                    conexion.query(queryTaxi, [marca_vehiculo, modelo_vehiculo, color_vehiculo, placa, capacidad], 
+                                        (err, result) => {
+                                            if (err) reject(err);
+                                            else resolve(result);
+                                        });
+                                });
+
+                                // 2. Insertar en Chofer
+                                const queryChofer = `INSERT INTO Chofer (licencia, experiencia, estado, id_taxi) 
+                                                   VALUES (?, ?, ?, ?)`;
+                                
+                                const choferResult = await new Promise((resolve, reject) => {
+                                    conexion.query(queryChofer, [licencia, experiencia || 0, 'inactivo', taxiResult.insertId], 
+                                        (err, result) => {
+                                            if (err) reject(err);
+                                            else resolve(result);
+                                        });
+                                });
+
+                                // 3. Insertar en Usuario
+                                const queryUsuario = `INSERT INTO Usuario 
+                                    (nombre, apellido, edad, tipo_documento, numero_documento, 
+                                     correo, telefono, contrasena, foto, id_chofer) 
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                                
+                                const usuarioResult = await new Promise((resolve, reject) => {
+                                    conexion.query(queryUsuario, [
+                                        nombre, 
+                                        apellido, 
+                                        edad,
+                                        tipo_documento,
+                                        numero_documento,
+                                        correo, 
+                                        telefono || null,
+                                        hashedPassword,
+                                        foto || null,
+                                        choferResult.insertId
+                                    ], (err, result) => {
+                                        if (err) reject(err);
+                                        else resolve(result);
+                                    });
+                                });
+
+                                // 4. Insertar documentos si existen
+                                if (documentos && documentos.length > 0) {
+                                    for (const doc of documentos) {
+                                        const queryDocumento = `INSERT INTO Documentos 
+                                            (id_chofer, tipo_documento, nombre_archivo, ruta_archivo) 
+                                            VALUES (?, ?, ?, ?)`;
+                                        
+                                        await new Promise((resolve, reject) => {
+                                            conexion.query(queryDocumento, [
+                                                choferResult.insertId,
+                                                doc.tipo,
+                                                doc.nombre,
+                                                doc.ruta
+                                            ], (err, result) => {
+                                                if (err) reject(err);
+                                                else resolve(result);
+                                            });
+                                        });
+                                    }
+                                }
+
+                                // 5. Actualizar referencia en Admin (si es necesario crear un admin)
+                                // Esto es opcional, depende de tu lógica de negocio
+
+                                // COMMIT de la transacción
+                                conexion.commit((err) => {
+                                    if (err) {
+                                        return conexion.rollback(() => {
+                                            res.status(500).json({ error: 'Error al finalizar transacción' });
+                                        });
+                                    }
+
+                                    res.status(201).json({ 
+                                        message: 'Chofer registrado exitosamente',
+                                        data: {
+                                            id_chofer: choferResult.insertId,
+                                            id_usuario: usuarioResult.insertId,
+                                            id_taxi: taxiResult.insertId
+                                        }
+                                    });
+                                });
+
+                            } catch (error) {
+                                // ROLLBACK en caso de error
+                                return conexion.rollback(() => {
+                                    console.error('Error en transacción:', error);
+                                    res.status(500).json({ error: 'Error al registrar chofer: ' + error.message });
+                                });
+                            }
                         });
                     });
                 });
@@ -111,7 +251,7 @@ app.post('/api/registrochofer', async (req, res) => {
     }
 });
 
-// est ees pacio es par averificar nada mas si si me trae todos los usuarios registtados
+// Obtener todos los usuarios
 app.get('/getTodoslosusuarios', (req, res) => {
     conexion.query('SELECT * FROM Usuario', (error, rows) => {
         if (error) {
@@ -121,27 +261,29 @@ app.get('/getTodoslosusuarios', (req, res) => {
             res.json(rows);
         }
     });
-    
 });
-// Este espacio es para el registro de usuarios pasajeros
+
+// Registro de usuarios pasajeros
 app.post('/api/registrousuario', async (req, res) => {
     try {
         const { 
             nombre, 
             apellido, 
+            edad,
+            tipo_documento,
+            numero_documento,
             correo, 
             telefono, 
-            edad,
             contrasena
-            // Nota: Los campos de las relaciones (id_chofer, id_admin, id_viajes, id_calificacion)
-            // se establecerán en null inicialmente
         } = req.body;
         
-        // Validar campos requeridos (NOT NULL según tu BD)
-        if (!nombre || !apellido || !correo || !contrasena || !edad) {
+        // Validar campos requeridos
+        if (!nombre || !apellido || !edad || !tipo_documento || !numero_documento || 
+            !correo || !contrasena) {
             return res.status(400).json({ 
                 error: 'Faltan campos requeridos',
-                required: ['nombre', 'apellido', 'correo', 'contrasena', 'edad']
+                required: ['nombre', 'apellido', 'edad', 'tipo_documento', 'numero_documento', 
+                          'correo', 'contrasena']
             });
         }
 
@@ -152,8 +294,8 @@ app.post('/api/registrousuario', async (req, res) => {
             });
         }
 
-        // Verificar si el correo ya existe (UNIQUE constraint)
-        const checkEmail = 'SELECT * FROM usuario WHERE correo = ?';
+        // Verificar si el correo ya existe
+        const checkEmail = 'SELECT * FROM Usuario WHERE correo = ?';
         conexion.query(checkEmail, [correo], async (err, results) => {
             if (err) {
                 console.error('Error verificando email:', err);
@@ -164,44 +306,51 @@ app.post('/api/registrousuario', async (req, res) => {
                 return res.status(400).json({ error: 'El correo ya está registrado' });
             }
 
-            // Insertar en tabla Usuario
-            // id_chofer, id_admin, id_viajes, id_calificacion se establecen como NULL inicialmente
-            const queryUsuario = `INSERT INTO Usuario 
-                (nombre, apellido, edad, correo, telefono, contrasena, id_chofer, id_admin, id_viajes, id_calificacion) 
-                VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, NULL, NULL)`;
-            
-            conexion.query(queryUsuario, [
-                nombre, 
-                apellido, 
-                edad,
-                correo, 
-                telefono || null, // Si no se proporciona teléfono, se guarda como NULL
-                contrasena
-            ], (err, userResult) => {
+            // Verificar si el documento ya existe
+            const checkDocumento = 'SELECT * FROM Usuario WHERE numero_documento = ?';
+            conexion.query(checkDocumento, [numero_documento], async (err, results) => {
                 if (err) {
-                    console.error('Error registrando usuario:', err);
-                    
-                    // Manejar errores específicos de MySQL
-                    if (err.code === 'ER_CHECK_CONSTRAINT_VIOLATED') {
-                        return res.status(400).json({ error: 'La edad debe ser mayor o igual a 18 años' });
-                    }
-                    
-                    return res.status(500).json({ error: 'Error al registrar usuario' });
+                    console.error('Error verificando documento:', err);
+                    return res.status(500).json({ error: 'Error en el servidor' });
                 }
                 
-                // Obtener el usuario recién creado (opcional, para confirmar los datos)
-                const selectQuery = 'SELECT id_usuario, nombre, apellido, correo, telefono, edad FROM Usuario WHERE id_usuario = ?';
-                conexion.query(selectQuery, [userResult.insertId], (err, userData) => {
+                if (results.length > 0) {
+                    return res.status(400).json({ error: 'El número de documento ya está registrado' });
+                }
+
+                // Encriptar contraseña
+                // const hashedPassword = await bcrypt.hash(contrasena, 10);
+                const hashedPassword = contrasena; // Temporal
+
+                // Insertar en tabla Usuario
+                const queryUsuario = `INSERT INTO Usuario 
+                    (nombre, apellido, edad, tipo_documento, numero_documento, 
+                     correo, telefono, contrasena) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+                
+                conexion.query(queryUsuario, [
+                    nombre, 
+                    apellido, 
+                    edad,
+                    tipo_documento,
+                    numero_documento,
+                    correo, 
+                    telefono || null,
+                    hashedPassword
+                ], (err, userResult) => {
                     if (err) {
-                        return res.status(201).json({ 
-                            message: 'Usuario registrado exitosamente',
-                            id_usuario: userResult.insertId
-                        });
+                        console.error('Error registrando usuario:', err);
+                        
+                        if (err.code === 'ER_CHECK_CONSTRAINT_VIOLATED') {
+                            return res.status(400).json({ error: 'La edad debe ser mayor o igual a 18 años' });
+                        }
+                        
+                        return res.status(500).json({ error: 'Error al registrar usuario' });
                     }
                     
                     res.status(201).json({ 
                         message: 'Usuario registrado exitosamente',
-                        usuario: userData[0]
+                        id_usuario: userResult.insertId
                     });
                 });
             });
@@ -211,7 +360,60 @@ app.post('/api/registrousuario', async (req, res) => {
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
+
+// Endpoint para obtener documentos de un chofer
+app.get('/api/documentos/:id_chofer', (req, res) => {
+    const { id_chofer } = req.params;
+    
+    const query = 'SELECT * FROM Documentos WHERE id_chofer = ?';
+    conexion.query(query, [id_chofer], (error, rows) => {
+        if (error) {
+            console.error('Error al obtener documentos:', error);
+            res.status(500).json({ error: 'Error al obtener documentos' });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
+// Endpoint para actualizar estado de documentos
+app.put('/api/documentos/:id_documento/estado', (req, res) => {
+    const { id_documento } = req.params;
+    const { estado } = req.body;
+    
+    if (!['pendiente', 'aprobado', 'rechazado'].includes(estado)) {
+        return res.status(400).json({ error: 'Estado no válido' });
+    }
+    
+    const query = 'UPDATE Documentos SET estado = ? WHERE id_documento = ?';
+    conexion.query(query, [estado, id_documento], (error, result) => {
+        if (error) {
+            console.error('Error actualizando documento:', error);
+            res.status(500).json({ error: 'Error al actualizar documento' });
+        } else if (result.affectedRows === 0) {
+            res.status(404).json({ error: 'Documento no encontrado' });
+        } else {
+            res.json({ message: 'Estado actualizado correctamente' });
+        }
+    });
+});
+
+// Endpoint para obtener historial de estados de un chofer
+app.get('/api/historial/:id_chofer', (req, res) => {
+    const { id_chofer } = req.params;
+    
+    const query = 'SELECT * FROM HistorialEstado WHERE id_chofer = ? ORDER BY fecha_cambio DESC';
+    conexion.query(query, [id_chofer], (error, rows) => {
+        if (error) {
+            console.error('Error al obtener historial:', error);
+            res.status(500).json({ error: 'Error al obtener historial' });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
 app.listen(port, () => {
-  console.log(`este ejemplo esta corriendo en el puerto  ${port} y se llama ojo, tambien en
-    http://127.0.0.1:3000/ojo para correr en pagina`)
-})
+    console.log(`API corriendo en el puerto ${port}`);
+    console.log(`http://127.0.0.1:${port}/ojo`);
+});

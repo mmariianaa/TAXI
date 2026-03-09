@@ -29,9 +29,9 @@
       </div>
 
       <form #registroForm="ngForm" (ngSubmit)="registrarUsuario()">
-        <!-- Nombre y Apellido (NOT NULL) -->
+        <!-- Nombre y Apellido -->
         <div class="input-row">
-          <div class="input-group" [class.error]="nombre.invalid && nombre.touched">
+          <div class="input-group">
             <ion-icon name="person-outline" class="input-icon"></ion-icon>
             <ion-input 
               type="text" 
@@ -43,7 +43,7 @@
             </ion-input>
           </div>
           
-          <div class="input-group" [class.error]="apellido.invalid && apellido.touched">
+          <div class="input-group">
             <ion-input 
               type="text" 
               placeholder="Apellido *"
@@ -55,8 +55,34 @@
           </div>
         </div>
 
-        <!-- Correo (UNIQUE NOT NULL) -->
-        <div class="input-group" [class.error]="correo.invalid && correo.touched">
+        <!-- Tipo y número de documento (NUEVO) -->
+        <div class="input-row">
+          <div class="custom-select">
+            <ion-icon name="card-outline"></ion-icon>
+            <ion-select 
+              placeholder="Tipo Doc. *"
+              [(ngModel)]="usuarioData.tipo_documento"
+              name="tipo_documento"
+              required>
+              <ion-select-option value="CC">CC</ion-select-option>
+              <ion-select-option value="CE">CE</ion-select-option>
+              <ion-select-option value="Pasaporte">Pasaporte</ion-select-option>
+            </ion-select>
+          </div>
+          
+          <div class="input-group">
+            <ion-input 
+              type="text" 
+              placeholder="Número de documento *"
+              [(ngModel)]="usuarioData.numero_documento"
+              name="numero_documento"
+              required>
+            </ion-input>
+          </div>
+        </div>
+
+        <!-- Correo -->
+        <div class="input-group">
           <ion-icon name="mail-outline" class="input-icon"></ion-icon>
           <ion-input 
             type="email" 
@@ -82,8 +108,8 @@
           </ion-input>
         </div>
 
-        <!-- Edad (CHECK edad >= 18) -->
-        <div class="input-group" [class.error]="edad.invalid && edad.touched">
+        <!-- Edad -->
+        <div class="input-group">
           <ion-icon name="calendar-outline" class="input-icon"></ion-icon>
           <ion-input 
             type="number" 
@@ -95,8 +121,6 @@
             min="18">
           </ion-input>
         </div>
-
-        <!-- Mensaje de error para edad -->
         @if (edad.invalid && edad.touched) {
           <div class="error-message">
             <ion-icon name="alert-circle-outline"></ion-icon>
@@ -104,8 +128,8 @@
           </div>
         }
 
-        <!-- Contraseña (NOT NULL) -->
-        <div class="input-group" [class.error]="contrasena.invalid && contrasena.touched">
+        <!-- Contraseña -->
+        <div class="input-group">
           <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
           <ion-input 
             type="password" 
@@ -117,16 +141,10 @@
             required
             minlength="6">
           </ion-input>
-          <ion-icon 
-            name="eye-off-outline" 
-            class="password-toggle"
-            (click)="togglePassword('usuarioPassword', 'usuarioEyeIcon')"
-            id="usuarioEyeIcon">
-          </ion-icon>
         </div>
 
         <!-- Confirmar Contraseña -->
-        <div class="input-group" [class.error]="confirmContrasena.invalid && confirmContrasena.touched">
+        <div class="input-group">
           <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
           <ion-input 
             type="password" 
@@ -138,15 +156,7 @@
             required
             minlength="6">
           </ion-input>
-          <ion-icon 
-            name="eye-off-outline" 
-            class="password-toggle"
-            (click)="togglePassword('usuarioConfirmPassword', 'usuarioConfirmEyeIcon')"
-            id="usuarioConfirmEyeIcon">
-          </ion-icon>
         </div>
-
-        <!-- Validación de contraseñas coincidentes -->
         @if (usuarioData.contrasena && usuarioData.confirmContrasena && usuarioData.contrasena !== usuarioData.confirmContrasena) {
           <div class="error-message">
             <ion-icon name="alert-circle-outline"></ion-icon>

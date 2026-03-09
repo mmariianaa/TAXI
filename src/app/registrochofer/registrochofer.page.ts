@@ -23,21 +23,28 @@ import { lastValueFrom } from 'rxjs';
   ]
 })
 export class RegistrochoferPage {
-  // Modelo que coincide con lo que espera el backend
+  // Modelo simplificado - SIN DOCUMENTOS
   chofer = {
+    // Datos personales
     nombre: '',
     apellido: '',
+    edad: null as number | null,
+    tipo_documento: 'CC',
+    numero_documento: '',
     correo: '',
     telefono: '',
     contrasena: '',
-    licencia: '',
-    experiencia: 0,
-    tipo_documento: 'cc',
-    numero_documento: '',
+    
+    // Datos del vehículo
     marca_vehiculo: '',
     modelo_vehiculo: '',
     color_vehiculo: '',
-    placa: ''
+    placa: '',
+    capacidad: null as number | null,
+    
+    // Datos profesionales
+    licencia: '',
+    experiencia: 0
   };
 
   confirmarContrasena = '';
@@ -51,9 +58,15 @@ export class RegistrochoferPage {
     }
 
     try {
-      // 🔑 Aquí cambiamos la URL al puerto correcto del backend
+      // Preparar datos para enviar (sin documentos)
+      const datosEnvio = {
+        ...this.chofer
+      };
+
+      console.log('Enviando datos:', datosEnvio);
+
       const response = await lastValueFrom(
-        this.http.post('http://localhost:3000/api/registrochofer', this.chofer)
+        this.http.post('http://localhost:3000/api/registrochofer', datosEnvio)
       );
       
       console.log('Respuesta:', response);
@@ -78,20 +91,49 @@ export class RegistrochoferPage {
   }
 
   validarFormulario(): boolean {
-    if (!this.chofer.nombre || !this.chofer.apellido || 
-        !this.chofer.correo || !this.chofer.contrasena || 
-        !this.chofer.licencia) {
-      alert('Por favor completa todos los campos requeridos');
+    // Validar datos personales
+    if (!this.chofer.nombre || !this.chofer.apellido || !this.chofer.edad) {
+      alert('Por favor completa nombre, apellido y edad');
       return false;
     }
 
+    if (this.chofer.edad < 18) {
+      alert('Debes ser mayor de 18 años');
+      return false;
+    }
+
+    if (!this.chofer.tipo_documento || !this.chofer.numero_documento) {
+      alert('Por favor completa tipo y número de documento');
+      return false;
+    }
+
+    // Validar correo
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.chofer.correo)) {
+    if (!this.chofer.correo || !emailRegex.test(this.chofer.correo)) {
       alert('Ingresa un correo electrónico válido');
       return false;
     }
 
-    if (this.chofer.contrasena.length < 6) {
+    // Validar vehículo
+    if (!this.chofer.marca_vehiculo || !this.chofer.modelo_vehiculo || 
+        !this.chofer.color_vehiculo || !this.chofer.placa || !this.chofer.capacidad) {
+      alert('Por favor completa todos los datos del vehículo');
+      return false;
+    }
+
+    if (this.chofer.capacidad < 1 || this.chofer.capacidad > 10) {
+      alert('La capacidad debe ser entre 1 y 10 pasajeros');
+      return false;
+    }
+
+    // Validar licencia
+    if (!this.chofer.licencia) {
+      alert('Por favor ingresa el número de licencia');
+      return false;
+    }
+
+    // Validar contraseña
+    if (!this.chofer.contrasena || this.chofer.contrasena.length < 6) {
       alert('La contraseña debe tener al menos 6 caracteres');
       return false;
     }
@@ -113,17 +155,19 @@ export class RegistrochoferPage {
     this.chofer = {
       nombre: '',
       apellido: '',
+      edad: null,
+      tipo_documento: 'CC',
+      numero_documento: '',
       correo: '',
       telefono: '',
       contrasena: '',
-      licencia: '',
-      experiencia: 0,
-      tipo_documento: 'cc',
-      numero_documento: '',
       marca_vehiculo: '',
       modelo_vehiculo: '',
       color_vehiculo: '',
-      placa: ''
+      placa: '',
+      capacidad: null,
+      licencia: '',
+      experiencia: 0
     };
     this.confirmarContrasena = '';
     this.terminosAceptados = false;
