@@ -1,5 +1,5 @@
 <ion-content [fullscreen]="true" class="login-content">
-  <!-- Fondo con efecto de ciudad nocturna -->
+  <!-- Fondo degradado moderno -->
   <div class="city-background">
     <div class="city-skyline"></div>
   </div>
@@ -12,10 +12,10 @@
         <ion-icon name="car-sport-outline" class="taxi-icon"></ion-icon>
       </div>
       <h1 class="app-title">Taxi<span class="yellow-text">App</span></h1>
-      <p class="subtitle">Selecciona cómo deseas ingresar</p>
+      <p class="subtitle">Bienvenido a la mejor experiencia en movilidad</p>
     </div>
 
-    <!-- Selector de tipo de usuario (CLIENTE / CHOFER) -->
+    <!-- Selector de tipo de usuario moderno -->
     <div class="user-type-selector">
       <div class="user-type-tabs">
         <div 
@@ -38,8 +38,10 @@
     <!-- TARJETA PARA CLIENTE -->
     @if (userType === 'cliente') {
       <div class="login-card">
+        <h2>¡Hola de nuevo!</h2>
+        <p class="welcome-text">Ingresa a tu cuenta para continuar disfrutando de nuestros servicios.</p>
+        
         <form class="login-form">
-          <!-- Campo de email -->
           <div class="input-group">
             <ion-icon name="mail-outline" class="input-icon"></ion-icon>
             <ion-input 
@@ -50,7 +52,6 @@
             </ion-input>
           </div>
 
-          <!-- Campo de contraseña -->
           <div class="input-group">
             <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
             <ion-input 
@@ -68,26 +69,21 @@
             </ion-icon>
           </div>
 
-          <!-- Opciones adicionales -->
           <div class="options-row">
             <div class="remember-me">
               <ion-checkbox [(ngModel)]="loginData.rememberMe" name="rememberMe"></ion-checkbox>
-              <span>Recordarme</span>
+              <span>Recordar mi sesión</span>
             </div>
             <a href="#" class="forgot-link" (click)="olvidePassword($event)">¿Olvidaste tu contraseña?</a>
           </div>
 
-          <!-- Botón de login para cliente -->
           <ion-button expand="block" class="login-button" (click)="loginCliente()">
-            Iniciar Sesión como Cliente
-            <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+            Iniciar Sesión
           </ion-button>
-
-          <!-- Link de registro para cliente -->
           <div class="register-link">
-            <p>¿No tienes cuenta? 
+            <p>¿No tienes una cuenta? 
               <a href="#" (click)="irARegistroCliente($event)">
-                Regístrate aquí
+                Regístrate gratis
               </a>
             </p>
           </div>
@@ -98,8 +94,10 @@
     <!-- TARJETA PARA CHOFER -->
     @if (userType === 'chofer') {
       <div class="login-card">
+        <h2>Bienvenido Chofer</h2>
+        <p class="welcome-text">Accede a tu panel de conductor para gestionar tus viajes y ganancias.</p>
+        
         <form class="login-form">
-          <!-- Campo de email -->
           <div class="input-group">
             <ion-icon name="mail-outline" class="input-icon"></ion-icon>
             <ion-input 
@@ -110,7 +108,6 @@
             </ion-input>
           </div>
 
-          <!-- Campo de contraseña -->
           <div class="input-group">
             <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
             <ion-input 
@@ -128,26 +125,22 @@
             </ion-icon>
           </div>
 
-          <!-- Opciones adicionales -->
           <div class="options-row">
             <div class="remember-me">
               <ion-checkbox [(ngModel)]="loginChoferData.rememberMe" name="rememberMe"></ion-checkbox>
-              <span>Recordarme</span>
+              <span>Recordar mi sesión</span>
             </div>
             <a href="#" class="forgot-link" (click)="olvidePassword($event)">¿Olvidaste tu contraseña?</a>
           </div>
 
-          <!-- Botón de login para chofer -->
           <ion-button expand="block" class="login-button" (click)="loginChofer()">
-            Iniciar Sesión como Chofer
-            <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+            Iniciar Sesión
           </ion-button>
 
-          <!-- Link de registro para chofer -->
           <div class="register-link">
             <p>¿No eres chofer? 
               <a href="#" (click)="irARegistroChofer($event)">
-                Regístrate aquí
+                Regístrate como conductor
               </a>
             </p>
           </div>

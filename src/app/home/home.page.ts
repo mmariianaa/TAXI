@@ -124,7 +124,7 @@ export class HomePage {
       localStorage.setItem('userEmail', this.loginChoferData.email);
       
       // Redirigir a la vista de chofer
-      this.router.navigate(['/vista-chofer']);
+      this.router.navigate(['/historial-chofer']);
     } else {
       this.mostrarMensaje('Credenciales incorrectas. Usa chofer@test.com / 123456');
     }

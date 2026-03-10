@@ -170,28 +170,27 @@ app.post('/api/registrochofer', async (req, res) => {
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
-
-
-//REGISTRO DEL USUARIO NORMAL
+// REGISTRO DE USUARIO
 app.post('/api/registrousuario', async (req, res) => {
     try {
         const { 
-            nombre, apellido, edad,
-            correo, telefono, contrasena
+            nombre, apellido, edad, correo, telefono, contrasena
         } = req.body;
         
         // Validar campos requeridos
         if (!nombre || !apellido || !edad || !correo || !contrasena) {
             return res.status(400).json({ 
                 error: 'Faltan campos requeridos',
-                required: ['nombre', 'apellido', 'edad', 'correo', 'contrasena']
+                received: req.body  // ayuda a depurar qué campos se recibieron realmente
             });
         }
 
-        // Validar que edad sea mayor o igual a 18
-        if (edad < 18) {
+        // Validar que edad sea un número y esté en rango
+        const edadNum = parseInt(edad);
+        if (isNaN(edadNum) || edadNum < 18 || edadNum > 120) {
             return res.status(400).json({ 
-                error: 'El usuario debe ser mayor de 18 años' 
+                error: 'La edad debe ser un número válido entre 18 y 120 años',
+                edad_recibida: edad
             });
         }
 
@@ -207,7 +206,7 @@ app.post('/api/registrousuario', async (req, res) => {
                 return res.status(400).json({ error: 'El correo ya está registrado' });
             }
 
-            // Insertar en tabla Usuario (INCLUYENDO VALORES POR DEFECTO)
+            // Insertar en tabla Usuario
             const queryUsuario = `INSERT INTO Usuario 
                 (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -215,9 +214,9 @@ app.post('/api/registrousuario', async (req, res) => {
             conexion.query(queryUsuario, [
                 nombre, 
                 apellido, 
-                edad,
-                'CC',                 // 👈 valor por defecto para tipo_documento
-                'SIN_DOCUMENTO',      // 👈 valor por defecto para numero_documento
+                edadNum,  // Usamos el número validado
+                'CC',     
+                'DOC_' + Date.now(),  //gneramos un documento único temporal
                 correo, 
                 telefono || null,
                 contrasena
@@ -225,8 +224,10 @@ app.post('/api/registrousuario', async (req, res) => {
                 if (err) {
                     console.error('Error registrando usuario:', err);
                     
-                    if (err.code === 'ER_CHECK_CONSTRAINT_VIOLATED') {
-                        return res.status(400).json({ error: 'La edad debe ser mayor o igual a 18 años' });
+                    if (err.code === 'ER_DUP_ENTRY') {
+                        return res.status(400).json({ 
+                            error: 'El número de documento o correo ya está registrado' 
+                        });
                     }
                     
                     return res.status(500).json({ error: 'Error al registrar usuario: ' + err.message });

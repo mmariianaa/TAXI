@@ -1,35 +1,22 @@
 .login-content {
-  --background: #1F1F1F; /* Cambiado a HEX negro de la paleta */
+  --background: #FFFFFF;
 
   .city-background {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #1F1F1F 0%, #4B4847 50%, #4B4847 100%);
-    /* Degradado usando los grises/negros de la paleta */
+    height: 40%;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 0 0 50px 50px;
     
     .city-skyline {
       position: absolute;
       bottom: 0;
       width: 100%;
-      height: 150px;
-      background: linear-gradient(transparent 0%, rgba(255, 195, 31, 0.1) 100%);
-      /* Sutil brillo amarillo en la base */
-      
-      &::before {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        height: 100%;
-        background-image: 
-          linear-gradient(90deg, #FFC31F 2px, transparent 2px),
-          linear-gradient(0deg, #FFC31F 1px, transparent 1px);
-        background-size: 50px 50px;
-        opacity: 0.15;
-      }
+      height: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      clip-path: polygon(0 60%, 20% 40%, 40% 60%, 60% 30%, 80% 50%, 100% 20%, 100% 100%, 0 100%);
     }
   }
 
@@ -38,7 +25,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     min-height: 100%;
     padding: 20px;
     z-index: 1;
@@ -46,90 +33,114 @@
 
   .logo-section {
     text-align: center;
-    margin-bottom: 30px;
-    animation: fadeInDown 0.8s ease;
+    margin: 40px 0 30px;
 
     .logo-wrapper {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       margin: 0 auto 15px;
-      background: rgba(255, 195, 31, 0.1); /* #FFC31F con opacidad */
-      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2px solid #FFC31F; /* Amarillo principal */
-      box-shadow: 0 0 30px rgba(255, 195, 31, 0.3); /* Sombra amarilla */
+      backdrop-filter: blur(10px);
 
       .taxi-icon {
-        font-size: 50px;
-        color: #FFC31F; /* Amarillo principal */
+        font-size: 40px;
+        color: #FFC31F;
       }
     }
 
     .app-title {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 700;
-      color: #E6E1DB; /* Beige claro para contraste */
+      color: white;
       margin: 0;
+      letter-spacing: 1px;
       
       .yellow-text {
-        color: #FFC31F; /* Amarillo principal */
+        color: #FFC31F;
       }
     }
 
     .subtitle {
-      color: rgba(230, 225, 219, 0.7); /* Beige con opacidad */
+      color: rgba(255, 255, 255, 0.9); // Más opaco para mejor lectura
       margin: 5px 0 0;
       font-size: 14px;
+      font-weight: 500;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // Sombra para mejor legibilidad
     }
   }
 
+  // Selector de tipo de usuario
+  .user-type-selector {
+    width: 100%;
+    max-width: 400px;
+    margin: 20px 0;
+    background: white;
+    border-radius: 50px;
+    padding: 5px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .user-type-tabs {
+    display: flex;
+    gap: 5px;
+  }
+
+  .user-type-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #666;
+    font-weight: 600; // Más negrita
+
+    ion-icon {
+      font-size: 20px;
+    }
+
+    &.active {
+      background: #FFC31F;
+      color: #1a1a2e;
+      box-shadow: 0 5px 15px rgba(255, 195, 31, 0.4);
+    }
+  }
+
+  // Tarjeta de login
   .login-card {
     width: 100%;
     max-width: 400px;
-    background: #E6E1DB; /* Beige claro como base de la tarjeta */
-    backdrop-filter: blur(10px);
+    background: white;
     border-radius: 30px;
     padding: 30px 25px;
-    box-shadow: 0 20px 40px rgba(31, 31, 31, 0.4); /* Sombra oscura */
-    animation: fadeInUp 0.8s ease;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.5s ease;
 
-    .tabs-container {
-      display: flex;
-      gap: 20px;
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a2e; // Texto oscuro sobre fondo blanco
+      margin-bottom: 10px;
+    }
+
+    .welcome-text {
+      color: #4a4a4a; // Gris oscuro para mejor contraste
+      font-size: 14px;
       margin-bottom: 30px;
-      border-bottom: 2px solid #4B4847; /* Gris oscuro para la línea divisoria */
-      padding-bottom: 15px;
-
-      .tab {
-        font-size: 18px;
-        font-weight: 600;
-        color: #4B4847; /* Gris oscuro para tabs inactivos */
-        cursor: pointer;
-        position: relative;
-        
-        &.active {
-          color: #FFC31F; /* Amarillo para el tab activo */
-          
-          &::after {
-            content: "";
-            position: absolute;
-            bottom: -17px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: #FFC31F; /* Línea inferior amarilla */
-            border-radius: 3px 3px 0 0;
-          }
-        }
-      }
+      line-height: 1.5;
     }
 
     .input-group {
       display: flex;
       align-items: center;
-      background: #FFFFFF; /* Fondo blanco puro para inputs */
+      background: #F5F7FA;
       border-radius: 15px;
       padding: 5px 15px;
       margin-bottom: 15px;
@@ -137,14 +148,14 @@
       transition: all 0.3s ease;
 
       &:focus-within {
-        border-color: #FFC31F; /* Borde amarillo al enfocar */
+        border-color: #FFC31F;
         background: white;
-        box-shadow: 0 5px 15px rgba(255, 195, 31, 0.2); /* Sombra amarilla */
+        box-shadow: 0 5px 20px rgba(255, 195, 31, 0.1);
       }
 
       .input-icon {
         font-size: 20px;
-        color: #4B4847; /* Gris oscuro para iconos */
+        color: #FFC31F;
         margin-right: 10px;
       }
 
@@ -152,12 +163,14 @@
         --padding-start: 0;
         --padding-end: 0;
         --background: transparent;
-        --color: #1F1F1F; /* Texto en negro de la paleta */
+        --color: #1a1a2e; // Texto oscuro
+        --placeholder-color: #999;
+        --placeholder-opacity: 1;
       }
 
       .password-toggle {
         font-size: 20px;
-        color: #4B4847; /* Gris oscuro */
+        color: #999;
         cursor: pointer;
       }
     }
@@ -166,7 +179,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 25px;
+      margin: 20px 0;
 
       .remember-me {
         display: flex;
@@ -175,52 +188,51 @@
         
         ion-checkbox {
           --size: 18px;
-          --checkbox-background-checked: #FFC31F; /* Amarillo cuando está marcado */
-          --border-color-checked: #FFC31F; /* Borde amarillo */
-          --border-color: #4B4847; /* Borde gris por defecto */
-          --checkmark-color: #1F1F1F; /* Checkmark en negro para contraste */
+          --checkbox-background-checked: #FFC31F;
+          --border-color-checked: #FFC31F;
+          --checkmark-color: #1a1a2e;
         }
         
         span {
-          color: #4B4847; /* Gris oscuro */
+          color: #4a4a4a; // Texto oscuro
           font-size: 14px;
         }
       }
 
       .forgot-link {
-        color: #FFC31F; /* Amarillo */
+        color: #FFC31F;
         text-decoration: none;
         font-size: 14px;
-        font-weight: 500;
+        font-weight: 600;
       }
     }
 
     .login-button {
-      --background: #FFC31F; /* Amarillo principal */
-      --background-hover: #EB8107; /* Naranja de la paleta para hover */
-      --color: #1F1F1F; /* Texto en negro */
+      --background: #FFC31F;
+      --background-hover: #e6b01c;
+      --color: #1a1a2e; // Texto oscuro para contraste
       --border-radius: 15px;
-      --padding-top: 20px;
-      --padding-bottom: 20px;
-      font-weight: 600;
+      --padding-top: 15px;
+      --padding-bottom: 15px;
+      font-weight: 700;
       font-size: 16px;
       margin-bottom: 20px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      text-transform: none;
+      letter-spacing: 0.5px;
       
       &::part(native) {
-        box-shadow: 0 10px 20px rgba(255, 195, 31, 0.3); /* Sombra amarilla */
+        box-shadow: 0 10px 20px rgba(255, 195, 31, 0.3);
       }
     }
 
     .social-section {
       text-align: center;
-      margin-bottom: 20px;
+      margin: 25px 0 15px;
 
       .social-text {
-        color: #4B4847; /* Gris oscuro */
+        color: #666;
         font-size: 14px;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
         position: relative;
         
         &::before,
@@ -230,7 +242,7 @@
           top: 50%;
           width: 30%;
           height: 1px;
-          background: #4B4847; /* Líneas en gris oscuro */
+          background: #ddd;
         }
         
         &::before {
@@ -245,33 +257,34 @@
       .social-buttons {
         display: flex;
         justify-content: center;
-        gap: 20px;
+        gap: 15px;
 
         .social-btn {
-          --padding-start: 0;
-          --padding-end: 0;
           width: 50px;
           height: 50px;
+          --border-radius: 15px;
+          --background: #F5F7FA;
+          --color: #333;
+          --box-shadow: none;
           
           ion-icon {
             font-size: 24px;
           }
           
           &.google {
-            --color: #DB4437; /* Mantengo el rojo de Google */
+            --color: #DB4437;
           }
           
           &.facebook {
-            --color: #4267B2; /* Mantengo el azul de FB */
+            --color: #4267B2;
           }
           
           &.apple {
-            --color: #1F1F1F; /* Negro de la paleta para Apple */
+            --color: #000;
           }
           
-          &::part(native) {
-            background: #FFFFFF; /* Fondo blanco para los botones sociales */
-            border-radius: 15px;
+          &:hover {
+            --background: #E8ECF0;
           }
         }
       }
@@ -282,59 +295,21 @@
       margin-top: 20px;
       
       p {
-        color: #4B4847; /* Gris oscuro */
+        color: #666;
         font-size: 14px;
         
         a {
-          color: #FFC31F; /* Amarillo */
+          color: #FFC31F;
           text-decoration: none;
-          font-weight: 600;
-        }
-      }
-    }
-
-    .driver-message {
-      margin-top: 20px;
-      padding-top: 20px;
-      border-top: 1px solid #4B4847; /* Línea en gris oscuro */
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      
-      ion-icon {
-        color: #FFC31F; /* Amarillo */
-        font-size: 18px;
-      }
-      
-      span {
-        color: #4B4847; /* Gris oscuro */
-        font-size: 13px;
-        
-        a {
-          color: #FFC31F; /* Amarillo */
-          text-decoration: none;
-          font-weight: 600;
+          font-weight: 700;
+          margin-left: 5px;
         }
       }
     }
   }
 }
 
-// Animaciones
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInUp {
+@keyframes slideUp {
   from {
     opacity: 0;
     transform: translateY(30px);
@@ -343,62 +318,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* Selector de tipo de usuario */
-.user-type-selector {
-  margin: 20px 0;
-  width: 100%;
-  max-width: 400px;
-}
-
-.user-type-tabs {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  background: rgba(31, 31, 31, 0.3); /* Fondo negro con opacidad */
-  border-radius: 50px;
-  padding: 5px;
-}
-
-.user-type-tab {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 25px;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.3s;
-  color: #E6E1DB; /* Beige claro para texto */
-  flex: 1;
-}
-
-.user-type-tab.active {
-  background: #FFC31F; /* Amarillo para el activo */
-  color: #1F1F1F; /* Texto en negro */
-  font-weight: 600;
-}
-
-.user-type-tab ion-icon {
-  font-size: 20px;
-}
-
-/* Términos y condiciones */
-.terms-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 15px 0;
-}
-
-.terms-text {
-  font-size: 13px;
-  color: #4B4847; /* Gris oscuro */
-}
-
-.terms-text a {
-  color: #FFC31F; /* Amarillo */
-  text-decoration: none;
-  font-weight: 600;
 }
