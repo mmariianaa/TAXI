@@ -37,6 +37,10 @@ export const routes: Routes = [
   {
     path: 'pantallausuario',
     loadComponent: () => import('./pantallausuario/pantallausuario.page').then( m => m.PantallausuarioPage)
+  },  {
+    path: 'perfilusuario',
+    loadComponent: () => import('./perfilusuario/perfilusuario.page').then( m => m.PerfilusuarioPage)
   },
+
 
 ];

@@ -1,9 +1,9 @@
 const mysql = require('mysql2');
 
 const connDB = mysql.createConnection({
-  host: 'localhost',    
+    host: 'localhost',    
     user: 'root',
-    password: 'root',
+    password: '12345',
     database: 'TaxiDBtaxi'
 })
 connDB.connect((err) => {
