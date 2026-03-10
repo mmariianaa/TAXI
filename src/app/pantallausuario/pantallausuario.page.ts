@@ -22,7 +22,7 @@ L.Marker.prototype.options.icon = iconDefault;
 @Component({
   selector: 'app-perfilusuario',
   templateUrl: './pantallausuario.page.html',
-  styleUrls: ['./pantallausuario.scss'], 
+  styleUrls: ['./pantallausuario.page.scss'], 
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule]
 })
