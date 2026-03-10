@@ -1,0 +1,63 @@
+<!-- Envolvemos todo en ion-content para que Ionic renderice la vista correctamente -->
+<ion-content>
+  
+  <div class="app-container">
+    
+    <!-- Cabecera -->
+    <header class="header">
+      <h1>Chofer</h1>
+      <button class="btn-menu"><i class="fas fa-bars"></i></button>
+    </header>
+
+    <!-- Pestañas -->
+    <nav class="tabs">
+      <button class="tab" [class.active]="activeTab === 'perfil'" (click)="setTab('perfil')">Perfil</button>
+      <button class="tab" [class.active]="activeTab === 'viajes'" (click)="setTab('viajes')">Viajes <span class="badge">1</span></button>
+      <button class="tab"[class.active]="activeTab === 'historial'" (click)="setTab('historial')">Historial</button>
+    </nav>
+
+    <!-- Contenido -->
+    <main class="content">
+      <ng-container *ngIf="activeTab === 'perfil'">
+        <div class="status-card">
+          <span class="status-label">Estado:</span>
+          <div class="toggle-container">
+            <label class="switch">
+              <input type="checkbox" [checked]="isActive" (change)="toggleStatus()">
+              <span class="slider"></span>
+            </label>
+            <span class="status-text" [class.active-text]="isActive" [class.inactive-text]="!isActive">
+              {{ isActive ? 'Activo' : 'Inactivo' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-text">
+            <h2>Info:</h2>
+            <div class="info-group"><label>Nombre del Chofer</label><p>{{ driverInfo.nombre }}</p></div>
+            <div class="info-group"><label>Placas</label><p>{{ driverInfo.placas }}</p></div>
+            <div class="info-group"><label>Vehículo</label><p>{{ driverInfo.vehiculo }}</p></div>
+          </div>
+          <div class="photo-box">
+            <i class="fas fa-user-circle"></i>
+            <span>Foto del<br>Chofer</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <div *ngIf="activeTab !== 'perfil'" class="loading-tab">
+        Cargando información de {{ activeTab }}...
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="action-buttons">
+        <button class="btn-primary" (click)="saveProfile()"><i class="fas fa-check"></i> Guardar</button>
+        <button class="btn-secondary"><i class="fas fa-ellipsis-h"></i></button>
+      </div>
+    </main>
+
+  </div>
+  
+</ion-content>
