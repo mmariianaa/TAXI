@@ -33,5 +33,9 @@ export const routes: Routes = [
     path: 'historial-chofer',
     loadComponent: () => import('./historial-chofer/historial-chofer.page').then( m => m.HistorialChoferPage)
   },
+  {
+    path: 'chofer',
+    loadComponent: () => import('./chofer/chofer.page').then( m => m.ChoferPage)
+  },
 
 ];
