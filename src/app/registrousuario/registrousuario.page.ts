@@ -16,7 +16,9 @@ import { lastValueFrom } from 'rxjs';
     IonIcon, 
     IonButton,
     CommonModule,
-    FormsModule,
+    FormsModule, 
+    IonSelectOption, 
+    IonSelect, 
     IonContent
   ]
 })
@@ -24,6 +26,8 @@ export class RegistrousuarioPage {
   usuarioData = {
     nombre: '',
     apellido: '',
+    tipo_documento: 'CC',
+    numero_documento: '',
     correo: '',
     telefono: '',
     edad: null as number | null,
@@ -43,6 +47,8 @@ export class RegistrousuarioPage {
       const datosEnvio = {
         nombre: this.usuarioData.nombre,
         apellido: this.usuarioData.apellido,
+        tipo_documento: this.usuarioData.tipo_documento,
+        numero_documento: this.usuarioData.numero_documento,
         correo: this.usuarioData.correo,
         telefono: this.usuarioData.telefono || null,
         edad: this.usuarioData.edad,
@@ -79,6 +85,11 @@ export class RegistrousuarioPage {
   validarFormulario(): boolean {
     if (!this.usuarioData.nombre || !this.usuarioData.apellido) {
       alert('Por favor completa nombre y apellido');
+      return false;
+    }
+
+    if (!this.usuarioData.tipo_documento || !this.usuarioData.numero_documento) {
+      alert('Por favor completa tipo y número de documento');
       return false;
     }
 
@@ -127,7 +138,9 @@ export class RegistrousuarioPage {
   resetFormulario() {
     this.usuarioData = {
       nombre: '',
-      apellido: '',    
+      apellido: '',
+      tipo_documento: 'CC',
+      numero_documento: '',
       correo: '',
       telefono: '',
       edad: null,

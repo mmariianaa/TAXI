@@ -12,9 +12,7 @@ app.get('/ojo', (req, res) => {
   res.send('primera pagina de este coso ')
 })
 
-// ============================================
-// ENDPOINT REGISTRO CHOFER
-// ============================================
+// REGISTRO DEL CHOFER
 app.post('/api/registrochofer', async (req, res) => {
     try {
         const { 
@@ -172,31 +170,27 @@ app.post('/api/registrochofer', async (req, res) => {
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
-
-// ============================================
-// ENDPOINT REGISTRO USUARIO
-// ============================================
+// REGISTRO DE USUARIO
 app.post('/api/registrousuario', async (req, res) => {
     try {
         const { 
-            nombre, apellido, edad, tipo_documento, numero_documento,
-            correo, telefono, contrasena
+            nombre, apellido, edad, correo, telefono, contrasena
         } = req.body;
         
         // Validar campos requeridos
-        if (!nombre || !apellido || !edad || !tipo_documento || !numero_documento || 
-            !correo || !contrasena) {
+        if (!nombre || !apellido || !edad || !correo || !contrasena) {
             return res.status(400).json({ 
                 error: 'Faltan campos requeridos',
-                required: ['nombre', 'apellido', 'edad', 'tipo_documento', 'numero_documento', 
-                          'correo', 'contrasena']
+                received: req.body  // ayuda a depurar qué campos se recibieron realmente
             });
         }
 
-        // Validar que edad sea mayor o igual a 18
-        if (edad < 18) {
+        // Validar que edad sea un número y esté en rango
+        const edadNum = parseInt(edad);
+        if (isNaN(edadNum) || edadNum < 18 || edadNum > 120) {
             return res.status(400).json({ 
-                error: 'El usuario debe ser mayor de 18 años' 
+                error: 'La edad debe ser un número válido entre 18 y 120 años',
+                edad_recibida: edad
             });
         }
 
@@ -212,48 +206,36 @@ app.post('/api/registrousuario', async (req, res) => {
                 return res.status(400).json({ error: 'El correo ya está registrado' });
             }
 
-            // Verificar si el documento ya existe
-            const checkDocumento = 'SELECT * FROM Usuario WHERE numero_documento = ?';
-            conexion.query(checkDocumento, [numero_documento], async (err, results) => {
+            // Insertar en tabla Usuario
+            const queryUsuario = `INSERT INTO Usuario 
+                (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+            
+            conexion.query(queryUsuario, [
+                nombre, 
+                apellido, 
+                edadNum,  // Usamos el número validado
+                'CC',     
+                'DOC_' + Date.now(),  //gneramos un documento único temporal
+                correo, 
+                telefono || null,
+                contrasena
+            ], (err, userResult) => {
                 if (err) {
-                    console.error('Error verificando documento:', err);
-                    return res.status(500).json({ error: 'Error en el servidor' });
-                }
-                
-                if (results.length > 0) {
-                    return res.status(400).json({ error: 'El número de documento ya está registrado' });
-                }
-
-                // Insertar en tabla Usuario
-                const queryUsuario = `INSERT INTO Usuario 
-                    (nombre, apellido, edad, tipo_documento, numero_documento, 
-                     correo, telefono, contrasena) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-                
-                conexion.query(queryUsuario, [
-                    nombre, 
-                    apellido, 
-                    edad,
-                    tipo_documento,
-                    numero_documento,
-                    correo, 
-                    telefono || null,
-                    contrasena
-                ], (err, userResult) => {
-                    if (err) {
-                        console.error('Error registrando usuario:', err);
-                        
-                        if (err.code === 'ER_CHECK_CONSTRAINT_VIOLATED') {
-                            return res.status(400).json({ error: 'La edad debe ser mayor o igual a 18 años' });
-                        }
-                        
-                        return res.status(500).json({ error: 'Error al registrar usuario' });
+                    console.error('Error registrando usuario:', err);
+                    
+                    if (err.code === 'ER_DUP_ENTRY') {
+                        return res.status(400).json({ 
+                            error: 'El número de documento o correo ya está registrado' 
+                        });
                     }
                     
-                    res.status(201).json({ 
-                        message: 'Usuario registrado exitosamente',
-                        id_usuario: userResult.insertId
-                    });
+                    return res.status(500).json({ error: 'Error al registrar usuario: ' + err.message });
+                }
+                
+                res.status(201).json({ 
+                    message: 'Usuario registrado exitosamente',
+                    id_usuario: userResult.insertId
                 });
             });
         });
@@ -262,7 +244,6 @@ app.post('/api/registrousuario', async (req, res) => {
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
-
 // ============================================
 // ENDPOINTS CONSULTA
 // ============================================
