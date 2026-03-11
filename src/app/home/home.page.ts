@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/auth'; // Asegúrate de que esta ruta sea correcta
 import { 
   IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, 
   IonButton, IonCheckbox, IonInput 
@@ -20,39 +20,52 @@ import {
   ]
 })
 export class HomePage {
-  userType: string = 'cliente'; // 'cliente' o 'chofer'
+  // Inyectamos los servicios necesarios
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  userType: string = 'cliente'; // Controla qué formulario se ve en el HTML
   
-  // Datos para login de cliente
+  // Datos para el login (unificados para ambos tipos de usuario)
   loginData = {
     email: '',
     password: '',
     rememberMe: false
   };
-  
-  // Datos para login de chofer
-  loginChoferData = {
-    email: '',
-    password: '',
-    rememberMe: false
-  };
-
-  // Credenciales quemadas para demostración
-  private credencialesCliente = {
-    email: 'cliente@test.com',
-    password: '123456'
-  };
-
-  private credencialesChofer = {
-    email: 'chofer@test.com',
-    password: '123456'
-  };
-
-  constructor(private router: Router) {}
 
   setUserType(type: string) {
     this.userType = type;
   }
 
+  // --- FUNCIÓN DE LOGIN REAL ---
+  iniciarSesion() {
+    // 1. Validar campos
+    if (!this.loginData.email || !this.loginData.password) {
+      alert('Por favor completa todos los campos');
+      return;
+    }
+
+    // 2. Llamar al servidor mediante el AuthService
+    this.authService.login(this.loginData.email, this.loginData.password).subscribe({
+      next: (res) => {
+        console.log('Inicio de sesión exitoso', res);
+        
+        // El servidor nos dirá si es 'chofer' o 'usuario'
+        if (res.user.rol === 'chofer') {
+          this.router.navigate(['/chofer']); // Pantalla principal de chofer
+        } else {
+          this.router.navigate(['/pantallausuario']); // Pantalla principal de cliente
+        }
+      },
+      error: (err) => {
+        console.error('Error en login:', err);
+        // Mostramos el mensaje de error que viene del backend (ej: "Contraseña incorrecta")
+        alert(err.error?.error || 'Error al conectar con el servidor');
+      }
+    });
+  }
+
+  // Lógica visual para mostrar/ocultar contraseña
   togglePassword(inputId: string, iconId: string) {
     const input = document.getElementById(inputId) as HTMLInputElement;
     const icon = document.getElementById(iconId) as HTMLElement;
@@ -66,12 +79,7 @@ export class HomePage {
     }
   }
 
-  olvidePassword(event: Event) {
-    event.preventDefault();
-    // Aquí puedes agregar la lógica para recuperar contraseña
-    console.log('Recuperar contraseña');
-  }
-
+  // Navegación a registros
   irARegistroCliente(event: Event) {
     event.preventDefault();
     this.router.navigate(['/registrousuario']);
@@ -82,57 +90,8 @@ export class HomePage {
     this.router.navigate(['/registrochofer']);
   }
 
-  loginCliente() {
-    // Validar que los campos no estén vacíos
-    if (!this.loginData.email || !this.loginData.password) {
-      this.mostrarMensaje('Por favor completa todos los campos');
-      return;
-    }
-
-    // Validar credenciales (ejemplo con credenciales quemadas)
-    if (this.loginData.email === this.credencialesCliente.email && 
-        this.loginData.password === this.credencialesCliente.password) {
-      
-      console.log('Inicio de sesión exitoso como cliente', this.loginData);
-      
-      // Aquí puedes guardar datos del usuario en localStorage o un servicio
-      localStorage.setItem('userType', 'cliente');
-      localStorage.setItem('userEmail', this.loginData.email);
-      
-      // Redirigir a la vista de usuario
-      this.router.navigate(['/vista-usuario']);
-    } else {
-      this.mostrarMensaje('Credenciales incorrectas. Usa cliente@test.com / 123456');
-    }
-  }
-
-  loginChofer() {
-    // Validar que los campos no estén vacíos
-    if (!this.loginChoferData.email || !this.loginChoferData.password) {
-      this.mostrarMensaje('Por favor completa todos los campos');
-      return;
-    }
-
-    // Validar credenciales (ejemplo con credenciales quemadas)
-    if (this.loginChoferData.email === this.credencialesChofer.email && 
-        this.loginChoferData.password === this.credencialesChofer.password) {
-      
-      console.log('Inicio de sesión exitoso como chofer', this.loginChoferData);
-      
-      // Aquí puedes guardar datos del usuario en localStorage o un servicio
-      localStorage.setItem('userType', 'chofer');
-      localStorage.setItem('userEmail', this.loginChoferData.email);
-      
-      // Redirigir a la vista de chofer
-      this.router.navigate(['/historial-chofer']);
-    } else {
-      this.mostrarMensaje('Credenciales incorrectas. Usa chofer@test.com / 123456');
-    }
-  }
-
-  private mostrarMensaje(mensaje: string) {
-    // Aquí puedes implementar un toast o alert
-    console.log(mensaje);
-    alert(mensaje); // Temporal, luego puedes cambiar por un Toast de Ionic
+  olvidePassword(event: Event) {
+    event.preventDefault();
+    console.log('Recuperar contraseña');
   }
 }

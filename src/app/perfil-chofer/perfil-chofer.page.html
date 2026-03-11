@@ -4,196 +4,66 @@
   </div>
 
   <div class="perfil-container">
-    <!-- Header con botón atrás y notificaciones -->
     <div class="header-perfil">
-      <ion-button fill="clear" class="back-btn">
+      <ion-button fill="clear" class="back-btn" (click)="regresar()">
         <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
         Atrás
       </ion-button>
       <ion-icon name="notifications-outline" class="notif-icon"></ion-icon>
     </div>
 
-    <!-- Foto de perfil con opción para cambiar -->
-    <div class="foto-section">
-      <div class="foto-wrapper">
-        <ion-avatar class="foto-perfil">
-          <img src="https://ionicframework.com/docs/img/demos/avatar.svg" alt="foto perfil">
-        </ion-avatar>
-        <div class="editar-foto">
-          <ion-icon name="camera-outline"></ion-icon>
+    @if (choferInfo) {
+      <div class="foto-section">
+        <div class="foto-wrapper">
+          <ion-avatar class="foto-perfil">
+            <img src="https://ionicframework.com/docs/img/demos/avatar.svg" alt="foto perfil">
+          </ion-avatar>
+          <div class="editar-foto">
+            <ion-icon name="camera-outline"></ion-icon>
+          </div>
         </div>
-      </div>
-      <p class="toque-cambiar">(Toque para cambiar)</p>
-      <h1 class="nombre-chofer">JUAN PÉREZ GARCÍA</h1>
-      <p class="estadisticas">⭐ 4.8 · 1,234 viajes</p>
-    </div>
-
-    <!-- Tarjeta principal de perfil -->
-    <div class="perfil-card">
-      
-      <!-- MIS DATOS -->
-      <div class="seccion-perfil">
-        <h2 class="seccion-titulo">📋 MIS DATOS</h2>
-        
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Nombre:</span>
-          <span class="campo-valor">Juan</span>
-        </div>
-        
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Apellido:</span>
-          <span class="campo-valor">Pérez García</span>
-        </div>
-        
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Correo:</span>
-          <span class="campo-valor">juan.perez@email.com</span>
-        </div>
-        
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Teléfono:</span>
-          <span class="campo-valor">3001234567</span>
-        </div>
-        
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Tipo Doc.:</span>
-          <span class="campo-valor">CC</span>
-        </div>
-        
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Número:</span>
-          <span class="campo-valor">123456789</span>
-        </div>
+        <p class="toque-cambiar">(Toque para cambiar)</p>
+        <h1 class="nombre-chofer">{{ choferInfo.nombre | uppercase }}</h1>
+        <p class="estadisticas">⭐ 4.8 · {{ choferInfo.viajes || 0 }} viajes</p>
       </div>
 
-      <!-- MI VEHÍCULO -->
-      <div class="seccion-perfil">
-        <h2 class="seccion-titulo">🚗 MI VEHÍCULO</h2>
+      <div class="perfil-card">
         
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Marca:</span>
-          <span class="campo-valor">TSURU</span>
+        <div class="seccion-perfil">
+          <h2 class="seccion-titulo">📋 MIS DATOS</h2>
+          
+          <div class="campo-dato">
+            <span class="campo-etiqueta">Nombre:</span>
+            <span class="campo-valor">{{ choferInfo.nombre }}</span>
+          </div>
+          
+          <div class="campo-dato">
+            <span class="campo-etiqueta">Correo:</span>
+            <span class="campo-valor">{{ choferInfo.correo }}</span>
+          </div>
+
+          @if (choferInfo.telefono) {
+            <div class="campo-dato">
+              <span class="campo-etiqueta">Teléfono:</span>
+              <span class="campo-valor">{{ choferInfo.telefono }}</span>
+            </div>
+          }
         </div>
-        
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Modelo:</span>
-          <span class="campo-valor">2018</span>
+
+        <div class="cerrar-sesion">
+          <ion-button expand="block" class="cerrar-sesion-btn" (click)="cerrarSesion()">
+            <ion-icon name="log-out-outline" slot="start"></ion-icon>
+            CERRAR SESIÓN
+          </ion-button>
         </div>
-        
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Color:</span>
-          <span class="campo-valor">Gris</span>
-        </div>
-        
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Placa:</span>
-          <span class="campo-valor">ABC-123</span>
-        </div>
-        
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Licencia:</span>
-          <span class="campo-valor">12345678</span>
-        </div>
-        
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Años exp.:</span>
-          <span class="campo-valor">5 años</span>
-        </div>
+
       </div>
-
-      <!-- MIS DOCUMENTOS -->
-      <div class="seccion-perfil">
-        <h2 class="seccion-titulo">📄 MIS DOCUMENTOS</h2>
-        
-        <div class="documento-item">
-          <div class="documento-info">
-            <ion-icon name="document-text-outline"></ion-icon>
-            <span>Licencia de conducción</span>
-          </div>
-          <div class="documento-acciones">
-            <span class="documento-estado vigente">✅ Vigente</span>
-            <ion-button fill="clear" size="small" class="ver-btn">
-              VER PDF
-            </ion-button>
-          </div>
-        </div>
-
-        <div class="documento-item">
-          <div class="documento-info">
-            <ion-icon name="document-text-outline"></ion-icon>
-            <span>SOAT vigente</span>
-          </div>
-          <div class="documento-acciones">
-            <span class="documento-estado vigente">✅ Vigente</span>
-            <ion-button fill="clear" size="small" class="ver-btn">
-              VER PDF
-            </ion-button>
-          </div>
-        </div>
-
-        <div class="documento-item">
-          <div class="documento-info">
-            <ion-icon name="document-text-outline"></ion-icon>
-            <span>Revisión técnico-mecánica</span>
-          </div>
-          <div class="documento-acciones">
-            <span class="documento-estado por-vencer">⚠ Vence en 15 días</span>
-            <ion-button fill="clear" size="small" class="ver-btn">
-              VER PDF
-            </ion-button>
-          </div>
-        </div>
-
-        <div class="documento-item">
-          <div class="documento-info">
-            <ion-icon name="image-outline"></ion-icon>
-            <span>Foto del vehículo</span>
-          </div>
-          <div class="documento-acciones">
-            <span class="documento-estado vigente">✅ Aprobada</span>
-            <ion-button fill="clear" size="small" class="ver-btn">
-              VER IMAGEN
-            </ion-button>
-          </div>
-        </div>
+    } @else {
+      <div class="ion-padding ion-text-center">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando perfil...</p>
       </div>
+    }
 
-      <!-- SEGURIDAD -->
-      <div class="seccion-perfil">
-        <h2 class="seccion-titulo">🔐 SEGURIDAD</h2>
-        
-        <div class="campo-dato">
-          <span class="campo-etiqueta">Contraseña:</span>
-          <span class="campo-valor">********</span>
-        </div>
-        
-        <div class="accion-link">
-          <ion-icon name="key-outline"></ion-icon>
-          <a href="#" class="cambiar-link">Cambiar contraseña</a>
-        </div>
-      </div>
-
-      <!-- TÉRMINOS -->
-      <div class="seccion-perfil">
-        <h2 class="seccion-titulo">📜 TÉRMINOS</h2>
-        
-        <div class="terminos-info">
-          <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
-          <div class="terminos-texto">
-            <p>Acepté Términos y Condiciones</p>
-            <small>el 15/03/2025</small>
-          </div>
-        </div>
-      </div>
-
-      <!-- CERRAR SESIÓN -->
-      <div class="cerrar-sesion">
-        <ion-button expand="block" class="cerrar-sesion-btn">
-          <ion-icon name="log-out-outline" slot="start"></ion-icon>
-          CERRAR SESIÓN
-        </ion-button>
-      </div>
-
-    </div> <!-- fin perfil-card -->
-  </div> <!-- fin perfil-container -->
+  </div>
 </ion-content>

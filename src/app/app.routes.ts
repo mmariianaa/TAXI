@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './auth.guard'; // Importa el guard que creamos
 
 export const routes: Routes = [
   {
@@ -18,29 +19,41 @@ export const routes: Routes = [
     path: 'registrousuario',
     loadComponent: () => import('./registrousuario/registrousuario.page').then( m => m.RegistrousuarioPage)
   },
+
+  // === RUTAS PROTEGIDAS (Solo entran si están logueados) ===
+
   {
     path: 'perfiladministrador',
-    loadComponent: () => import('./perfiladministrador/perfiladministrador.page').then( m => m.PerfiladministradorPage)
+    loadComponent: () => import('./perfiladministrador/perfiladministrador.page').then( m => m.PerfiladministradorPage),
+    canActivate: [authGuard] // <--- AGREGADO
   },
   {
     path: 'perfil-chofer',
-    loadComponent: () => import('./perfil-chofer/perfil-chofer.page').then( m => m.PerfilChoferPage)
+    loadComponent: () => import('./perfil-chofer/perfil-chofer.page').then( m => m.PerfilChoferPage),
+    canActivate: [authGuard]
   },
   {
     path: 'viajenotificacion-chofer',
-    loadComponent: () => import('./viajenotificacion-chofer/viajenotificacion-chofer.page').then( m => m.ViajenotificacionChoferPage)
+    loadComponent: () => import('./viajenotificacion-chofer/viajenotificacion-chofer.page').then( m => m.ViajenotificacionChoferPage),
+    canActivate: [authGuard]
   },
   {
     path: 'historial-chofer',
-    loadComponent: () => import('./historial-chofer/historial-chofer.page').then( m => m.HistorialChoferPage)
+    loadComponent: () => import('./historial-chofer/historial-chofer.page').then( m => m.HistorialChoferPage),
+    canActivate: [authGuard]
   },
   {
     path: 'pantallausuario',
-    loadComponent: () => import('./pantallausuario/pantallausuario.page').then( m => m.PantallausuarioPage)
-  },  {
-    path: 'perfilusuario',
-    loadComponent: () => import('./perfilusuario/perfilusuario.page').then( m => m.PerfilusuarioPage)
+    loadComponent: () => import('./pantallausuario/pantallausuario.page').then( m => m.PantallausuarioPage),
+    canActivate: [authGuard]
   },
-
-
+  {
+    path: 'perfilusuario',
+    loadComponent: () => import('./perfilusuario/perfilusuario.page').then( m => m.PerfilusuarioPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'chofer', 
+    loadComponent: () => import('./chofer/chofer.page').then((m) => m.ChoferPage),
+  },
 ];

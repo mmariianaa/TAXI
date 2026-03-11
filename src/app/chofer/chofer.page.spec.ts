@@ -1,37 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonContent } from "@ionic/angular/standalone";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ChoferPage } from './chofer.page';
 
-@Component({
-  selector: 'app-chofer',
-  templateUrl: './chofer.page.html',
-  styleUrls: ['./chofer.page.scss'], // <-- IMPORTANTE: Cambia a .css si tu archivo termina en .css
-  standalone: true,
-  imports: [CommonModule, FormsModule, IonContent]
-})
-export class ChoferPage implements OnInit {
-  activeTab: string = 'perfil';
-  isActive: boolean = true;
-  driverInfo: any = {};
+describe('ChoferPage', () => {
+  let component: ChoferPage;
+  let fixture: ComponentFixture<ChoferPage>;
 
-  listaChoferes =[
-    { nombre: 'Juan Carlos Pérez', placas: 'XYZ-987-A', vehiculo: 'Nissan Versa' }
-  ];
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ChoferPage);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-  ngOnInit() {
-    this.driverInfo = this.listaChoferes[0];
-  }
-
-  setTab(tab: string) {
-    this.activeTab = tab;
-  }
-
-  toggleStatus() {
-    this.isActive = !this.isActive;
-  }
-
-  saveProfile() {
-    alert(`¡Datos de ${this.driverInfo.nombre} guardados!`);
-  }
-}
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

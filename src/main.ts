@@ -4,13 +4,21 @@ import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalo
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+// 1. Agregamos "withInterceptors" a la importación
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http'; 
+// 2. Importamos el interceptor que creamos (ajusta la ruta si es necesario)
+import { authInterceptor } from './app/auth.interceptor'; 
 
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
-    provideHttpClient(withFetch()),
+    
+    // 3. Modificamos el provideHttpClient para incluir el interceptor
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([authInterceptor]) 
+    ),
   ],
 });

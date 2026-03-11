@@ -87,13 +87,13 @@ import {
   setIonicClasses,
   setOverlayId,
   toastController
-} from "./chunk-AJIOBICY.js";
+} from "./chunk-KPFSA4UI.js";
 import {
   iosTransitionAnimation
-} from "./chunk-IZ5B4YAO.js";
+} from "./chunk-ZM27KGMO.js";
 import {
   mdTransitionAnimation
-} from "./chunk-JJQO6HHQ.js";
+} from "./chunk-RTTHXQHQ.js";
 import {
   LIFECYCLE_DID_LEAVE,
   LIFECYCLE_WILL_LEAVE,
@@ -104,18 +104,7 @@ import {
   setPageHidden,
   transition,
   waitForMount
-} from "./chunk-IAP5N457.js";
-import {
-  shouldUseCloseWatcher
-} from "./chunk-OMUDORZO.js";
-import {
-  GESTURE_CONTROLLER,
-  createGesture
-} from "./chunk-6U2AQA2C.js";
-import {
-  doc,
-  win
-} from "./chunk-QEE7QVES.js";
+} from "./chunk-SND3HBTK.js";
 import {
   Build,
   Fragment,
@@ -150,25 +139,36 @@ import {
   transitionEndAsync
 } from "./chunk-4554YRK6.js";
 import {
+  GESTURE_CONTROLLER,
+  createGesture
+} from "./chunk-6U2AQA2C.js";
+import {
+  shouldUseCloseWatcher
+} from "./chunk-OMUDORZO.js";
+import {
+  doc,
+  win
+} from "./chunk-QEE7QVES.js";
+import {
   config,
   printIonError,
   printIonWarning
 } from "./chunk-2H3NLAAY.js";
 import {
   NG_VALUE_ACCESSOR
-} from "./chunk-6XMUO3CC.js";
+} from "./chunk-4XCEG27B.js";
 import {
   ActivatedRoute,
   Router
-} from "./chunk-Q4AIDTZQ.js";
-import "./chunk-2XLHUTMW.js";
-import "./chunk-TNOVWDLH.js";
+} from "./chunk-V7DPN5VY.js";
+import "./chunk-J43DCUEE.js";
+import "./chunk-QL46KADR.js";
 import {
   CommonModule,
   Location,
   NgIf,
   NgTemplateOutlet
-} from "./chunk-5MEYINRM.js";
+} from "./chunk-QMHKCMBV.js";
 import "./chunk-R6U7IGMG.js";
 import {
   APP_INITIALIZER,
@@ -222,11 +222,14 @@ import {
   ɵɵrestoreView,
   ɵɵtemplate,
   ɵɵviewQuery
-} from "./chunk-32MPPJND.js";
+} from "./chunk-Q2UYNWHK.js";
+import "./chunk-UQGLAMHP.js";
 import {
-  __decorate,
   fromEvent
-} from "./chunk-YB2C65QT.js";
+} from "./chunk-576P5TAG.js";
+import {
+  __decorate
+} from "./chunk-2K3BB2X3.js";
 import {
   __async,
   __spreadProps,
@@ -863,7 +866,7 @@ var RouterOutlet = proxyCustomElement(class RouterOutlet2 extends H {
           this.swipeHandler.onStart();
         }
       };
-      this.gesture = (yield import("./swipe-back-JCLAQYCU.js")).createSwipeBackGesture(this.el, () => !this.gestureOrAnimationInProgress && !!this.swipeHandler && this.swipeHandler.canStart(), () => onStart(), (step) => {
+      this.gesture = (yield import("./swipe-back-KUKHIT7K.js")).createSwipeBackGesture(this.el, () => !this.gestureOrAnimationInProgress && !!this.swipeHandler && this.swipeHandler.canStart(), () => onStart(), (step) => {
         var _a;
         return (_a = this.ani) === null || _a === void 0 ? void 0 : _a.progressStep(step);
       }, (shouldComplete, step, dur) => {
@@ -5282,14 +5285,14 @@ var App = proxyCustomElement(class App2 extends H {
       rIC(() => __async(this, null, function* () {
         const isHybrid = isPlatform(window, "hybrid");
         if (!config.getBoolean("_testing")) {
-          import("./index7-JUJIRBTH.js").then((module) => module.startTapClick(config));
+          import("./index7-7DXTWXZW.js").then((module) => module.startTapClick(config));
         }
         if (config.getBoolean("statusTap", isHybrid)) {
           import("./status-tap-FPY3KQGF.js").then((module) => module.startStatusTap());
         }
         if (config.getBoolean("inputShims", needInputShims())) {
           const platform = isPlatform(window, "ios") ? "ios" : "android";
-          import("./input-shims-QLXUJ2VD.js").then((module) => module.startInputShims(config, platform));
+          import("./input-shims-NWRZXZI4.js").then((module) => module.startInputShims(config, platform));
         }
         const hardwareBackButtonModule = yield import("./hardware-back-button-SESDWJL2.js");
         const supportsHardwareBackButtonEvents = isHybrid || shouldUseCloseWatcher();
@@ -16990,7 +16993,7 @@ var Nav = proxyCustomElement(class Nav2 extends H {
     return __async(this, null, function* () {
       this.didLoad = true;
       this.rootChanged();
-      this.gesture = (yield import("./swipe-back-JCLAQYCU.js")).createSwipeBackGesture(this.el, this.canStart.bind(this), this.onStart.bind(this), this.onMove.bind(this), this.onEnd.bind(this));
+      this.gesture = (yield import("./swipe-back-KUKHIT7K.js")).createSwipeBackGesture(this.el, this.canStart.bind(this), this.onStart.bind(this), this.onMove.bind(this), this.onEnd.bind(this));
       this.swipeGestureChanged();
     });
   }
