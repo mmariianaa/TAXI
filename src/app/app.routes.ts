@@ -9,7 +9,8 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
-  },  {
+  },
+  {
     path: 'registrochofer',
     loadComponent: () => import('./registrochofer/registrochofer.page').then( m => m.RegistrochoferPage)
   },
@@ -37,5 +38,9 @@ export const routes: Routes = [
     path: 'chofer',
     loadComponent: () => import('./chofer/chofer.page').then( m => m.ChoferPage)
   },
+  {
+  path: 'pantallausuario',
+  loadComponent: () => import('./pantallausuario/pantallausuario.page').then( m => m.PantallausuarioPage)
+},
 
 ];
