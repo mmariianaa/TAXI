@@ -41,6 +41,18 @@ export const routes: Routes = [
     path: 'perfilusuario',
     loadComponent: () => import('./perfilusuario/perfilusuario.page').then( m => m.PerfilusuarioPage)
   },
+  {
+    path: 'configuracionusuario',
+    loadComponent: () => import('./configuracionusuario/configuracionusuario.page').then( m => m.ConfiguracionusuarioPage)
+  },
+  {
+    path: 'historialusuario',
+    loadComponent: () => import('./historialusuario/historialusuario.page').then( m => m.HistorialusuarioPage)
+  },
+  {
+    path: 'calificarusuario',
+    loadComponent: () => import('./calificarusuario/calificarusuario.page').then( m => m.CalificarusuarioPage)
+  },
 
 
 ];
