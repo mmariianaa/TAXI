@@ -1,6 +1,5 @@
-import { Component, inject } from '@angular/core'; // Añadimos inject
-import { Router, RouterLink } from '@angular/router'; // Añadimos Router
-import { AuthService } from './services/auth'; // Importamos tu servicio
+import { Component } from '@angular/core'; 
+import { RouterLink } from '@angular/router'; 
 import { 
   IonApp, IonRouterOutlet, IonMenu, IonHeader, IonToolbar, 
   IonTitle, IonContent, IonList, IonItem, IonIcon, IonLabel, IonMenuToggle 
@@ -17,18 +16,14 @@ import {
   templateUrl: 'app.component.html',
   standalone: true,
   imports: [
-    IonApp, IonRouterOutlet, IonMenu, IonHeader, IonToolbar, 
-    IonTitle, IonContent, IonList, IonItem, IonIcon, IonLabel, 
-    IonMenuToggle, RouterLink
+    IonApp, IonRouterOutlet,
   ],
 })
 export class AppComponent {
-  // Inyectamos los servicios necesarios
-  private authService = inject(AuthService);
-  private router = inject(Router);
 
   constructor() {
-    // Registramos todos los iconos
+    // Registramos los iconos para que se vean en el HTML, 
+    // pero no añadimos lógica de servicios.
     addIcons({
       personOutline,
       carOutline,
@@ -44,9 +39,6 @@ export class AppComponent {
     });
   }
 
-  // Esta función es la que conectamos con el (click) en el HTML
-  logout() {
-    this.authService.logout(); // Borra el token/sesión
-    this.router.navigate(['/home']); // Te manda al inicio
-  }
+  // Si quitas el logout() de aquí, recuerda quitar el (click)="logout()" 
+  // en el archivo app.component.html para que no te dé error.
 }

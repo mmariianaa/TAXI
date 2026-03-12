@@ -1,59 +1,94 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Panel Chofer</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-menu contentId="main-content" type="overlay">
+  <ion-header>
+    <ion-toolbar color="primary">
+      <ion-title>Menú Taxi</ion-title>
+    </ion-toolbar>
+  </ion-header>
 
-<ion-content>
-  <div class="app-container">
-    <main class="content">
-      
-      <div class="status-card">
-        <span class="status-label">Estado:</span>
-        <div class="toggle-container">
-          <label class="switch">
-            <input type="checkbox" [checked]="isActive" (change)="toggleStatus()">
-            <span class="slider"></span>
-          </label>
-          <span class="status-text" [class.active-text]="isActive" [class.inactive-text]="!isActive">
-            {{ isActive ? 'Activo' : 'Inactivo' }}
-          </span>
-        </div>
-      </div>
+  <ion-content>
+    <ion-list lines="none">
+      <ion-menu-toggle auto-hide="true">
+        <ion-item button routerLink="/perfil-chofer">
+          <ion-icon slot="start" name="person-outline"></ion-icon>
+          <ion-label>Mi Perfil Detallado</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
 
-      <div class="info-section">
-        <div class="info-text">
-          <h2>Info Actual:</h2>
-          <div class="info-group">
-            <label>Nombre del Chofer</label>
-            <p>{{ driverInfo.nombre }} {{ driverInfo.apellido }}</p>
-          </div>
-          <div class="info-group">
-            <label>Placas</label>
-            <p>{{ driverInfo.vehiculo?.placa }}</p>
-          </div>
-          <div class="info-group">
-            <label>Vehículo</label>
-            <p>{{ driverInfo.vehiculo?.marca }} {{ driverInfo.vehiculo?.modelo }}</p>
-          </div>
-        </div>
+      <ion-menu-toggle auto-hide="true">
+        <ion-item button routerLink="/viajenotificacion-chofer">
+          <ion-icon slot="start" name="car-outline"></ion-icon>
+          <ion-label>Historial de Viajes</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
+
+      <ion-menu-toggle auto-hide="true">
+        <ion-item button (click)="logout()" color="danger">
+          <ion-icon slot="start" name="log-out-outline"></ion-icon>
+          <ion-label>Cerrar Sesión</ion-label>
+        </ion-item>
+      </ion-menu-toggle>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<div class="ion-page" id="main-content">
+  <ion-header class="ion-no-border">
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>Panel Chofer</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <div class="app-container">
+      <main class="content">
         
-        <div class="photo-box">
-          <ion-icon name="person-circle-outline" style="font-size: 60px;"></ion-icon>
-          <span>Foto del<br>Chofer</span>
+        <div class="status-card">
+          <span class="status-label">Estado:</span>
+          <div class="toggle-container">
+            <label class="switch">
+              <input type="checkbox" [checked]="isActive" (change)="toggleStatus()">
+              <span class="slider"></span>
+            </label>
+            <span class="status-text" [class.active-text]="isActive" [class.inactive-text]="!isActive">
+              {{ isActive ? 'Activo' : 'Inactivo' }}
+            </span>
+          </div>
         </div>
-      </div>
 
-      <div class="spacer"></div>
+        <div class="info-section">
+          <div class="info-text">
+            <h2>Info Actual:</h2>
+            <div class="info-group">
+              <label>Nombre del Chofer</label>
+              <p>{{ driverInfo.nombre }} {{ driverInfo.apellido }}</p>
+            </div>
+            <div class="info-group">
+              <label>Placas</label>
+              <p>{{ driverInfo.vehiculo?.placa || 'Sin placa' }}</p>
+            </div>
+            <div class="info-group">
+              <label>Vehículo</label>
+              <p>{{ driverInfo.vehiculo?.marca }} {{ driverInfo.vehiculo?.modelo }}</p>
+            </div>
+          </div>
+          
+          <div class="photo-box">
+            <ion-icon name="person-circle-outline" style="font-size: 60px; color: #ccc;"></ion-icon>
+            <span>Foto del<br>Chofer</span>
+          </div>
+        </div>
 
-      <div class="action-buttons">
-        <button class="btn-primary" (click)="saveProfile()">
-          <ion-icon name="checkmark-outline"></ion-icon> Guardar
-        </button>
-      </div>
-    </main>
-  </div>
-</ion-content>
+        <div class="spacer"></div>
+
+        <div class="action-buttons">
+          <button class="btn-primary" (click)="saveProfile()">
+            <ion-icon name="checkmark-outline"></ion-icon> Guardar Cambios
+          </button>
+        </div>
+      </main>
+    </div>
+  </ion-content>
+</div>

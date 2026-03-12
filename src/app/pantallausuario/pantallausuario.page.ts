@@ -2,18 +2,21 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { HttpClient, HttpClientModule } from '@angular/common/http'; 
-import { Router } from '@angular/router'; // <--- NUEVO: Importamos el Router
+import { HttpClient} from '@angular/common/http'; 
+import { Router, RouterLink } from '@angular/router'; // Añadimos RouterLink para el menú
 import * as L from 'leaflet';
 import 'leaflet-routing-machine'; 
 import { Geolocation } from '@capacitor/geolocation';
+import { addIcons } from 'ionicons'; // Necesario para los iconos del menú
+import { personOutline, carOutline, logOutOutline } from 'ionicons/icons'; // Iconos del menú
 
 @Component({
   selector: 'app-pantallausuario',
   templateUrl: './pantallausuario.page.html',
   styleUrls: ['./pantallausuario.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, HttpClientModule]
+  // Añadimos HttpClientModule y RouterLink a los imports
+  imports: [IonicModule, CommonModule, FormsModule,RouterLink]
 })
 export class PantallausuarioPage implements OnInit {
   map!: L.Map;
@@ -29,16 +32,27 @@ export class PantallausuarioPage implements OnInit {
     { conductor: 'Mon', modelo: 'Hyundai Accent', precio: 14.00 }
   ];
 
-  // Agregamos 'router' al constructor
-  constructor(private http: HttpClient, private router: Router) {} // <--- MODIFICADO
+  constructor(private http: HttpClient, private router: Router) {
+    // Registramos los iconos que usa el menú que me diste
+    addIcons({ personOutline, carOutline, logOutOutline });
+  }
 
   ngOnInit() {}
 
-  ionViewDidEnter() {
-    this.obtenerUbicacionActual();
+  // Función de logout para el botón del menú
+  logout() {
+    console.log('Cerrando sesión...');
+    this.router.navigate(['/home']);
   }
 
-  // ir a pantalla de notificaciones del usuario cuanod la hagan
+  ionViewDidEnter() {
+    this.obtenerUbicacionActual();
+    // Reajusta el mapa por si el menú cambió el tamaño del contenedor
+    setTimeout(() => {
+      if (this.map) this.map.invalidateSize();
+    }, 300);
+  }
+
   irANotificaciones() {
     this.router.navigate(['/viajenotificacion']); 
   }
@@ -98,7 +112,7 @@ export class PantallausuarioPage implements OnInit {
   dibujarRuta(destino: L.LatLng) {
     if (this.routingControl) { this.map.removeControl(this.routingControl); }
 
-    this.routingControl = L.Routing.control({
+    this.routingControl = (L as any).Routing.control({
       waypoints: [this.miUbicacion!, destino],
       show: false,
       addWaypoints: false,

@@ -1,12 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router'; // Añadimos RouterLink
 import { AuthService } from '../services/auth'; 
 import { 
-  IonContent, IonIcon, IonSpinner, IonButton, 
-  IonToggle, IonButtons, IonHeader, IonTitle, 
-  IonToolbar, IonMenuButton, IonApp, IonItem,
-  IonList, IonLabel, IonRouterOutlet, IonMenu } from '@ionic/angular/standalone';
+  IonContent, IonIcon, IonButtons, IonHeader, IonTitle, 
+  IonToolbar, IonMenuButton, IonList, IonItem, IonLabel,
+  IonMenu, IonMenuToggle, // Importamos los componentes del menú
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
   menuOutline, notificationsOutline, personCircle, 
@@ -20,10 +20,15 @@ import {
   templateUrl: './chofer.page.html',
   styleUrls: ['./chofer.page.scss'],
   standalone: true,
-  imports: [IonRouterOutlet, IonLabel, IonList, IonItem, IonApp, 
-    IonToolbar, IonTitle, IonHeader, IonButtons, 
-    IonToggle, IonButton, IonSpinner, IonIcon, 
-    IonContent, IonMenuButton, FormsModule, IonMenu
+  imports: [
+    // Componentes del Menú y Estructura
+    IonMenu, IonMenuToggle, IonMenuButton,
+    // Componentes de la Página
+    IonLabel, IonItem, IonList, IonToolbar, IonTitle, 
+    IonHeader, IonButtons, IonIcon, IonContent, 
+    IonMenuButton, 
+    // Módulos extra
+    FormsModule, RouterLink
   ]
 })
 export class ChoferPage implements OnInit {
@@ -44,8 +49,7 @@ export class ChoferPage implements OnInit {
   };
 
   constructor() {
-    // Registramos los iconos que necesita tanto el HTML de esta página 
-    // como los que se verán cuando se abra el Menú Lateral
+    // Registramos todos los iconos necesarios
     addIcons({ 
       menuOutline, 
       notificationsOutline, 
@@ -62,37 +66,32 @@ export class ChoferPage implements OnInit {
   }
 
   ngOnInit() {
-    // 1. Intentamos obtener los datos de la sesión (Token/User)
+    // 1. Intentamos obtener los datos de la sesión
     const data = this.authService.getUserData();
     
     if (data) {
-      // 2. Si existen, los pintamos en el HTML
+      // 2. Si existen, llenamos la info del chofer
       this.driverInfo = data;
-      console.log('Sesión activa para:', this.driverInfo.nombre);
+      console.log('Panel cargado para:', this.driverInfo.nombre);
     } else {
-      // 3. Si no hay datos, seguridad ante todo: al Login
+      // 3. Si no hay datos, al Login
       this.router.navigate(['/home']);
     }
   }
 
-  // Control del Switch de disponibilidad
+  // Control del Switch de disponibilidad (Online / Offline)
   toggleStatus() {
-    this.isActive = !this.isActive;
-    console.log('El chofer ahora está:', this.isActive ? 'Activo' : 'Inactivo');
+    // Aquí podrías llamar a un servicio para avisar al backend
+    // que el taxi está disponible en el mapa
+    console.log('Disponibilidad:', this.isActive ? 'ACTIVO' : 'INACTIVO');
   }
 
-  // Acción del botón Guardar
+  // Acción del botón Guardar Cambios
   saveProfile() {
-    // Aquí podrías enviar una petición al backend para actualizar el estado
-    alert(`Estado de ${this.driverInfo.nombre} actualizado correctamente.`);
+    alert(`Estado de ${this.driverInfo.nombre} guardado en el servidor.`);
   }
 
-  // Esta función es por si quieres un botón que mande al perfil
-  // (Aunque ya lo tienes en las tres rayitas del menú lateral)
-  irAPerfil() {
-    this.router.navigate(['/perfil-chofer']);
-  }
-
+  // Función de cierre de sesión
   logout() {
     this.authService.logout();
     this.router.navigate(['/home']);
