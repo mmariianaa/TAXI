@@ -6,11 +6,7 @@ import {
 } from "./chunk-2H3NLAAY.js";
 import {
   __async
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-BT47KCBG.js
-} from "./chunk-SCNEKAWF.js";
-========
 } from "./chunk-XCTEB7MY.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-MMB4JZV3.js
 
 // node_modules/@ionic/core/components/index8.js
 var ION_CONTENT_TAG_NAME = "ION-CONTENT";
@@ -99,8 +95,4 @@ export {
    * (C) Ionic http://ionicframework.com - MIT License
    *)
 */
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-BT47KCBG.js
-//# sourceMappingURL=chunk-BT47KCBG.js.map
-========
 //# sourceMappingURL=chunk-MMB4JZV3.js.map
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-MMB4JZV3.js

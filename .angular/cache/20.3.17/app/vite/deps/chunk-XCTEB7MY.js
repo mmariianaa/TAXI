@@ -41,11 +41,7 @@ var __objRest = (source, exclude) => {
     }
   return target;
 };
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-SCNEKAWF.js
-var __commonJS = (cb, mod) => function __require() {
-========
 var __commonJS = (cb, mod) => function __require2() {
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-XCTEB7MY.js
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 var __async = (__this, __arguments, generator) => {

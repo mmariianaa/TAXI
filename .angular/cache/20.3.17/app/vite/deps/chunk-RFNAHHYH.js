@@ -1,23 +1,15 @@
 import {
-  MENU_BACK_BUTTON_PRIORITY,
-  OVERLAY_BACK_BUTTON_PRIORITY,
-  shouldUseCloseWatcher
-} from "./chunk-X3GWJTBI.js";
-import {
   LIFECYCLE_DID_ENTER,
   LIFECYCLE_DID_LEAVE,
   LIFECYCLE_WILL_ENTER,
   LIFECYCLE_WILL_LEAVE,
   LIFECYCLE_WILL_UNLOAD,
   createAnimation
-} from "./chunk-7PRYFLPE.js";
+} from "./chunk-SND3HBTK.js";
 import {
   getMode,
   setMode
-} from "./chunk-AZBLTKCP.js";
-import {
-  doc
-} from "./chunk-QEE7QVES.js";
+} from "./chunk-77UNVSHX.js";
 import {
   addEventListener,
   componentOnReady,
@@ -25,6 +17,17 @@ import {
   getElementRoot,
   removeEventListener
 } from "./chunk-4554YRK6.js";
+import {
+  BACKDROP_NO_SCROLL
+} from "./chunk-6U2AQA2C.js";
+import {
+  MENU_BACK_BUTTON_PRIORITY,
+  OVERLAY_BACK_BUTTON_PRIORITY,
+  shouldUseCloseWatcher
+} from "./chunk-OMUDORZO.js";
+import {
+  doc
+} from "./chunk-QEE7QVES.js";
 import {
   config,
   configFromSession,
@@ -34,9 +37,6 @@ import {
   saveConfig
 } from "./chunk-2H3NLAAY.js";
 import {
-  BACKDROP_NO_SCROLL
-} from "./chunk-6U2AQA2C.js";
-import {
   ActivatedRoute,
   ChildrenOutletContexts,
   NavigationStart,
@@ -44,14 +44,14 @@ import {
   Router,
   RouterLink,
   UrlSerializer
-} from "./chunk-V6SCU4O6.js";
+} from "./chunk-V7DPN5VY.js";
 import {
   NgControl
-} from "./chunk-IZVFRM5F.js";
+} from "./chunk-4XCEG27B.js";
 import {
   Location,
   LocationStrategy
-} from "./chunk-IQ5AXENQ.js";
+} from "./chunk-QMHKCMBV.js";
 import {
   ApplicationRef,
   Attribute,
@@ -90,7 +90,10 @@ import {
   ɵɵloadQuery,
   ɵɵqueryRefresh,
   ɵɵviewQuery
-} from "./chunk-52YVTCBL.js";
+} from "./chunk-Q2UYNWHK.js";
+import {
+  fromEvent
+} from "./chunk-576P5TAG.js";
 import {
   BehaviorSubject,
   Subject,
@@ -98,16 +101,15 @@ import {
   combineLatest,
   distinctUntilChanged,
   filter,
-  fromEvent,
   of,
   switchMap
-} from "./chunk-YB2C65QT.js";
+} from "./chunk-2K3BB2X3.js";
 import {
   __async,
   __objRest,
   __spreadProps,
   __spreadValues
-} from "./chunk-SCNEKAWF.js";
+} from "./chunk-XCTEB7MY.js";
 
 // node_modules/@ionic/core/components/cubic-bezier.js
 var getTimeGivenProgression = (p0, p1, p2, p3, progression) => {
@@ -4089,4 +4091,4 @@ export {
    * (C) Ionic http://ionicframework.com - MIT License
    *)
 */
-//# sourceMappingURL=chunk-CHNGC4JH.js.map
+//# sourceMappingURL=chunk-RFNAHHYH.js.map

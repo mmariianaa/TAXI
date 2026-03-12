@@ -8,14 +8,7 @@ import {
   createGesture
 } from "./chunk-6U2AQA2C.js";
 import "./chunk-2H3NLAAY.js";
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/swipe-back-JH4JF7B2.js
-import {
-  createGesture
-} from "./chunk-6U2AQA2C.js";
-import "./chunk-SCNEKAWF.js";
-========
 import "./chunk-XCTEB7MY.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/swipe-back-KUKHIT7K.js
 
 // node_modules/@ionic/core/components/swipe-back.js
 var createSwipeBackGesture = (el, canStartHandler, onStartHandler, onMoveHandler, onEndHandler) => {
@@ -85,8 +78,4 @@ export {
    * (C) Ionic http://ionicframework.com - MIT License
    *)
 */
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/swipe-back-JH4JF7B2.js
-//# sourceMappingURL=swipe-back-JH4JF7B2.js.map
-========
 //# sourceMappingURL=swipe-back-KUKHIT7K.js.map
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/swipe-back-KUKHIT7K.js

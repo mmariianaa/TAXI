@@ -1,19 +1,11 @@
 import {
-  doc
-} from "./chunk-QEE7QVES.js";
-import {
   pointerCoord
 } from "./chunk-4554YRK6.js";
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/index7-YFQDCVQ2.js
-import "./chunk-2H3NLAAY.js";
-import "./chunk-SCNEKAWF.js";
-========
 import {
   doc
 } from "./chunk-QEE7QVES.js";
 import "./chunk-2H3NLAAY.js";
 import "./chunk-XCTEB7MY.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/index7-7DXTWXZW.js
 
 // node_modules/@ionic/core/components/index7.js
 var startTapClick = (config) => {
@@ -157,8 +149,4 @@ export {
    * (C) Ionic http://ionicframework.com - MIT License
    *)
 */
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/index7-YFQDCVQ2.js
-//# sourceMappingURL=index7-YFQDCVQ2.js.map
-========
 //# sourceMappingURL=index7-7DXTWXZW.js.map
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/index7-7DXTWXZW.js

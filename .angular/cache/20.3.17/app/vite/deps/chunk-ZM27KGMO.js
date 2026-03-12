@@ -1,11 +1,7 @@
 import {
   createAnimation,
   getIonPageElement
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-UZRG5AAX.js
-} from "./chunk-7PRYFLPE.js";
-========
 } from "./chunk-SND3HBTK.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-ZM27KGMO.js
 
 // node_modules/@ionic/core/components/ios.transition.js
 var DURATION = 540;
@@ -472,8 +468,4 @@ export {
    * (C) Ionic http://ionicframework.com - MIT License
    *)
 */
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-UZRG5AAX.js
-//# sourceMappingURL=chunk-UZRG5AAX.js.map
-========
 //# sourceMappingURL=chunk-ZM27KGMO.js.map
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-ZM27KGMO.js

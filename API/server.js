@@ -73,74 +73,142 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// ============================================
-// REGISTRO DEL CHOFER
-// ============================================
+// registro del chofer 
 app.post('/api/registrochofer', async (req, res) => {
-    try {
-        const { 
-            nombre, apellido, edad, tipo_documento, numero_documento,
-            correo, telefono, contrasena,
-            marca_vehiculo, modelo_vehiculo, color_vehiculo, placa, capacidad,
-            licencia, experiencia
-        } = req.body;
+    const { 
+        nombre, apellido, edad, tipo_documento, numero_documento,
+        correo, telefono, contrasena,
+        marca, modelo, capacidad, color, placa, // Datos del Taxi
+        licencia, experiencia // Datos del Chofer
+    } = req.body;
 
+    try {
+        // 1. Encriptar contraseña
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10);
 
-        // Iniciar transacción manual o inserts en cadena
-        // 1. Insertar Taxi
-        const queryTaxi = `INSERT INTO Taxi (marca, modelo, color, placa, capacidad) VALUES (?, ?, ?, ?, ?)`;
-        conexion.query(queryTaxi, [marca_vehiculo, modelo_vehiculo, color_vehiculo, placa, capacidad], (err, taxiRes) => {
-            if (err) return res.status(500).json({ error: 'Error al registrar vehículo' });
+        // Iniciamos la cadena de inserciones
+        // PASO 1: Insertar el Taxi
+        const queryTaxi = `INSERT INTO Taxi (marca, modelo, capacidad, color, placa) VALUES (?, ?, ?, ?, ?)`;
+        
+        conexion.query(queryTaxi, [marca, modelo, capacidad, color, placa], (err, taxiRes) => {
+            if (err) {
+                console.error("Error en Taxi:", err);
+                return res.status(500).json({ error: 'Error al registrar el vehículo', detalle: err.sqlMessage });
+            }
+            
+            const idTaxiGenerado = taxiRes.insertId;
 
-            // 2. Insertar Chofer
-            const queryChofer = `INSERT INTO Chofer (licencia, experiencia, id_taxi) VALUES (?, ?, ?)`;
-            conexion.query(queryChofer, [licencia, experiencia, taxiRes.insertId], (err, choferRes) => {
-                if (err) return res.status(500).json({ error: 'Error al registrar chofer' });
+            // PASO 2: Insertar el Chofer vinculado al Taxi
+            const queryChofer = `INSERT INTO Chofer (licencia, experiencia, id_taxi, estado) VALUES (?, ?, ?, 'parar')`;
+            
+            conexion.query(queryChofer, [licencia, experiencia || 0, idTaxiGenerado], (err, choferRes) => {
+                if (err) {
+                    console.error("Error en Chofer:", err);
+                    return res.status(500).json({ error: 'Error al registrar la licencia', detalle: err.sqlMessage });
+                }
 
-                // 3. Insertar Usuario
-                const queryUser = `INSERT INTO Usuario 
-                    (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena, id_chofer) 
+                const idChoferGenerado = choferRes.insertId;
+
+                // PASO 3: Insertar el Usuario vinculado al Chofer
+                const queryUser = `
+                    INSERT INTO Usuario 
+                    (nombre, apellido, edad, correo, telefono, contrasena, tipo_documento, numero_documento, id_chofer) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
                 
                 conexion.query(queryUser, [
-                    nombre, apellido, edad, tipo_documento, numero_documento, 
-                    correo, telefono, contrasenaEncriptada, choferRes.insertId
+                    nombre, apellido, edad, correo, telefono, 
+                    contrasenaEncriptada, tipo_documento, numero_documento, idChoferGenerado
                 ], (err, result) => {
-                    if (err) return res.status(500).json({ error: 'Error al crear cuenta de usuario' });
-                    res.status(201).json({ message: 'Chofer registrado exitosamente' });
+                    if (err) {
+                        console.error("Error en Usuario:", err);
+                        return res.status(500).json({ error: 'Error al crear la cuenta de usuario', detalle: err.sqlMessage });
+                    }
+                    
+                    res.status(201).json({ 
+                        message: '¡Chofer y Vehículo registrados exitosamente!',
+                        id_usuario: result.insertId 
+                    });
                 });
             });
         });
+
     } catch (error) {
-        res.status(500).json({ error: 'Error interno' });
+        console.error("Error general:", error);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
 
-// ============================================
-// REGISTRO DE USUARIO (CLIENTE)
-// ============================================
+// El resto de tus rutas (Login, etc) se mantienen igual...
+
+app.listen(port, () => {
+    console.log(`API corriendo en http://localhost:${port}`);
+});
+
+
+//REGISTRO DE USUARIOS (SIN CHOFER)
 app.post('/api/registrousuario', async (req, res) => {
     try {
-        const { nombre, apellido, edad, correo, telefono, contrasena } = req.body;
+        const { 
+            nombre, 
+            apellido, 
+            edad, 
+            correo, 
+            telefono, 
+            contrasena,
+            tipo_documento, // Es mejor recibirlo del front
+            numero_documento // Es mejor recibirlo del front
+        } = req.body;
+
+        // 1. Validaciones básicas antes de tocar la DB
+        if (!correo || !contrasena || !nombre) {
+            return res.status(400).json({ error: 'Faltan campos obligatorios' });
+        }
+
+        // 2. Encriptar la contraseña
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10);
 
+        // 3. Preparar la consulta
+        // Nota: Asegúrate de que el orden de los campos coincida con los valores
         const query = `INSERT INTO Usuario 
-            (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena) 
+            (nombre, apellido, edad, correo, telefono, contrasena, tipo_documento, numero_documento) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
         
+        // 4. Ejecutar inserción
         conexion.query(query, [
-            nombre, apellido, edad, 'CC', 'DOC_' + Date.now(), 
-            correo, telefono, contrasenaEncriptada
+            nombre, 
+            apellido, 
+            edad, 
+            correo, 
+            telefono, 
+            contrasenaEncriptada,
+            tipo_documento || 'CC', // Valor por defecto si no viene
+            numero_documento || `USR${Date.now()}` // Genera uno único si no viene
         ], (err, result) => {
-            if (err) return res.status(500).json({ error: 'Error al registrar usuario' });
-            res.status(201).json({ message: 'Usuario registrado con éxito' });
+            if (err) {
+                console.error("ERROR EN REGISTRO USUARIO:", err);
+                
+                // Si el error es por correo duplicado (Error MySQL 1062)
+                if (err.errno === 1062) {
+                    return res.status(400).json({ error: 'El correo o documento ya está registrado' });
+                }
+                
+                return res.status(500).json({ 
+                    error: 'Error al registrar usuario en la base de datos',
+                    detalle: err.sqlMessage 
+                });
+            }
+            
+            res.status(201).json({ 
+                message: 'Usuario registrado con éxito',
+                id: result.insertId 
+            });
         });
+
     } catch (error) {
-        res.status(500).json({ error: 'Error en el servidor' });
+        console.error("Error en el catch:", error);
+        res.status(500).json({ error: 'Error interno en el servidor' });
     }
 });
-
 // ============================================
 // CONSULTAS
 // ============================================

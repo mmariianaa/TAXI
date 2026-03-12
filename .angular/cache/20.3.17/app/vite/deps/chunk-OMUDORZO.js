@@ -7,11 +7,7 @@ import {
 } from "./chunk-2H3NLAAY.js";
 import {
   __async
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-X3GWJTBI.js
-} from "./chunk-SCNEKAWF.js";
-========
 } from "./chunk-XCTEB7MY.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-OMUDORZO.js
 
 // node_modules/@ionic/core/components/hardware-back-button.js
 var shouldUseCloseWatcher = () => config.get("experimentalCloseWatcher", false) && win !== void 0 && "CloseWatcher" in win;
@@ -100,8 +96,4 @@ export {
    * (C) Ionic http://ionicframework.com - MIT License
    *)
 */
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-X3GWJTBI.js
-//# sourceMappingURL=chunk-X3GWJTBI.js.map
-========
 //# sourceMappingURL=chunk-OMUDORZO.js.map
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-OMUDORZO.js

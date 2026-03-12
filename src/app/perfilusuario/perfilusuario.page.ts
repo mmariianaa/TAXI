@@ -2,28 +2,29 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-  IonContent, IonHeader, IonTitle, IonToolbar,
-  IonList, IonItem, IonLabel, IonInput, IonButton,
-  IonAvatar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonIcon, IonButtons, IonBackButton, IonSelectOption } from '@ionic/angular/standalone';
+ IonToolbar,
+  IonList, IonItem, IonLabel, IonInput, IonButton, IonButtons, IonBackButton, IonContent, IonIcon, IonHeader, IonTitle } from '@ionic/angular/standalone';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
-
+import { addIcons } from 'ionicons';
+import { pencilSharp } from 'ionicons/icons';
 
 @Component({
   selector: 'app-perfilusuario',
   templateUrl: './perfilusuario.page.html',
   styleUrls: ['./perfilusuario.page.scss'],
   standalone: true,
-  imports: [IonBackButton, IonButtons, IonIcon, 
-    IonCardTitle, IonCardHeader,
-    IonContent, IonHeader, IonTitle, IonToolbar,
+  imports: [IonTitle, IonHeader, IonIcon, IonContent, IonBackButton, IonButtons,IonToolbar,
     IonList, IonItem, IonLabel, IonInput, IonButton,
-    IonAvatar, IonCard, IonCardContent,
-    CommonModule, FormsModule, IonSelectOption
+    CommonModule, FormsModule,
   ]
 })
 export class PerfilusuarioPage implements OnInit {
-
+  constuctor() {
+    addIcons({
+      pencilSharp
+    });
+  }
   editingField: string = '';
 
   user = {

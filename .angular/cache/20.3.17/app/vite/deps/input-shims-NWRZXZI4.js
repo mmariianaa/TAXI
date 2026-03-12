@@ -6,15 +6,7 @@ import {
   findClosestIonContent,
   getScrollElement,
   scrollByPoint
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/input-shims-ANUY6J6A.js
-} from "./chunk-BT47KCBG.js";
-import {
-  doc,
-  win
-} from "./chunk-QEE7QVES.js";
-========
 } from "./chunk-MMB4JZV3.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/input-shims-NWRZXZI4.js
 import {
   addEventListener,
   componentOnReady,
@@ -22,10 +14,6 @@ import {
   removeEventListener
 } from "./chunk-4554YRK6.js";
 import {
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/input-shims-ANUY6J6A.js
-  __async
-} from "./chunk-SCNEKAWF.js";
-========
   doc,
   win
 } from "./chunk-QEE7QVES.js";
@@ -33,7 +21,6 @@ import "./chunk-2H3NLAAY.js";
 import {
   __async
 } from "./chunk-XCTEB7MY.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/input-shims-NWRZXZI4.js
 
 // node_modules/@ionic/core/components/input-shims.js
 var cloneMap = /* @__PURE__ */ new WeakMap();
@@ -386,8 +373,4 @@ export {
    * (C) Ionic http://ionicframework.com - MIT License
    *)
 */
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/input-shims-ANUY6J6A.js
-//# sourceMappingURL=input-shims-ANUY6J6A.js.map
-========
 //# sourceMappingURL=input-shims-NWRZXZI4.js.map
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/input-shims-NWRZXZI4.js

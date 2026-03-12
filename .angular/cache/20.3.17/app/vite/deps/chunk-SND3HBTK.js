@@ -1,14 +1,7 @@
 import {
   Build,
   writeTask
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-7PRYFLPE.js
-} from "./chunk-AZBLTKCP.js";
-import {
-  win
-} from "./chunk-QEE7QVES.js";
-========
 } from "./chunk-77UNVSHX.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-SND3HBTK.js
 import {
   raf
 } from "./chunk-4554YRK6.js";
@@ -22,11 +15,7 @@ import {
 } from "./chunk-2H3NLAAY.js";
 import {
   __async
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-7PRYFLPE.js
-} from "./chunk-SCNEKAWF.js";
-========
 } from "./chunk-XCTEB7MY.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-SND3HBTK.js
 
 // node_modules/@ionic/core/components/animation.js
 var animationPrefix;
@@ -783,13 +772,8 @@ var createFocusController = () => {
   };
 };
 var LAST_FOCUS = "ion-last-focus";
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-7PRYFLPE.js
-var iosTransitionAnimation = () => import("./ios.transition-44N3XKI3.js");
-var mdTransitionAnimation = () => import("./md.transition-HECQJW5K.js");
-========
 var iosTransitionAnimation = () => import("./ios.transition-ZEZFMTRU.js");
 var mdTransitionAnimation = () => import("./md.transition-GHATFZ4D.js");
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-SND3HBTK.js
 var focusController = createFocusController();
 var transition = (opts) => {
   return new Promise((resolve, reject) => {
@@ -1019,8 +1003,4 @@ export {
    * (C) Ionic http://ionicframework.com - MIT License
    *)
 */
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-7PRYFLPE.js
-//# sourceMappingURL=chunk-7PRYFLPE.js.map
-========
 //# sourceMappingURL=chunk-SND3HBTK.js.map
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-SND3HBTK.js

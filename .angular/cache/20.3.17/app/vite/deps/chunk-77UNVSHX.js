@@ -2,11 +2,7 @@ import {
   __async,
   __glob,
   __spreadValues
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-AZBLTKCP.js
-} from "./chunk-SCNEKAWF.js";
-========
 } from "./chunk-XCTEB7MY.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-77UNVSHX.js
 
 // node_modules/@stencil/core/internal/app-data/index.js
 var BUILD = {
@@ -3987,8 +3983,4 @@ export {
    * https://github.com/angular/angular/blob/master/packages/compiler/src/shadow_css.ts
    *)
 */
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-AZBLTKCP.js
-//# sourceMappingURL=chunk-AZBLTKCP.js.map
-========
 //# sourceMappingURL=chunk-77UNVSHX.js.map
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-77UNVSHX.js

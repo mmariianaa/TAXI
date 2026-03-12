@@ -1,11 +1,7 @@
 import {
   createAnimation,
   getIonPageElement
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-DLQBFW3D.js
-} from "./chunk-7PRYFLPE.js";
-========
 } from "./chunk-SND3HBTK.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-RTTHXQHQ.js
 
 // node_modules/@ionic/core/components/md.transition.js
 var mdTransitionAnimation = (_, opts) => {
@@ -52,8 +48,4 @@ export {
    * (C) Ionic http://ionicframework.com - MIT License
    *)
 */
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-DLQBFW3D.js
-//# sourceMappingURL=chunk-DLQBFW3D.js.map
-========
 //# sourceMappingURL=chunk-RTTHXQHQ.js.map
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-RTTHXQHQ.js

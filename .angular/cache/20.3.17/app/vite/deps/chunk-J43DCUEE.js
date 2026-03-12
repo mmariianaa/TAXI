@@ -1,21 +1,13 @@
 import {
   withHttpTransferCache
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-RU23R7VM.js
-} from "./chunk-BFKS6OPA.js";
-========
 } from "./chunk-QL46KADR.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-J43DCUEE.js
 import {
   CommonModule,
   DomAdapter,
   PLATFORM_BROWSER_ID,
   getDOM,
   setRootDomAdapter
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-RU23R7VM.js
-} from "./chunk-IQ5AXENQ.js";
-========
 } from "./chunk-QMHKCMBV.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-J43DCUEE.js
 import {
   XhrFactory,
   parseCookieValue
@@ -81,17 +73,10 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-RU23R7VM.js
-} from "./chunk-52YVTCBL.js";
-import {
-  __spreadValues
-} from "./chunk-SCNEKAWF.js";
-========
 } from "./chunk-Q2UYNWHK.js";
 import {
   __spreadValues
 } from "./chunk-XCTEB7MY.js";
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-J43DCUEE.js
 
 // node_modules/@angular/platform-browser/fesm2022/dom_renderer.mjs
 var EventManagerPlugin = class {
@@ -2048,8 +2033,4 @@ export {
    * License: MIT
    *)
 */
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-RU23R7VM.js
-//# sourceMappingURL=chunk-RU23R7VM.js.map
-========
 //# sourceMappingURL=chunk-J43DCUEE.js.map
->>>>>>>> main:.angular/cache/20.3.17/app/vite/deps/chunk-J43DCUEE.js
