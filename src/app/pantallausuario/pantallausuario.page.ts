@@ -2,65 +2,122 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { HttpClient, HttpClientModule } from '@angular/common/http'; 
+import { Router } from '@angular/router'; // <--- NUEVO: Importamos el Router
 import * as L from 'leaflet';
-import { addIcons } from 'ionicons';
-import { menuOutline, locationOutline, flagOutline, diceOutline, carSport } from 'ionicons/icons';
-
-// CONFIGURACIÓN GLOBAL DEL ICONO
-const iconDefault = L.icon({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
-  shadowSize: [41, 41]
-});
-L.Marker.prototype.options.icon = iconDefault;
+import 'leaflet-routing-machine'; 
+import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
-  selector: 'app-perfilusuario',
+  selector: 'app-pantallausuario',
   templateUrl: './pantallausuario.page.html',
-  styleUrls: ['./pantallausuario.page.scss'], 
+  styleUrls: ['./pantallausuario.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, HttpClientModule]
 })
-export class PantallausuarioPage implements OnInit { // <--- ESTE NOMBRE ES EL QUE IMPORTA
+export class PantallausuarioPage implements OnInit {
   map!: L.Map;
-  origen: string = '';
+  routingControl: any;
+  origen: string = 'Mi ubicación';
   destino: string = '';
+  miUbicacion: L.LatLng | null = null;
+  mostrarTaxis: boolean = false;
 
   listaTaxis = [
     { conductor: 'Maty', modelo: 'Toyota Prius', precio: 15.00 },
     { conductor: 'Vale', modelo: 'Ford Focus', precio: 12.50 },
-    { conductor: 'Mong', modelo: 'Hyundai Accent', precio: 14.00 }
+    { conductor: 'Mon', modelo: 'Hyundai Accent', precio: 14.00 }
   ];
 
-  constructor() {
-    addIcons({ menuOutline, locationOutline, flagOutline, diceOutline, carSport });
-  }
+  // Agregamos 'router' al constructor
+  constructor(private http: HttpClient, private router: Router) {} // <--- MODIFICADO
 
   ngOnInit() {}
 
   ionViewDidEnter() {
-    this.initMap();
+    this.obtenerUbicacionActual();
+  }
+
+  // ir a pantalla de notificaciones del usuario cuanod la hagan
+  irANotificaciones() {
+    this.router.navigate(['/viajenotificacion']); 
+  }
+
+  async obtenerUbicacionActual() {
+    try {
+      const coordinates = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 10000 
+      });
+
+      this.miUbicacion = L.latLng(coordinates.coords.latitude, coordinates.coords.longitude);
+      this.initMap();
+
+    } catch (error) {
+      console.warn('Usando CDMX por defecto', error);
+      this.miUbicacion = L.latLng(19.4326, -99.1332); 
+      this.initMap();
+    }
   }
 
   initMap() {
-    if (this.map) {
-      this.map.remove();
-    }
-    this.map = L.map('map').setView([19.4326, -99.1332], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
-    L.marker([19.4326, -99.1332]).addTo(this.map).bindPopup('Tu ubicación').openPopup();
+    if (!this.miUbicacion) return;
+    if (this.map) { this.map.remove(); }
+
+    this.map = L.map('map').setView([this.miUbicacion.lat, this.miUbicacion.lng], 15);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(this.map);
+    
+    L.marker([this.miUbicacion.lat, this.miUbicacion.lng])
+      .addTo(this.map)
+      .bindPopup('Estás aquí')
+      .openPopup();
+      
+    this.map.invalidateSize();
+  }
+
+  buscarDestino() {
+    if (!this.destino || !this.miUbicacion) return;
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(this.destino)}`;
+
+    this.http.get<any[]>(url).subscribe(data => {
+      if (data.length > 0) {
+        const latDestino = parseFloat(data[0].lat);
+        const lonDestino = parseFloat(data[0].lon);
+        const coordsDestino = L.latLng(latDestino, lonDestino);
+        this.dibujarRuta(coordsDestino);
+        this.mostrarTaxis = true; 
+      } else {
+        alert('No se encontró la dirección.');
+      }
+    });
+  }
+
+  dibujarRuta(destino: L.LatLng) {
+    if (this.routingControl) { this.map.removeControl(this.routingControl); }
+
+    this.routingControl = L.Routing.control({
+      waypoints: [this.miUbicacion!, destino],
+      show: false,
+      addWaypoints: false,
+      routeWhileDragging: false,
+      fitSelectedRoutes: true,
+      lineOptions: {
+        styles: [{ color: '#3880ff', weight: 6 }],
+        extendToWaypoints: true,
+        missingRouteTolerance: 0
+      }
+    }).addTo(this.map);
   }
 
   seleccionarTaxi(taxi: any) {
-    console.log('Elegiste a:', taxi.conductor);
+    alert('Has seleccionado a ' + taxi.conductor);
   }
 
   sugerirRuta() {
-    alert('Calculando ruta rápida...');
+    this.destino = "Palacio de Bellas Artes, CDMX"; 
+    this.buscarDestino();
   }
 }

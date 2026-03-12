@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PerfilusuarioPage } from './pantallausuario.page'; // <--- CAMBIADO EL NOMBRE AQUÍ
+import { PantallausuarioPage } from './pantallausuario.page'; // <--- CAMBIADO EL NOMBRE AQUÍ
 
-describe('PerfilusuarioPage', () => { // <--- CAMBIADO EL NOMBRE AQUÍ
-  let component: PerfilusuarioPage;
-  let fixture: ComponentFixture<PerfilusuarioPage>;
+describe('PantallausuarioPage', () => { // <--- CAMBIADO EL NOMBRE AQUÍ
+  let component: PantallausuarioPage;
+  let fixture: ComponentFixture<PantallausuarioPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PerfilusuarioPage],
+      imports: [PantallausuarioPage],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PerfilusuarioPage);
+    fixture = TestBed.createComponent(PantallausuarioPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,70 +1,66 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/auth'; // Asegúrate de que la ruta sea correcta
 import { 
   IonContent, IonIcon, IonButton, IonAvatar, 
   IonItem, IonLabel, IonList, IonListHeader, 
-  IonText 
-} from "@ionic/angular/standalone";
-import { CommonModule } from '@angular/common';
+  IonText, IonSpinner } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-perfil-chofer',
   templateUrl: './perfil-chofer.page.html',
   styleUrls: ['./perfil-chofer.page.scss'],
   standalone: true,
-  imports: [
-    IonButton, IonIcon, IonContent, IonAvatar, CommonModule
+  imports: [IonSpinner, 
+    CommonModule,
+    IonButton, 
+    IonIcon, 
+    IonContent, 
+    IonAvatar
+    // Si usas IonItem o IonLabel en el HTML, agrégalos aquí también
   ],
 })
 export class PerfilChoferPage implements OnInit {
   
-  /* ESTOS DATOS SON DE PRUEBA (ESTÁTICOS). 
-     Cuando conectes la API, este objeto se iniciará vacío y se llenará 
-     con la respuesta de tu base de datos (MySQL/MongoDB).
-  */
-  choferInfo: any = {
-    personal: {
-      nombre: 'Juan',
-      apellido: 'Pérez García',
-      correo: 'juan.perez@email.com',
-      telefono: '3001234567',
-      tipoDoc: 'CC',
-      numDoc: '123456789',
-      viajes: 1234,
-      calificacion: 4.8
-    },
-    vehiculo: {
-      marca: 'TSURU',
-      modelo: '2018',
-      color: 'Gris',
-      placa: 'ABC-123',
-      licencia: '12345678',
-      experiencia: '5 años'
-    },
-    documentos: [
-      { nombre: 'Licencia de conducción', estado: '✅ Vigente', alerta: false },
-      { nombre: 'SOAT vigente', estado: '✅ Vigente', alerta: false },
-      { nombre: 'Revisión técnico-mecánica', estado: '⚠ Vence en 15 días', alerta: true }
-    ]
-  };
+  // Inyecciones de servicios (Forma moderna de Angular)
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-  // Usamos public para evitar errores de acceso en el HTML
-  constructor(public router: Router) { }
+  /* Inicializamos choferInfo como null. 
+     Se llenará automáticamente al entrar a la página con los datos del Login.
+  */
+  choferInfo: any = null;
 
   ngOnInit() {
-    /* AQUÍ ES DONDE LLAMARÁS A TU SERVICIO:
-       this.tuServicio.getPerfil().subscribe(res => {
-          this.choferInfo = res; // Esto reemplaza los datos de prueba por los de la BD
-       });
-    */
+    // 1. Intentamos obtener los datos del usuario guardados en el servicio
+    const datosSesion = this.authService.getUserData();
+    
+    if (datosSesion) {
+      // 2. Si existen, los asignamos a nuestra variable para el HTML
+      this.choferInfo = datosSesion;
+      console.log('Sesión activa. Datos cargados:', this.choferInfo);
+    } else {
+      // 3. Si no hay datos (intento de entrada ilegal), mandamos al Home
+      console.warn('No se encontró sesión activa. Redirigiendo...');
+      this.router.navigate(['/home']);
+    }
   }
 
+  /**
+   * Navega a la pantalla principal del chofer
+   */
   regresar() {
-    this.router.navigate(['/home-chofer']);
+    // Ajusta 'chofer' por el nombre exacto de tu ruta principal
+    this.router.navigate(['/chofer']); 
   }
 
+  /**
+   * Cierra la sesión limpiando el almacenamiento y redirigiendo al Home
+   */
   cerrarSesion() {
-    // Al cerrar sesión, podrías limpiar el almacenamiento local (Storage)
-    this.router.navigate(['/home']);
+    // Llamamos al método logout que creamos en el AuthService
+    this.authService.logout();
+    console.log('Sesión cerrada correctamente');
   }
 }
