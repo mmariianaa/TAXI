@@ -78,7 +78,7 @@ app.post('/api/login', (req, res) => {
 // ============================================
 app.post('/api/registrochofer', async (req, res) => {
     try {
-        const { 
+        const {
             nombre, apellido, edad, tipo_documento, numero_documento,
             correo, telefono, contrasena,
             marca_vehiculo, modelo_vehiculo, color_vehiculo, placa, capacidad,
@@ -102,9 +102,9 @@ app.post('/api/registrochofer', async (req, res) => {
                 const queryUser = `INSERT INTO Usuario 
                     (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena, id_chofer) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-                
+
                 conexion.query(queryUser, [
-                    nombre, apellido, edad, tipo_documento, numero_documento, 
+                    nombre, apellido, edad, tipo_documento, numero_documento,
                     correo, telefono, contrasenaEncriptada, choferRes.insertId
                 ], (err, result) => {
                     if (err) return res.status(500).json({ error: 'Error al crear cuenta de usuario' });
@@ -128,9 +128,9 @@ app.post('/api/registrousuario', async (req, res) => {
         const query = `INSERT INTO Usuario 
             (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-        
+
         conexion.query(query, [
-            nombre, apellido, edad, 'CC', 'DOC_' + Date.now(), 
+            nombre, apellido, edad, 'CC', 'DOC_' + Date.now(),
             correo, telefono, contrasenaEncriptada
         ], (err, result) => {
             if (err) return res.status(500).json({ error: 'Error al registrar usuario' });
@@ -150,7 +150,7 @@ app.get('/getTodosChoferes', (req, res) => {
         FROM Chofer c
         LEFT JOIN Usuario u ON c.id_chofer = u.id_chofer
         LEFT JOIN Taxi t ON c.id_taxi = t.id_taxi`;
-    
+
     conexion.query(query, (error, rows) => {
         if (error) res.status(500).json({ error: 'Error' });
         else res.json(rows);
@@ -159,4 +159,66 @@ app.get('/getTodosChoferes', (req, res) => {
 
 app.listen(port, () => {
     console.log(`API corriendo en http://localhost:${port}`);
+});
+
+// ============================================
+// CAMBIAR CONTRASEÑA
+// ============================================
+app.put('/api/usuarios/:id/password', async (req, res) => {
+    const { id } = req.params;
+    const { nueva } = req.body;  // 👈 SOLO recibe nueva contraseña
+
+    if (!nueva || nueva.length < 6) {
+        return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+    }
+
+    try {
+        // Encriptar nueva contraseña directamente
+        const nuevaEncriptada = await bcrypt.hash(nueva, 10);
+
+        // Actualizar sin verificar la actual
+        const queryUpdate = 'UPDATE Usuario SET contrasena = ? WHERE id_usuario = ?';
+
+        conexion.query(queryUpdate, [nuevaEncriptada, id], (err2) => {
+            if (err2) {
+                return res.status(500).json({ error: 'Error al actualizar contraseña' });
+            }
+
+            res.json({ success: true, message: 'Contraseña actualizada' });
+        });
+
+    } catch (error) {
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
+
+// ============================================
+// ACTUALIZAR TELÉFONO (¡FALTABA!)
+// ============================================
+app.put('/api/usuarios/:id', (req, res) => {
+    const { id } = req.params;
+    const { telefono } = req.body;
+
+    if (!telefono) {
+        return res.status(400).json({ error: 'El teléfono es requerido' });
+    }
+
+    const query = 'UPDATE Usuario SET telefono = ? WHERE id_usuario = ?';
+
+    conexion.query(query, [telefono, id], (err, result) => {
+        if (err) {
+            console.error('Error al actualizar teléfono:', err);
+            return res.status(500).json({ error: 'Error al actualizar teléfono' });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        res.json({
+            success: true,
+            message: 'Teléfono actualizado correctamente',
+            telefono: telefono
+        });
+    });
 });
