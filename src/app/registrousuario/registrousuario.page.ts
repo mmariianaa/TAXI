@@ -149,9 +149,4 @@ export class RegistrousuarioPage {
       aceptaTerminos: false
     };
   }
-
-  irALogin(event: Event) {
-    event.preventDefault();
-    console.log('Navegar a login');
-  }
 }
