@@ -1,242 +1,73 @@
-<!-- admin-panel.page.html -->
-<ion-header>
-  <ion-toolbar color="dark">
-    <ion-title>
-      <ion-icon name="crown-outline"></ion-icon>
-      PANEL ADMINISTRADOR
-    </ion-title>
+html :<ion-header class="ion-no-border">
+  <ion-toolbar color="taxi-header">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Perfil Administrador</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <!-- RESUMEN DEL DTA -->
-  <section class="resumen-dta">
-    <h2>
-      <ion-icon name="stats-chart-outline"></ion-icon>
-      RESUMEN DEL DTA
-    </h2>
-
-    <div class="stats-grid">
-      <!-- Viajes -->
-      <div class="stat-card">
-        <div class="stat-icon"><ion-icon name="car-outline"></ion-icon></div>
-        <div class="stat-content">
-          <h3>156</h3>
-          <p>Viajes</p>
-        </div>
+<ion-content color="taxi-content">
+  <div class="main-container">
+    
+    <div class="avatar-section">
+      <div class="avatar-wrapper">
+        <img [src]="avatarUrl" alt="Avatar">
       </div>
-
-      <!-- Ingresos -->
-      <div class="stat-card">
-        <div class="stat-icon"><ion-icon name="cash-outline"></ion-icon></div>
-        <div class="stat-content">
-          <h3>$3,000</h3>
-          <p>Ingresos</p>
-        </div>
-      </div>
-
-      <!-- Choferes activos -->
-      <div class="stat-card">
-        <div class="stat-icon"><ion-icon name="people-outline"></ion-icon></div>
-        <div class="stat-content">
-          <h3>25</h3>
-          <p>Choferes activos</p>
-        </div>
-      </div>
-
-      <!-- Taxis disponibles -->
-      <div class="stat-card">
-        <div class="stat-icon"><ion-icon name="bus-outline"></ion-icon></div>
-        <div class="stat-content">
-          <h3>32</h3>
-          <p>Taxis disponibles</p>
-        </div>
+      
+      <div class="avatar-buttons">
+        <ion-button fill="outline" size="small" color="taxi-yellow" (click)="cambiarFoto()" mode="ios">
+          CAMBIAR
+        </ion-button>
+        <ion-button fill="outline" size="small" color="danger" (click)="quitarFoto()" mode="ios">
+          QUITAR
+        </ion-button>
       </div>
     </div>
-  </section>
 
-  <!-- GESTIÓN DE TAXIS (bloques 4x4) -->
-  <section class="gestion-section">
-    <div class="section-title">
-      <ion-icon name="settings-outline"></ion-icon>
-      <h2>GESTIÓN DE TAXIS</h2>
-    </div>
+    <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()">
+      <ion-card mode="ios" class="info-card">
+        <ion-card-content>
+          <ion-item lines="full" [class.input-error]="esInvalido('nombre')" [class.input-success]="esValido('nombre')">
+            <ion-label position="stacked">Nombre</ion-label>
+            <ion-input formControlName="nombre" type="text" placeholder="Ingresa tu nombre"></ion-input>
+          </ion-item>
 
-    <div class="pantalla-grid">
-      <!-- Ver Lista completa -->
-      <div class="pantalla-card">
-        <div class="pantalla-header">
-          <ion-icon name="list-outline"></ion-icon>
-          <h3>Lista completa</h3>
-        </div>
-        <ul class="pantalla-list">
-          <li><ion-icon name="checkmark-circle-outline"></ion-icon> Nissan Tsuru - ABC123</li>
-          <li><ion-icon name="checkmark-circle-outline"></ion-icon> Toyota Prius - XYZ789</li>
-          <li><ion-icon name="checkmark-circle-outline"></ion-icon> Chevrolet Spark - DEF456</li>
-          <li><ion-icon name="checkmark-circle-outline"></ion-icon> Honda Civic - GHI789</li>
-        </ul>
-        <div class="mini-note">Total: 32 taxis</div>
-      </div>
+          <ion-item lines="full" [class.input-error]="esInvalido('apellido')" [class.input-success]="esValido('apellido')">
+            <ion-label position="stacked">Apellido</ion-label>
+            <ion-input formControlName="apellido" type="text" placeholder="Ingresa tu apellido"></ion-input>
+          </ion-item>
 
-      <!-- Agregar nuevo taxi -->
-      <div class="pantalla-card highlight">
-        <div class="pantalla-header">
-          <ion-icon name="add-circle-outline"></ion-icon>
-          <h3>Agregar taxi</h3>
-        </div>
-        <ul class="pantalla-list">
-          <li><ion-icon name="document-text-outline"></ion-icon> Marca / Modelo</li>
-          <li><ion-icon name="document-text-outline"></ion-icon> Placa / matrícula</li>
-          <li><ion-icon name="document-text-outline"></ion-icon> Año / color</li>
-          <li><ion-icon name="document-text-outline"></ion-icon> Seguro / tenencia</li>
-        </ul>
-        <ion-button expand="block" color="warning" routerLink="/agregartaxi">+ Nuevo taxi</ion-button>
-      </div>
-    </div>
-  </section>
+          <ion-item lines="full" [class.input-error]="esInvalido('correo')" [class.input-success]="esValido('correo')">
+            <ion-label position="stacked">Correo Electrónico</ion-label>
+            <ion-input formControlName="correo" type="email"></ion-input>
+          </ion-item>
 
-  <!-- GESTIÓN DE COMPRAS (segunda fila de 4) -->
-  <section class="gestion-section">
-    <div class="section-title">
-      <ion-icon name="cart-outline"></ion-icon>
-      <h2>GESTIÓN DE COMPRAS</h2>
-    </div>
+          <ion-item lines="full" [class.input-error]="esInvalido('telefono')" [class.input-success]="esValido('telefono')">
+            <ion-label position="stacked">Teléfono</ion-label>
+            <ion-input formControlName="telefono" type="tel"></ion-input>
+          </ion-item>
 
-    <div class="pantalla-grid">
-      <!-- Ver Lista -->
-      <div class="pantalla-card">
-        <div class="pantalla-header">
-          <ion-icon name="folder-open-outline"></ion-icon>
-          <h3>Ver Lista</h3>
-        </div>
-        <ul class="pantalla-list">
-          <li><ion-icon name="receipt-outline"></ion-icon> Compra #1245 - $450</li>
-          <li><ion-icon name="receipt-outline"></ion-icon> Compra #1246 - $230</li>
-          <li><ion-icon name="receipt-outline"></ion-icon> Compra #1247 - $1,200</li>
-          <li><ion-icon name="receipt-outline"></ion-icon> Compra #1248 - $89</li>
-        </ul>
-      </div>
+          <div class="admin-only-section">
+            <ion-item lines="full" [class.input-error]="esInvalido('numero_empleado')" [class.input-success]="esValido('numero_empleado')">
+              <ion-label position="stacked">Nº de Empleado</ion-label>
+              <ion-input formControlName="numero_empleado" readonly="true"></ion-input>
+            </ion-item>
 
-      <!-- Registrar chofer -->
-      <div class="pantalla-card">
-        <div class="pantalla-header">
-          <ion-icon name="person-add-outline"></ion-icon>
-          <h3>Registrar chofer</h3>
-        </div>
-        <ul class="pantalla-list">
-          <li><ion-icon name="id-card-outline"></ion-icon> Juan Pérez - Lic: ABC123</li>
-          <li><ion-icon name="id-card-outline"></ion-icon> María Gómez - Lic: XYZ789</li>
-          <li><ion-icon name="id-card-outline"></ion-icon> Carlos Ruiz - Lic: DEF456</li>
-        </ul>
-      </div>
-
-      <!-- Licencias vendidas -->
-      <div class="pantalla-card">
-        <div class="pantalla-header">
-          <ion-icon name="ribbon-outline"></ion-icon>
-          <h3>Licencias vendidas</h3>
-        </div>
-        <ul class="pantalla-list">
-          <li><ion-icon name="checkmark-done-outline"></ion-icon> Tipo A <span class="badge-licencia">12</span></li>
-          <li><ion-icon name="checkmark-done-outline"></ion-icon> Tipo B <span class="badge-licencia">8</span></li>
-          <li><ion-icon name="checkmark-done-outline"></ion-icon> Tipo C <span class="badge-licencia">5</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- REPORTES (tercera fila de 4) -->
-  <section class="gestion-section">
-    <div class="section-title">
-      <ion-icon name="bar-chart-outline"></ion-icon>
-      <h2>REPORTES</h2>
-    </div>
-
-    <div class="pantalla-grid">
-      <!-- Por fechas -->
-      <div class="pantalla-card">
-        <div class="pantalla-header">
-          <ion-icon name="calendar-outline"></ion-icon>
-          <h3>Por fechas</h3>
-        </div>
-        <ul class="pantalla-list">
-          <li><ion-icon name="today-outline"></ion-icon> 01/03/2024 - 15/03/2024</li>
-          <li><ion-icon name="today-outline"></ion-icon> 16/03/2024 - 31/03/2024</li>
-          <li><ion-icon name="today-outline"></ion-icon> Personalizado</li>
-        </ul>
-      </div>
-
-      <!-- Por donadores -->
-      <div class="pantalla-card">
-        <div class="pantalla-header">
-          <ion-icon name="heart-outline"></ion-icon>
-          <h3>Por donadores</h3>
-        </div>
-        <ul class="pantalla-list">
-          <li><ion-icon name="person-outline"></ion-icon> Donador frecuente: $500</li>
-          <li><ion-icon name="person-outline"></ion-icon> Nuevos donantes: 4</li>
-          <li><ion-icon name="person-outline"></ion-icon> Total recaudado: $2,500</li>
-        </ul>
-      </div>
-
-      <!-- Por raíces -->
-      <div class="pantalla-card">
-        <div class="pantalla-header">
-          <ion-icon name="git-network-outline"></ion-icon>
-          <h3>Por raíces</h3>
-        </div>
-        <ul class="pantalla-list">
-          <li><ion-icon name="map-outline"></ion-icon> Ruta norte: 45 viajes</li>
-          <li><ion-icon name="map-outline"></ion-icon> Ruta sur: 38 viajes</li>
-          <li><ion-icon name="map-outline"></ion-icon> Ruta oriente: 52 viajes</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- TRES BOTONES: gestionar, agregar taxi, calificaciones -->
-  <div class="action-buttons">
-    <ion-button class="btn-custom" routerLink="/modificartaxi">
-      <ion-icon name="construct-outline"></ion-icon>
-      Gestionar
-    </ion-button>
-
-    <ion-button class="btn-custom" color="warning" routerLink="/agregartaxi">
-      <ion-icon name="add-outline"></ion-icon>
-      Agregar taxi
-    </ion-button>
-
-    <ion-button class="btn-custom" routerLink="/calificaciones">
-      <ion-icon name="star-outline"></ion-icon>
-      Calificaciones
-    </ion-button>
-  </div>
-
-  <!-- EJEMPLO DE USO DE @for y @if (simulado con datos estáticos en el componente) -->
-  @if (mostrarEjemplo) {
-    <section class="gestion-section">
-      <div class="section-title">
-        <ion-icon name="code-slash-outline"></ion-icon>
-        <h2>{{ '@' + 'usuario' }}</h2>
-      </div>
-      <div class="pantalla-grid">
-        @for (item of itemsEjemplo; track item.id) {
-          <div class="pantalla-card">
-            <div class="pantalla-header">
-              <ion-icon [name]="item.icono"></ion-icon>
-              <h3>{{ item.titulo }}</h3>
-            </div>
-            <ul class="pantalla-list">
-              @for (detalle of item.detalles; track detalle) {
-                <li><ion-icon name="caret-forward-outline"></ion-icon> {{ detalle }}</li>
-              }
-            </ul>
-            @if (item.destacado) {
-              <ion-badge color="warning">Destacado</ion-badge>
-            }
+            <ion-item lines="full" [class.input-error]="esInvalido('departamento')" [class.input-success]="esValido('departamento')">
+              <ion-label position="stacked">Departamento</ion-label>
+              <ion-input formControlName="departamento"></ion-input>
+            </ion-item>
           </div>
-        }
+        </ion-card-content>
+      </ion-card>
+
+      <div class="ion-padding footer-button">
+        <ion-button expand="block" type="submit" [disabled]="perfilForm.invalid" class="btn-guardar" mode="ios">
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+          Guardar y Actualizar
+        </ion-button>
       </div>
-    </section>
-  }
+    </form>
+  </div>
 </ion-content>
