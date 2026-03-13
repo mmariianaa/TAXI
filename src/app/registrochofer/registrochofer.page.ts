@@ -36,6 +36,8 @@ export class RegistrochoferPage {
     modelo_vehiculo: '',
     color_vehiculo: '',
     placa: '',
+
+    
     capacidad: null as number | null,
     licencia: '',
     experiencia: 0
