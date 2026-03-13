@@ -1,55 +1,45 @@
-// Variables de colores
-$dark-gray: #1F1F1F;
-$medium-gray: #4B4847;
-$light-beige: #E6E1DB;
-$primary-yellow: #FFC31F;
-$secondary-orange: #EB8107;
-
 .perfil-chofer-content {
-  --background: #{$dark-gray};
-  
+  --background: #FFFFFF;
+
   .city-background {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    height: 200px;
-    background: linear-gradient(180deg, rgba($dark-gray, 0.9) 0%, $dark-gray 100%);
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 0 0 50px 50px;
     z-index: 0;
     
     .city-skyline {
       position: absolute;
       bottom: 0;
       width: 100%;
-      height: 60px;
-      background: repeating-linear-gradient(
-        90deg,
-        rgba($light-beige, 0.1) 0px,
-        rgba($light-beige, 0.1) 20px,
-        transparent 20px,
-        transparent 40px
-      );
-      mask-image: linear-gradient(to right, transparent, black, transparent);
+      height: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      clip-path: polygon(0 60%, 20% 40%, 40% 60%, 60% 30%, 80% 50%, 100% 20%, 100% 100%, 0 100%);
     }
   }
 
   .perfil-container {
     position: relative;
-    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
     padding: 20px;
+    z-index: 1;
   }
 
   .header-perfil {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    
+    margin: 10px 0 20px;
+
     .back-btn {
-      --color: #{$light-beige};
+      --color: white;
       --padding-start: 0;
       --padding-end: 0;
-      font-size: 16px;
       font-weight: 500;
       
       ion-icon {
@@ -57,9 +47,48 @@ $secondary-orange: #EB8107;
         margin-right: 4px;
       }
     }
-    
+
+    .acciones-edicion {
+      display: flex;
+      gap: 10px;
+      
+      .guardar-btn {
+        --color: #4CAF50;
+        --padding-start: 8px;
+        --padding-end: 8px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+      
+      .cancelar-btn {
+        --color: #ff4444;
+        --padding-start: 8px;
+        --padding-end: 8px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+    }
+
+    .edit-btn {
+      --color: white;
+      --border-color: rgba(255, 255, 255, 0.3);
+      --border-width: 1px;
+      --border-style: solid;
+      --border-radius: 20px;
+      --padding-start: 15px;
+      --padding-end: 15px;
+      font-size: 14px;
+      font-weight: 500;
+      
+      ion-icon {
+        color: #FFC31F;
+        font-size: 18px;
+        margin-right: 5px;
+      }
+    }
+
     .notif-icon {
-      color: $light-beige;
+      color: white;
       font-size: 24px;
     }
   }
@@ -68,258 +97,254 @@ $secondary-orange: #EB8107;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 30px;
-    
+    margin-bottom: 25px;
+
     .foto-wrapper {
       position: relative;
       margin-bottom: 8px;
-      
+
       .foto-perfil {
         width: 100px;
         height: 100px;
-        border: 3px solid $primary-yellow;
-        box-shadow: 0 4px 15px rgba($primary-yellow, 0.3);
+        border: 3px solid #FFC31F;
+        box-shadow: 0 4px 15px rgba(255, 195, 31, 0.3);
         
         img {
           object-fit: cover;
         }
       }
-      
+
       .editar-foto {
         position: absolute;
         bottom: 0;
         right: 0;
-        background: $primary-yellow;
+        background: #FFC31F;
         border-radius: 50%;
         width: 32px;
         height: 32px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 2px solid $dark-gray;
+        border: 2px solid white;
         cursor: pointer;
         
         ion-icon {
-          color: $dark-gray;
+          color: #1a1a2e;
           font-size: 16px;
         }
       }
     }
-    
+
     .toque-cambiar {
-      color: rgba($light-beige, 0.5);
+      color: rgba(255, 255, 255, 0.5);
       font-size: 12px;
-      margin: 0 0 10px 0;
+      margin: 0 0 10px;
     }
-    
+
     .nombre-chofer {
-      color: $light-beige;
+      color: white;
       font-size: 24px;
       font-weight: 700;
-      margin: 0 0 8px 0;
+      margin: 0 0 5px;
       text-align: center;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
-    
+
     .estadisticas {
-      color: $primary-yellow;
-      font-size: 16px;
+      color: #FFC31F;
+      font-size: 14px;
       margin: 0;
     }
   }
 
   .perfil-card {
-    background: rgba($medium-gray, 0.3);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 24px;
-    padding: 20px;
-    border: 1px solid rgba($light-beige, 0.1);
+    background: white;
+    border-radius: 30px;
+    padding: 25px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.5s ease;
   }
 
   .seccion-perfil {
     margin-bottom: 30px;
-    
+
     &:last-child {
       margin-bottom: 0;
     }
-    
+
     .seccion-titulo {
-      color: $primary-yellow;
       font-size: 18px;
-      font-weight: 600;
-      margin: 0 0 20px 0;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin: 0 0 20px;
       padding-bottom: 10px;
-      border-bottom: 1px solid rgba($light-beige, 0.1);
+      border-bottom: 2px solid #FFC31F;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    
+
     .campo-dato {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       margin-bottom: 15px;
       
       &:last-child {
         margin-bottom: 0;
       }
-      
+
       .campo-etiqueta {
-        color: rgba($light-beige, 0.6);
-        font-size: 14px;
-      }
-      
-      .campo-valor {
-        color: $light-beige;
-        font-size: 16px;
+        display: block;
+        color: #666;
+        font-size: 13px;
+        margin-bottom: 5px;
         font-weight: 500;
       }
-    }
-  }
 
-  .documento-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba($light-beige, 0.05);
-    
-    &:last-child {
-      margin-bottom: 0;
-      padding-bottom: 0;
-      border-bottom: none;
-    }
-    
-    .documento-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
-      
-      ion-icon {
-        color: $primary-yellow;
-        font-size: 20px;
+      .campo-valor {
+        display: block;
+        color: #1a1a2e;
+        font-size: 16px;
+        font-weight: 500;
+        padding: 8px 0;
       }
-      
-      span {
-        color: $light-beige;
-        font-size: 14px;
-      }
-    }
-    
-    .documento-acciones {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      
-      .documento-estado {
-        font-size: 13px;
-        white-space: nowrap;
-        
-        &.vigente {
-          color: $primary-yellow;
+
+      .campo-input {
+        --background: #F5F7FA;
+        --color: #1a1a2e;
+        --padding-start: 15px;
+        --padding-end: 15px;
+        --padding-top: 12px;
+        --padding-bottom: 12px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+
+        &:focus-within {
+          border-color: #FFC31F;
+          --background: white;
         }
-        
-        &.por-vencer {
-          color: $secondary-orange;
-        }
-        
-        &.vencido {
-          color: #ff3b30;
+
+        &.password-input {
+          padding-right: 40px;
         }
       }
-      
-      .ver-btn {
-        --color: #{$light-beige};
-        --padding-start: 8px;
-        --padding-end: 8px;
+
+      .campo-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        .password-toggle {
+          position: absolute;
+          right: 8px;
+          --padding-start: 8px;
+          --padding-end: 8px;
+          --color: #999;
+          z-index: 2;
+          
+          &:hover {
+            --color: #FFC31F;
+          }
+        }
+      }
+
+      .campo-error {
+        color: #ff4444;
         font-size: 12px;
-        margin: 0;
-        height: 30px;
-        
-        &:hover {
-          --color: #{$primary-yellow};
-        }
+        margin-top: 5px;
+      }
+    }
+
+    // Para inputs tipo texto normales (los que usamos para contraseñas)
+    input[type="text"],
+    input[type="tel"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 15px;
+      background: #F5F7FA;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      color: #1a1a2e;
+      font-size: 15px;
+      transition: all 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #FFC31F;
+        background: white;
+      }
+
+      &::placeholder {
+        color: #999;
       }
     }
   }
 
-  .accion-link {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 10px;
-    
-    ion-icon {
-      color: $primary-yellow;
-      font-size: 18px;
-    }
-    
-    .cambiar-link {
-      color: $light-beige;
-      text-decoration: none;
-      font-size: 14px;
-      
-      &:hover {
-        color: $primary-yellow;
-        text-decoration: underline;
-      }
-    }
-  }
+  .mensaje {
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
 
-  .terminos-info {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    
-    .check-icon {
-      color: $primary-yellow;
-      font-size: 22px;
-      margin-top: 2px;
+    &.success {
+      background: #E8F5E9;
+      color: #2E7D32;
+      border: 1px solid #A5D6A7;
     }
-    
-    .terminos-texto {
-      p {
-        color: $light-beige;
-        font-size: 15px;
-        margin: 0 0 4px 0;
-      }
-      
-      small {
-        color: rgba($light-beige, 0.5);
-        font-size: 12px;
-      }
+
+    &.error {
+      background: #FFEBEE;
+      color: #C62828;
+      border: 1px solid #EF9A9A;
     }
   }
 
   .cerrar-sesion {
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid rgba($light-beige, 0.1);
-    
+    border-top: 1px solid #E0E0E0;
+
     .cerrar-sesion-btn {
       --background: transparent;
-      --border-color: #{$secondary-orange};
+      --border-color: #ff4444;
       --border-width: 1px;
       --border-style: solid;
-      --color: #{$light-beige};
-      --border-radius: 12px;
+      --color: #ff4444;
+      --border-radius: 15px;
       --padding-top: 15px;
       --padding-bottom: 15px;
+      font-weight: 600;
       
       ion-icon {
-        color: $secondary-orange;
+        color: #ff4444;
       }
       
       &:hover {
-        --background: rgba($secondary-orange, 0.1);
+        --background: rgba(255, 68, 68, 0.05);
       }
     }
   }
 
-  // Ajustes para iOS
+  .cargando-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    
+    ion-spinner {
+      width: 40px;
+      height: 40px;
+      color: #FFC31F;
+      margin-bottom: 15px;
+    }
+    
+    p {
+      color: white;
+      font-size: 16px;
+    }
+  }
+
   .ios & {
     .header-perfil {
       padding-top: 20px;
@@ -327,20 +352,21 @@ $secondary-orange: #EB8107;
   }
 }
 
-// Personalización del scroll
-::-webkit-scrollbar {
-  width: 6px;
-  
-  &-track {
-    background: rgba($dark-gray, 0.5);
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
-  
-  &-thumb {
-    background: $primary-yellow;
-    border-radius: 3px;
-    
-    &:hover {
-      background: $secondary-orange;
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
+
+// Estilos globales para inputs
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #F5F7FA inset;
+  transition: background-color 5000s ease-in-out 0s;
 }
