@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="light">
+  <ion-toolbar color="light" mode="ios">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/" text="" icon="arrow-back-outline"></ion-back-button>
+      <ion-back-button defaultHref="/pantallausuario" text="⬅️ Atras" icon="arrow-back-outline" class="custom-back-button"></ion-back-button>
     </ion-buttons>
     <ion-title>Cuenta SmartTaxi</ion-title>
   </ion-toolbar>
@@ -10,8 +10,6 @@
     <div class="uber-tab" [class.active]="activeSection === 'inicio'" (click)="setSection('inicio')">Inicio</div>
     <div class="uber-tab" [class.active]="activeSection === 'personal'" (click)="setSection('personal')">Información personal</div>
     <div class="uber-tab" [class.active]="activeSection === 'seguridad'" (click)="setSection('seguridad')">Seguridad</div>
-    <div class="uber-tab" [class.active]="activeSection === 'configuracion'" (click)="irAConfiguracionUsuario($event)">Configuracion</div>
-    
   </div>
 </ion-header>
 
@@ -48,14 +46,8 @@
     <span>Seguridad</span>
   </div>
 
-  <div class="uber-card" (click)="setSection('privacidad')">
-    <div class="icon-container">
-      <ion-icon name="lock-closed"></ion-icon>
-    </div>
-    <span>Configuracion</span>
-  </div>
 
-  <div class="uber-card full-width" (click)="irAConfiguracionUsuario($event)">
+  <div class="uber-card full-width" (click)="irAHistorialUsuario($event)">
     <div class="icon-container"><ion-icon name="lock-closed"></ion-icon></div>
     <span>Historial de viajes</span>
   </div>
@@ -70,7 +62,6 @@
   }
 
   @if (activeSection === 'personal') {
-  <h3 class="section-title">Información personal</h3>
 
   <ion-list lines="full">
     
@@ -150,8 +141,6 @@
 }
 
   @if (activeSection === 'seguridad') {
-    <h3 class="section-title">Seguridad</h3>
-    <p class="section-subtitle">Iniciar sesión en SmartTaxi</p>
 
     @if (!editingPassword) {
       <ion-list lines="full">
