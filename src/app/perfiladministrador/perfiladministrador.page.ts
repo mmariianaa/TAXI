@@ -31,8 +31,7 @@ export class PerfiladministradorPage implements OnInit {
       nombre: ['', [Validators.required]],
       apellido: ['', [Validators.required]],
       correo: ['', [Validators.required, Validators.email]],
-      telefono: ['', [Validators.required]],
-      numero_empleado: [{value: '', disabled: false}], 
+      telefono: ['', [Validators.required]], 
       departamento: ['', [Validators.required]],
       titulo: ['']
     });
