@@ -48,15 +48,9 @@
             <ion-input formControlName="telefono" type="tel"></ion-input>
           </ion-item>
 
-          <div class="admin-only-section">
-            <ion-item lines="full" [class.input-error]="esInvalido('numero_empleado')" [class.input-success]="esValido('numero_empleado')">
-              <ion-label position="stacked">Nº de Empleado</ion-label>
-              <ion-input formControlName="numero_empleado" readonly="true"></ion-input>
-            </ion-item>
-
             <ion-item lines="full" [class.input-error]="esInvalido('departamento')" [class.input-success]="esValido('departamento')">
               <ion-label position="stacked">Departamento</ion-label>
-              <ion-input formControlName="departamento"></ion-input>
+              <ion-input formControlName="departamento"  placeholder="Ingresa el nombre del puesto al que perteneces"></ion-input>
             </ion-item>
           </div>
         </ion-card-content>

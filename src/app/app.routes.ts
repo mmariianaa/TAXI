@@ -67,5 +67,13 @@ export const routes: Routes = [
   {
     path: 'chofer', 
     loadComponent: () => import('./chofer/chofer.page').then((m) => m.ChoferPage),
+  },  {
+    path: 'perfiladministrador',
+    loadComponent: () => import('./admin/perfiladministrador/perfiladministrador.page').then( m => m.PerfiladministradorPage)
   },
+  {
+    path: 'administrador',
+    loadComponent: () => import('./administrador/administrador/administrador.page').then( m => m.AdministradorPage)
+  },
+
 ];

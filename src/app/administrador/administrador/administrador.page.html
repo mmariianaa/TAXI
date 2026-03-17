@@ -1,0 +1,129 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="taxi-header">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Panel de Control</ion-title>
+  </ion-toolbar>
+  
+  <ion-toolbar color="taxi-header" class="nav-toolbar">
+    <div class="nav-container">
+      <ion-button fill="clear" (click)="irAPerfil()">
+        <ion-icon name="person-outline"></ion-icon> Perfil
+      </ion-button>
+      <ion-button fill="clear" class="active">
+        <ion-icon name="car-outline"></ion-icon> Gestión
+      </ion-button>
+      <ion-button fill="clear">
+        <ion-icon name="document-text-outline"></ion-icon> Reportes
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="taxi-content">
+  
+  <div class="section-title">Resumen de Actividad</div>
+  
+  <ion-segment value="dia" (ionChange)="cambiarFiltro($event)" mode="ios">
+    <ion-segment-button value="dia">
+      <ion-label>Hoy</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="semana">
+      <ion-label>Esta Semana</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <div class="stats-grid">
+    <div class="stat-box">
+      <ion-icon name="map-outline" color="taxi-yellow"></ion-icon>
+      <h2>{{ stats.viajes }}</h2>
+      <p>Viajes</p>
+    </div>
+    <div class="stat-box">
+      <ion-icon name="cash-outline" color="success"></ion-icon>
+      <h2>${{ stats.ingresos }}</h2>
+      <p>Ingresos</p>
+    </div>
+    <div class="stat-box">
+      <ion-icon name="people-outline" color="taxi-yellow"></ion-icon>
+      <h2>{{ stats.choferes }}</h2>
+      <p>Choferes</p>
+    </div>
+    <div class="stat-box">
+      <ion-icon name="checkmark-circle-outline" color="taxi-yellow"></ion-icon>
+      <h2>{{ stats.disponibles }}</h2>
+      <p>Taxis Disp.</p>
+    </div>
+  </div>
+
+  <div class="section-title">Gestión de Choferes</div>
+  
+  <ion-list mode="ios" class="driver-list">
+    <ion-item *ngFor="let chofer of listaChoferes" button (click)="abrirDetalle(chofer)" detail="true">
+      <ion-avatar slot="start">
+        <img [src]="chofer.foto || 'assets/avatar.png'">
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ chofer.nombre }} {{ chofer.apellido }}</h2>
+        <p>Placa: {{ chofer.placa }}</p>
+      </ion-label>
+      <ion-badge slot="end" [color]="chofer.estado === 'activo' ? 'success' : 'medium'">
+        {{ chofer.estado }}
+      </ion-badge>
+    </ion-item>
+  </ion-list>
+
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="isModalOpen = false" mode="ios">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="taxi-header">
+          <ion-title>Detalle del Chofer</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="isModalOpen = false">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content color="taxi-content" class="ion-padding">
+        <div class="modal-avatar">
+          <img [src]="choferSel?.foto || 'assets/avatar.png'">
+        </div>
+
+        <h3 class="group-title">Datos Personales (Lectura)</h3>
+        <ion-list lines="none">
+          <ion-item>
+            <ion-label>Nombre: {{ choferSel?.nombre }} {{ choferSel?.apellido }}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>Correo: {{ choferSel?.correo }}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>Documento: {{ choferSel?.tipo_doc }} - {{ choferSel?.num_doc }}</ion-label>
+          </ion-item>
+        </ion-list>
+
+        <h3 class="group-title">Datos del Vehículo y Profesionales (Editable)</h3>
+        <form [formGroup]="editForm">
+          <ion-item class="input-item">
+            <ion-label position="stacked">Marca</ion-label>
+            <ion-input formControlName="marca"></ion-input>
+          </ion-item>
+          <ion-item class="input-item">
+            <ion-label position="stacked">Placa</ion-label>
+            <ion-input formControlName="placa"></ion-input>
+          </ion-item>
+          <ion-item class="input-item">
+            <ion-label position="stacked">Nº Licencia</ion-label>
+            <ion-input formControlName="licencia"></ion-input>
+          </ion-item>
+
+          <ion-button expand="block" color="taxi-yellow" class="btn-save" (click)="confirmarCambios()">
+            Guardar Cambios
+          </ion-button>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+</ion-content>
