@@ -1,13 +1,75 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>calificarusuario</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/history" icon="arrow-back-outline" text="Atrás"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Calificar viaje</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">calificarusuario</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="rating-wrapper ion-padding">
+    
+    <div class="driver-card">
+      <ion-avatar>
+        <img [src]="driverPhoto" />
+      </ion-avatar>
+      <h2>¿Cómo estuvo tu viaje con {{ driverName }}?</h2>
+      <p>Selecciona las estrellas para calificar</p>
+    </div>
+
+    <div class="stars-container">
+      @for (num of [1,2,3,4,5]; track num) {
+        <ion-icon 
+          [name]="rating >= num ? 'star' : 'star-outline'" 
+          (click)="setRating(num)"
+          [class.filled]="rating >= num">
+        </ion-icon>
+      }
+    </div>
+
+    @if (rating > 0) {
+      <div class="feedback-section">
+        <p class="section-title">¿Qué destacó en este viaje?</p>
+        <div class="chips-grid">
+          @for (tag of tags; track tag.label) {
+            <ion-chip 
+              [class.active-chip]="tag.selected" 
+              (click)="toggleTag(tag)">
+              <ion-icon [name]="tag.icon"></ion-icon>
+              <ion-label>{{ tag.label }}</ion-label>
+            </ion-chip>
+          }
+        </div>
+      </div>
+
+      <div class="comment-box">
+        <p class="section-title">Déjanos un comentario (opcional)</p>
+        <div class="input-container">
+          <ion-textarea 
+            [(ngModel)]="comment"
+            placeholder="Escribe aquí tu reseña..."
+            [autoGrow]="true"
+            rows="3"
+            maxlength="200">
+          </ion-textarea>
+          <div class="counter">{{ comment.length }}/200</div>
+        </div>
+      </div>
+    }
+
+  </div>
 </ion-content>
+
+<ion-footer class="ion-no-border">
+  <div class="ion-padding">
+    <ion-button 
+      expand="block" 
+      mode="ios" 
+      class="submit-btn" 
+      [disabled]="rating === 0"
+      (click)="submitRating()">
+      Enviar calificación
+    </ion-button>
+  </div>
+</ion-footer>

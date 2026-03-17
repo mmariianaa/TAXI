@@ -1,8 +1,15 @@
 {
+<<<<<<< HEAD
   "hash": "0d9eae53",
   "configHash": "bb3ce4c3",
   "lockfileHash": "12cfd6e6",
   "browserHash": "8c851b31",
+=======
+  "hash": "4c9c507a",
+  "configHash": "5c1d8161",
+  "lockfileHash": "be0ee418",
+  "browserHash": "ad631ebd",
+>>>>>>> Monybbranch
   "optimized": {},
   "chunks": {}
 }

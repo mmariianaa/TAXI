@@ -1,0 +1,148 @@
+// Colores de tu paleta
+$noche: #1F1F1F;
+$carbon: #4B4847;
+$crema: #E6E1DB;
+$oro: #FFC31F;
+$naranja: #EB8107;
+
+:host {
+    --ion-background-color: #{$noche};
+}
+
+ion-toolbar {
+    --background: #{$noche};
+    --color: #{$crema};
+    font-weight: 700;
+}
+
+.custom-back-button {
+    --color: #{$oro};
+}
+
+.history-list {
+    padding: 16px;
+}
+
+.trip-card {
+    background: $carbon;
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+    &.cancelled {
+        opacity: 0.5;
+    }
+
+    .card-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+
+        .icon-bg {
+            background: $oro;
+            color: $noche;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            display: flex;
+        }
+
+        .info {
+            flex: 1;
+
+            h2 {
+                margin: 0;
+                font-size: 0.95rem;
+                color: $crema;
+                font-weight: 600;
+            }
+
+            p {
+                margin: 2px 0 0;
+                font-size: 0.75rem;
+                color: rgba($crema, 0.5);
+            }
+        }
+
+        .price {
+            .amount {
+                color: $oro;
+                font-weight: 700;
+                font-size: 1.1rem;
+            }
+
+            .promo {
+                color: $naranja;
+                font-weight: 800;
+                font-size: 0.8rem;
+                text-transform: uppercase;
+            }
+        }
+    }
+
+    .card-bottom {
+        display: flex;
+        gap: 12px;
+        padding-left: 4px;
+
+        .route-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 0;
+
+            .dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+
+                &.gold {
+                    background: $oro;
+                }
+
+                &.orange {
+                    background: $naranja;
+                }
+            }
+
+            .line {
+                width: 1px;
+                flex: 1;
+                background: rgba($crema, 0.2);
+                margin: 4px 0;
+            }
+        }
+
+        .addresses {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            span {
+                font-size: 0.85rem;
+                color: rgba($crema, 0.8);
+                display: block;
+            }
+
+            .text-truncate {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+}
+
+.empty-msg {
+    text-align: center;
+    margin-top: 100px;
+    color: rgba($crema, 0.2);
+
+    ion-icon {
+        font-size: 4rem;
+    }
+}

@@ -1,13 +1,52 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>historialusuario</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button 
+        defaultHref="/perfilusuario" 
+        text="Atrás" 
+        icon="arrow-back-outline" 
+        class="custom-back-button">
+      </ion-back-button>
+    </ion-buttons>
+    <ion-title>Historial de viajes</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">historialusuario</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content color="light">
+  
+  <ion-list lines="none" class="ion-padding-top">
+    
+    @for (trip of trips; track trip.id) {
+      <ion-item class="trip-card ion-margin-bottom" button detail="false">
+        <div slot="start" class="icon-container">
+          <ion-icon name="car-outline"></ion-icon>
+        </div>
+
+        <ion-label>
+          <div class="header-row">
+            <span class="date">{{ trip.date }}</span>
+            <span class="amount">${{ trip.price.toFixed(2) }}</span>
+          </div>
+
+          <p class="route-info">{{ trip.origin }}</p>
+          <p class="route-info">{{ trip.destination }}</p>
+
+          <div class="status-row">
+            @if (trip.status === 'completed') {
+              <ion-badge color="success" mode="ios">Completado</ion-badge>
+            } @else {
+              <ion-badge color="danger" mode="ios">Cancelado</ion-badge>
+            }
+          </div>
+        </ion-label>
+
+        <ion-icon slot="end" name="chevron-forward-outline" color="medium"></ion-icon>
+      </ion-item>
+    } @empty {
+      <div class="ion-text-center ion-padding">
+        <p>Aún no tienes viajes registrados.</p>
+      </div>
+    }
+
+  </ion-list>
 </ion-content>
