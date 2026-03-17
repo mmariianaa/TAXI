@@ -1,5 +1,6 @@
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
   "hash": "0d9eae53",
   "configHash": "bb3ce4c3",
   "lockfileHash": "12cfd6e6",
@@ -10,6 +11,12 @@
   "lockfileHash": "be0ee418",
   "browserHash": "ad631ebd",
 >>>>>>> Monybbranch
+=======
+  "hash": "e3a49929",
+  "configHash": "b7adcde7",
+  "lockfileHash": "5de8b047",
+  "browserHash": "04a97beb",
+>>>>>>> pablobranch
   "optimized": {},
   "chunks": {}
 }
