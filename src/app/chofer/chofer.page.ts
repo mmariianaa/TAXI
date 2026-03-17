@@ -140,4 +140,7 @@ export class ChoferPage implements OnInit {
     localStorage.removeItem('user_session'); 
     this.router.navigate(['/home']);
   }
+  irAPerfil() {
+  this.router.navigate(['/perfil-chofer']);
+}
 }

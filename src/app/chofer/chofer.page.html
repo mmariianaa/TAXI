@@ -7,17 +7,18 @@
   <ion-content style="--background: #1F1F1F;">
     <ion-list lines="none" style="background: #1F1F1F;">
       <ion-menu-toggle auto-hide="true">
-        <ion-item button (click)="setTab('perfil')" style="--background: transparent; color: #E6E1DB;">
+        <ion-item button (click)="irAPerfil()" style="--background: transparent; color: #E6E1DB;">
           <ion-icon slot="start" name="person-outline" style="color: #FFC31F;"></ion-icon>
           <ion-label>Mi Perfil</ion-label>
         </ion-item>
-        <ion-item button (click)="setTab('viajes')" style="--background: transparent; color: #E6E1DB;">
-          <ion-icon slot="start" name="car-outline" style="color: #FFC31F;"></ion-icon>
-          <ion-label>Viajes</ion-label>
-        </ion-item>
+
+      <ion-item button (click)="setTab('viajes')" style="--background: transparent; color: #E6E1DB;">
+        <ion-icon slot="start" name="car-outline" style="color: #FFC31F;"></ion-icon>
+        <ion-label>Viajes</ion-label>
+      </ion-item>
       </ion-menu-toggle>
-      
-      <ion-item button (click)="logout()" style="--background: rgba(235, 129, 7, 0.1); color: #EB8107; margin-top: 30px; border-radius: 10px; margin-inline: 10px;">
+      <ion-item button (click)="logout()"
+        style="--background: rgba(235, 129, 7, 0.1); color: #EB8107; margin-top: 30px; border-radius: 10px; margin-inline: 10px;">
         <ion-icon slot="start" name="log-out-outline"></ion-icon>
         <ion-label>Cerrar Sesión</ion-label>
       </ion-item>
@@ -62,8 +63,12 @@
             </div>
           </div>
           <div class="info-grid">
-            <div class="info-item"><span class="info-label">PLACAS</span><p>{{ driverInfo.vehiculo?.placa }}</p></div>
-            <div class="info-item"><span class="info-label">VEHÍCULO</span><p>{{ driverInfo.vehiculo?.marca }}</p></div>
+            <div class="info-item"><span class="info-label">PLACAS</span>
+              <p>{{ driverInfo.vehiculo?.placa }}</p>
+            </div>
+            <div class="info-item"><span class="info-label">VEHÍCULO</span>
+              <p>{{ driverInfo.vehiculo?.marca }}</p>
+            </div>
           </div>
         </div>
       </section>
@@ -75,9 +80,11 @@
             <h2>{{ viajePendiente?.ganancia }}</h2>
             <p class="pass-name">Pasajero: {{ viajePendiente?.pasajero }}</p>
             <div class="route-box">
-              <div class="route-item"><ion-icon name="radio-button-on" style="color: #FFC31F;"></ion-icon> {{ viajePendiente?.origen }}</div>
+              <div class="route-item"><ion-icon name="radio-button-on" style="color: #FFC31F;"></ion-icon> {{
+                viajePendiente?.origen }}</div>
               <div class="line"></div>
-              <div class="route-item"><ion-icon name="location" style="color: #EB8107;"></ion-icon> {{ viajePendiente?.destino }}</div>
+              <div class="route-item"><ion-icon name="location" style="color: #EB8107;"></ion-icon> {{
+                viajePendiente?.destino }}</div>
             </div>
           </div>
           <div class="req-footer">
@@ -100,7 +107,8 @@
       <section class="historial-section">
         <h3 style="font-weight: bold; margin-bottom: 15px;">Viajes Rechazados</h3>
         <div id="rejected-list">
-          <p [style.display]="viajesRechazados.length === 0 ? 'block' : 'none'" style="text-align: center; color: #999; margin-top: 50px;">
+          <p [style.display]="viajesRechazados.length === 0 ? 'block' : 'none'"
+            style="text-align: center; color: #999; margin-top: 50px;">
             No tienes viajes rechazados.
           </p>
           <div class="rejected-card" *ngFor="let v of viajesRechazados">
@@ -124,18 +132,13 @@
       </div>
 
       <div class="stars-container">
-        <ion-icon 
-          *ngFor="let starNum of [1,2,3,4,5]" 
-          [name]="ratingActual >= starNum ? 'star' : 'star-outline'" 
+        <ion-icon *ngFor="let starNum of [1,2,3,4,5]" [name]="ratingActual >= starNum ? 'star' : 'star-outline'"
           (click)="setRating(starNum)">
         </ion-icon>
       </div>
 
       <div class="comment-section">
-        <ion-textarea 
-          placeholder="Escribe un comentario opcional..." 
-          [(ngModel)]="comentarioUsuario" 
-          rows="3" 
+        <ion-textarea placeholder="Escribe un comentario opcional..." [(ngModel)]="comentarioUsuario" rows="3"
           class="custom-textarea">
         </ion-textarea>
       </div>
