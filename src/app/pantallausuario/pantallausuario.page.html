@@ -21,8 +21,8 @@
         </ion-item>
       </ion-menu-toggle>
 
-      <ion-menu-toggle auto-hide="true">
-        <ion-item button color="danger">
+       <ion-menu-toggle auto-hide="true">
+        <ion-item button (click)="logout()" color="danger">
           <ion-icon slot="start" name="log-out-outline"></ion-icon>
           <ion-label>Cerrar Sesión</ion-label>
         </ion-item>

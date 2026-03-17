@@ -17,7 +17,7 @@ export const routes: Routes = [
   },
   {
     path: 'registrousuario',
-    loadComponent: () => import('./registrousuario/registrousuario.page').then( m => m.RegistrousuarioPage)
+    loadComponent: () => import('./registrousuario/registrousuario.page').then(m => m.RegistrousuarioPage)
   },
   {
     path: 'historialusuario',
