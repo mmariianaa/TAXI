@@ -120,23 +120,76 @@ app.post('/api/registrochofer', async (req, res) => {
 // ============================================
 // REGISTRO DE USUARIO (CLIENTE)
 // ============================================
+// ============================================
+// REGISTRO DE USUARIO (CLIENTE) - CORREGIDO
+// ============================================
 app.post('/api/registrousuario', async (req, res) => {
     try {
-        const { nombre, apellido, edad, correo, telefono, contrasena } = req.body;
+        const { 
+            nombre, 
+            apellido, 
+            edad, 
+            tipo_documento, 
+            numero_documento,  // ¡Este campo es necesario!
+            correo, 
+            telefono, 
+            contrasena 
+        } = req.body;
+
+        // Validar que todos los campos requeridos existan
+        if (!nombre || !apellido || !edad || !tipo_documento || !numero_documento || !correo || !telefono || !contrasena) {
+            return res.status(400).json({ 
+                error: 'Todos los campos son obligatorios',
+                recibido: req.body 
+            });
+        }
+
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10);
 
+        // Modificar la consulta para incluir TODOS los campos requeridos
         const query = `INSERT INTO Usuario 
-            (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+            (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena, id_chofer, id_admin, id_viajes, id_calificacion) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
         conexion.query(query, [
-            nombre, apellido, edad, 'CC', 'DOC_' + Date.now(),
-            correo, telefono, contrasenaEncriptada
+            nombre, 
+            apellido, 
+            edad, 
+            tipo_documento, 
+            numero_documento,  // Usar el número de documento real, no el generado
+            correo, 
+            telefono, 
+            contrasenaEncriptada,
+            null,  // id_chofer (NULL para usuarios normales)
+            null,  // id_admin (NULL)
+            null,  // id_viajes (NULL)
+            null   // id_calificacion (NULL)
         ], (err, result) => {
-            if (err) return res.status(500).json({ error: 'Error al registrar usuario' });
-            res.status(201).json({ message: 'Usuario registrado con éxito' });
+            if (err) {
+                console.error('Error SQL:', err);
+                
+                // Mensajes de error más específicos
+                if (err.code === 'ER_DUP_ENTRY') {
+                    if (err.message.includes('correo')) {
+                        return res.status(400).json({ error: 'El correo ya está registrado' });
+                    }
+                    if (err.message.includes('numero_documento')) {
+                        return res.status(400).json({ error: 'El número de documento ya está registrado' });
+                    }
+                }
+                
+                return res.status(500).json({ 
+                    error: 'Error al registrar usuario',
+                    detalle: err.message 
+                });
+            }
+            res.status(201).json({ 
+                message: 'Usuario registrado con éxito',
+                id: result.insertId 
+            });
         });
     } catch (error) {
+        console.error('Error en servidor:', error);
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
