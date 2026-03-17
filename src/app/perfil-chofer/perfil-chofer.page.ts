@@ -23,11 +23,6 @@ import {
     IonIcon,
     IonContent,
     IonAvatar,
-    IonItem,
-    IonLabel,
-    IonList,
-    IonListHeader,
-    IonText,
     IonInput
   ],
 })
