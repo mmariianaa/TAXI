@@ -1,0 +1,134 @@
+$bg-dark: #1F1F1F;
+$card-gray: #4B4847;
+$text-light: #E6E1DB;
+$taxi-yellow: #FFC31F;
+$taxi-orange: #EB8107;
+
+:host {
+    --ion-background-color: #{$bg-dark};
+}
+
+ion-toolbar {
+    --background: #{$bg-dark};
+    --color: #{$text-light};
+    font-weight: 700;
+
+    ion-back-button {
+        --color: #{$taxi-yellow};
+    }
+}
+
+.rating-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.driver-card {
+    text-align: center;
+    margin-bottom: 30px;
+
+    ion-avatar {
+        width: 90px;
+        height: 90px;
+        margin: 0 auto 15px;
+        border: 3px solid $taxi-yellow;
+    }
+
+    h2 {
+        color: $text-light;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    p {
+        color: rgba($text-light, 0.5);
+        margin-top: 5px;
+        font-size: 0.9rem;
+    }
+}
+
+.stars-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 40px;
+
+    ion-icon {
+        font-size: 2.8rem;
+        color: $card-gray;
+        transition: transform 0.2s ease;
+
+        &.filled {
+            color: $taxi-yellow;
+            transform: scale(1.15);
+        }
+    }
+}
+
+.section-title {
+    color: $text-light;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.chips-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 30px;
+
+    ion-chip {
+        --color: #{$text-light};
+        --background: #{$card-gray};
+        border: 1px solid transparent;
+        margin: 0;
+
+        &.active-chip {
+            --background: #{$taxi-yellow};
+            --color: #{$bg-dark};
+            font-weight: 600;
+        }
+    }
+}
+
+.comment-box {
+    width: 100%;
+
+    .input-container {
+        background: $card-gray;
+        border-radius: 15px;
+        padding: 12px;
+        border: 1px solid rgba($text-light, 0.1);
+
+        ion-textarea {
+            --color: #{$text-light};
+            --placeholder-color: rgba($text-light, 0.3);
+            font-size: 0.95rem;
+        }
+
+        .counter {
+            text-align: right;
+            font-size: 0.7rem;
+            color: rgba($text-light, 0.3);
+            margin-top: 5px;
+        }
+    }
+}
+
+ion-footer {
+    background: $bg-dark;
+
+    .submit-btn {
+        --background: #{$taxi-yellow};
+        --color: #{$bg-dark};
+        --border-radius: 12px;
+        height: 54px;
+        font-weight: 700;
+        font-size: 1rem;
+        margin: 0;
+    }
+}

@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="light" mode="ios">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/pantallausuario" text="⬅️ Atras" icon="arrow-back-outline" class="custom-back-button"></ion-back-button>
+      <ion-back-button defaultHref="/pantallausuario" text="Atras" icon="arrow-back-outline" class="custom-back-button"></ion-back-button>
     </ion-buttons>
     <ion-title>Cuenta SmartTaxi</ion-title>
   </ion-toolbar>
@@ -24,130 +24,119 @@
         </div>
         <input type="file" accept="image/*" #fileInput hidden (change)="changePhoto($event)">
       </div>
-      <h2>{{ user.name }}</h2> 
-      <p>{{ user.edad }}</p>
+      <h2>{{ user.name }} {{ user.apellido }}</h2> 
+      <p> {{ user.edad }} </p>
       <p>{{ user.email }}</p>
-      <p>{{ user.calificacion }}</p>
-
+      <p>Puntuación: {{ user.calificacion }} ⭐</p>
     </div>
 
-  <div class="uber-grid">
-  <div class="uber-card" (click)="setSection('personal')">
-    <div class="icon-container">
-      <ion-icon name="person"></ion-icon>
+    <div class="uber-grid">
+      <div class="uber-card" (click)="setSection('personal')">
+        <div class="icon-container"><ion-icon name="person"></ion-icon></div>
+        <span>Información personal</span>
+      </div>
+      <div class="uber-card" (click)="setSection('seguridad')">
+        <div class="icon-container"><ion-icon name="shield-checkmark"></ion-icon></div>
+        <span>Seguridad</span>
+      </div>
+      <div class="uber-card full-width" (click)="irAHistorialUsuario($event)">
+        <div class="icon-container"><ion-icon name="time-outline"></ion-icon></div>
+        <span>Historial de viajes</span>
+      </div>
+      <div class="uber-card full-width" (click)="irACalificarUsuario($event)">
+        <div class="icon-container"><ion-icon name="star-outline"></ion-icon></div>
+        <span>Calificar</span>
+      </div>
     </div>
-    <span>Información personal</span>
-  </div>
-
-  <div class="uber-card" (click)="setSection('seguridad')">
-    <div class="icon-container">
-      <ion-icon name="shield-checkmark"></ion-icon>
-    </div>
-    <span>Seguridad</span>
-  </div>
-
-
-  <div class="uber-card full-width" (click)="irAHistorialUsuario($event)">
-    <div class="icon-container"><ion-icon name="lock-closed"></ion-icon></div>
-    <span>Historial de viajes</span>
-  </div>
-
-  <div class="uber-card full-width" (click)="irACalificarUsuario($event)">
-    <div class="icon-container"><ion-icon name="help-circle"></ion-icon></div>
-    <span>Calificar</span>
-  </div>
-</div>
-
-  
   }
 
   @if (activeSection === 'personal') {
-
-  <ion-list lines="full">
-    
-    <div class="edit-block">
-      @if (editingField !== 'name') {
-        <ion-item button detail="true" (click)="editingField = 'name'">
-          <ion-label>
-            <strong>Nombre</strong>
-            <span>{{ user.name }} {{ user.apellido }}</span>
-          </ion-label>
-        </ion-item>
-      } @else {
-        <div class="inline-edit-form">
-          <ion-item fill="solid" class="uber-input">
-            <ion-label position="stacked">Nombre</ion-label>
-            <ion-input [(ngModel)]="user.name"></ion-input>
+    <ion-list lines="full">
+      
+      <div class="edit-block">
+        @if (editingField !== 'name') {
+          <ion-item button detail="true" (click)="editingField = 'name'">
+            <ion-label>
+              <strong>Nombre</strong>
+              <span>{{ user.name }} {{ user.apellido }}</span>
+            </ion-label>
           </ion-item>
-          <ion-item fill="solid" class="uber-input">
-            <ion-label position="stacked">Apellido</ion-label>
-            <ion-input [(ngModel)]="user.apellido"></ion-input>
-          </ion-item>
-          <div class="edit-buttons">
-            <ion-button size="small" class="btn-black" (click)="saveField('name')">Guardar</ion-button>
-            <ion-button size="small" fill="clear" color="dark" (click)="editingField = ''">Cancelar</ion-button>
+        } @else {
+          <div class="inline-edit-form ion-padding">
+            <ion-item fill="solid" class="uber-input">
+              <ion-label position="stacked">Nombre</ion-label>
+              <ion-input [(ngModel)]="user.name" placeholder="Ej. Juan"></ion-input>
+            </ion-item>
+            <ion-item fill="solid" class="uber-input">
+              <ion-label position="stacked">Apellido</ion-label>
+              <ion-input [(ngModel)]="user.apellido" placeholder="Ej. Pérez"></ion-input>
+            </ion-item>
+            <div class="edit-buttons">
+              <ion-button size="small" class="btn-black" (click)="saveName()">Guardar</ion-button>
+              <ion-button size="small" fill="clear" color="dark" (click)="editingField = ''">Cancelar</ion-button>
+            </div>
           </div>
-        </div>
-      }
-    </div>
+        }
+      </div>
 
-    
-
-    <div class="edit-block">
-      @if (editingField !== 'phone') {
-        <ion-item button detail="true" (click)="editingField = 'phone'">
-          <ion-label>
-            <strong>Número de teléfono</strong>
-            <span>{{ user.numero }} <ion-icon name="checkmark-circle" color="success"></ion-icon></span>
-          </ion-label>
-        </ion-item>
-      } @else {
-        <div class="inline-edit-form">
-          <ion-item fill="solid" class="uber-input">
-            <ion-label position="stacked">Número de teléfono</ion-label>
-            <ion-input type="tel" [(ngModel)]="user.numero"></ion-input>
+      <div class="edit-block">
+        @if (editingField !== 'phone') {
+          <ion-item button detail="true" (click)="editingField = 'phone'">
+            <ion-label>
+              <strong>Número de teléfono</strong>
+              <span>{{ user.lada }} {{ user.numero }} <ion-icon name="" color="success"></ion-icon></span>
+            </ion-label>
           </ion-item>
-          <div class="edit-buttons">
-            <ion-button size="small" class="btn-black" (click)="saveField('phone')">Guardar</ion-button>
-            <ion-button size="small" fill="clear" color="dark" (click)="editingField = ''">Cancelar</ion-button>
+        } @else {
+          <div class="inline-edit-form ion-padding">
+            <div style="display: flex; gap: 8px;">
+              <ion-item fill="solid" class="uber-input" style="flex: 1.5;">
+                <ion-label position="stacked">Lada</ion-label>
+                <ion-input [(ngModel)]="user.lada" placeholder="+52"></ion-input>
+              </ion-item>
+              <ion-item fill="solid" class="uber-input" style="flex: 3;">
+                <ion-label position="stacked">Número (10 dígitos)</ion-label>
+                <ion-input type="tel" [(ngModel)]="user.numero" maxlength="10"></ion-input>
+              </ion-item>
+            </div>
+            <div class="edit-buttons">
+              <ion-button size="small" class="btn-black" (click)="savePhone()">Guardar</ion-button>
+              <ion-button size="small" fill="clear" color="dark" (click)="editingField = ''">Cancelar</ion-button>
+            </div>
           </div>
-        </div>
-      }
-    </div>
+        }
+      </div>
 
-    <div class="edit-block">
-      @if (editingField !== 'email') {
-        <ion-item button detail="true" (click)="editingField = 'email'">
-          <ion-label>
-            <strong>Correo electrónico</strong>
-            <span>{{ user.email }} <ion-icon name="checkmark-circle" color="success"></ion-icon></span>
-          </ion-label>
-        </ion-item>
-      } @else {
-        <div class="inline-edit-form">
-          <ion-item fill="solid" class="uber-input">
-            <ion-label position="stacked">Correo electrónico</ion-label>
-            <ion-input type="email" [(ngModel)]="user.email"></ion-input>
+      <div class="edit-block">
+        @if (editingField !== 'email') {
+          <ion-item button detail="true" (click)="editingField = 'email'">
+            <ion-label>
+              <strong>Correo electrónico</strong>
+              <span>{{ user.email }} <ion-icon name="" color="success"></ion-icon></span>
+            </ion-label>
           </ion-item>
-          <div class="edit-buttons">
-            <ion-button size="small" class="btn-black" (click)="saveField('email')">Guardar</ion-button>
-            <ion-button size="small" fill="clear" color="dark" (click)="editingField = ''">Cancelar</ion-button>
+        } @else {
+          <div class="inline-edit-form ion-padding">
+            <ion-item fill="solid" class="uber-input">
+              <ion-label position="stacked">Correo electrónico</ion-label>
+              <ion-input type="email" [(ngModel)]="user.email"></ion-input>
+            </ion-item>
+            <div class="edit-buttons">
+              <ion-button size="small" class="btn-black" (click)="saveEmail()">Guardar</ion-button>
+              <ion-button size="small" fill="clear" color="dark" (click)="editingField = ''">Cancelar</ion-button>
+            </div>
           </div>
-        </div>
-      }
-    </div>
-
-  </ion-list>
-}
+        }
+      </div>
+    </ion-list>
+  }
 
   @if (activeSection === 'seguridad') {
-
     @if (!editingPassword) {
       <ion-list lines="full">
         <ion-item button detail="true" (click)="toggleEditPassword()">
           <ion-label>
             <strong>Contraseña</strong>
-            <span></span>
           </ion-label>
         </ion-item>
       </ion-list>
@@ -161,7 +150,6 @@
           <ion-label position="stacked">Confirmar Contraseña</ion-label>
           <ion-input type="password" [(ngModel)]="confirmPassword"></ion-input>
         </ion-item>
-        
         <ion-button expand="block" class="btn-black" (click)="savePassword()">Actualizar contraseña</ion-button>
         <ion-button expand="block" fill="clear" color="dark" (click)="toggleEditPassword()">Cancelar</ion-button>
       </div>

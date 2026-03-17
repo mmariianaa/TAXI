@@ -1,172 +1,235 @@
-// Variables basadas en tu paleta de colores
-$taxi-black: #1F1F1F; // Negro principal
-$taxi-dark-gray: #4B4847; // Gris oscuro
-$taxi-light-gray: #E6E1DB; // Gris claro / Fondo suave
-$taxi-yellow: #FFC31F; // Amarillo vibrante (Acción)
-$taxi-orange: #EB8107; // Naranja (Acentuación)
+// Variables de marca SmartTaxi
+$taxi-black: #1F1F1F;
+$taxi-dark-gray: #4B4847;
+$taxi-light-gray: #F5F3F0; // Un poco más claro para contraste
+$taxi-yellow: #FFC31F;
+$taxi-orange: #EB8107;
+$taxi-success: #2dd36f;
 
-/* Estilos Globales del Header e Ionic */
+/* Estilos de la página */
+ion-content {
+    --background: white;
+}
+
+/* Header e Ionic Toolbar */
 ion-toolbar {
     --background: white;
     --color: #{$taxi-black};
+    --border-style: none;
 }
 
 .custom-back-button {
-    --color: #{$taxi-black}; // Color negro para que se vea bien
-    font-weight: 800;
+    --color: #{$taxi-black};
+    font-weight: 700;
 }
 
-/* Header y Pestañas */
+/* Sistema de Pestañas Estilo Uber */
 .uber-tabs-container {
     display: flex;
     overflow-x: auto;
     background: white;
-    border-bottom: 2px solid $taxi-light-gray;
+    padding: 0 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+
+    &::-webkit-scrollbar { display: none; } // Ocultar scroll en móviles
 
     .uber-tab {
-        padding: 16px 20px;
+        padding: 16px 15px;
         font-size: 14px;
         font-weight: 600;
         color: $taxi-dark-gray;
-        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
         white-space: nowrap;
 
         &.active {
             color: $taxi-black;
-            border-bottom: 4px solid $taxi-yellow; // Línea amarilla activa
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 3px;
+                background: $taxi-black; // Línea negra sólida para resaltar
+            }
         }
     }
 }
 
-/* Perfil y Foto con Lápiz */
+/* Perfil y Avatar */
 .profile-header {
-    padding: 40px 20px;
-    background: white;
+    padding: 30px 20px;
     text-align: center;
 
     .avatar-wrapper {
         position: relative;
-        width: 110px; 
-        height: 110px;
+        width: 100px; 
+        height: 100px;
         margin: 0 auto 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         border-radius: 50%; 
-        background: $taxi-light-gray; 
-        border: 3px solid $taxi-yellow;
-        // Importante: SIN overflow: hidden para que el lápiz no se corte
+        padding: 4px;
+        
 
         img {
             width: 100%;
             height: 100%;
-            border-radius: 50%; // La imagen se hace circular aquí
+            border-radius: 50%;
             object-fit: cover;
-        }
-
-        span {
-            font-size: 12px;
-            color: $taxi-dark-gray;
-            padding: 10px;
-            line-height: 1.2;
         }
 
         .edit-icon {
             position: absolute;
-            bottom: 0;
-            right: 0;
+            bottom: -5px;
+            right: -5px;
             background: $taxi-black;
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border: 2px solid white;
 
             ion-icon {
-                font-size: 18px;
-                color: $taxi-yellow;
+                font-size: 16px;
+                color: white;
             }
         }
     }
 
     h2 {
-        color: $taxi-black;
+        font-size: 24px;
         font-weight: 800;
-        margin: 0;
+        margin: 5px 0;
+        color: $taxi-black;
+    }
+    
+    p {
+        margin: 2px 0;
+        color: $taxi-dark-gray;
+        font-size: 14px;
     }
 }
 
-/* Cuadrícula de Tarjetas (Grid) */
+/* Grid de Tarjetas */
 .uber-grid {
     display: grid;
-    // Esto crea 2 columnas iguales (valor de 6 y 6)
-    grid-template-columns: repeat(2, 1fr); 
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
-    padding: 16px;
+    padding: 0 20px 20px;
 
     .uber-card {
         background: $taxi-light-gray;
         border-radius: 12px;
-        padding: 25px 10px;
+        padding: 20px;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        transition: 0.3s;
-        text-align: center;
+        align-items: flex-start; // Alineación a la izquierda estilo moderno
+        transition: transform 0.2s;
 
         .icon-container ion-icon {
-            font-size: 30px;
+            font-size: 24px;
             color: $taxi-black;
+            margin-bottom: 10px;
         }
 
         span {
-            color: $taxi-black;
-            font-weight: 700;
-            margin-top: 10px;
             font-size: 14px;
+            font-weight: 600;
+            color: $taxi-black;
         }
 
         &:active {
-            background: $taxi-yellow;
+            transform: scale(0.96);
+            background: darken($taxi-light-gray, 5%);
         }
 
-        // Tarjetas de ancho completo (Historial y Calificar)
         &.full-width {
-            grid-column: span 2; 
+            grid-column: span 2;
             flex-direction: row;
+            align-items: center;
             background: $taxi-black;
-            justify-content: flex-start;
-            padding: 18px 20px;
 
-            span,
-            ion-icon {
+            .icon-container ion-icon, span {
                 color: white;
+                margin-bottom: 0;
             }
 
             .icon-container {
                 margin-right: 15px;
             }
-
-            span {
-                margin-top: 0;
-            }
         }
     }
 }
 
-/* Botones y Formularios */
-.btn-black {
-    --background: #{$taxi-black};
-    --color: #{$taxi-yellow}; 
-    --border-radius: 8px;
-    font-weight: 700;
+/* Formularios de Edición (Inline) */
+.edit-block {
+    margin-bottom: 5px;
+
+    ion-item {
+        --padding-start: 20px;
+        --inner-padding-end: 20px;
+        --min-height: 70px;
+        
+        strong {
+            display: block;
+            font-size: 14px;
+            color: $taxi-dark-gray;
+            margin-bottom: 4px;
+        }
+
+        span {
+            font-size: 16px;
+            color: $taxi-black;
+            font-weight: 500;
+        }
+    }
 }
 
+.inline-edit-form {
+    background: #ffffff;
+    padding: 15px 20px;
+    border-bottom: 1px solid $taxi-light-gray;
+    animation: fadeIn 0.3s ease;
+
+    .edit-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    }
+}
+
+/* Inputs mejorados */
 .uber-input {
     --background: #{$taxi-light-gray};
-    --color: #{$taxi-black};
+    --border-radius: 8px;
+    --padding-start: 12px;
+    margin-bottom: 10px;
+    font-size: 15px;
+
+    ion-label {
+        color: $taxi-dark-gray !important;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+}
+
+/* Botones */
+.btn-black {
+    --background: #{$taxi-black};
+    --color: #{$taxi-yellow};
+    --border-radius: 8px;
+    --box-shadow: none;
+    font-weight: 700;
+    text-transform: none;
+    height: 45px;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
