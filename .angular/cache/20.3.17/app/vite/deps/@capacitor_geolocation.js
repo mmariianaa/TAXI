@@ -1,6 +1,6 @@
 import {
   registerPlugin
-} from "./chunk-6HNEJG3O.js";
+} from "./chunk-WWWA2D3E.js";
 import {
   __async
 } from "./chunk-XCTEB7MY.js";
@@ -54,7 +54,7 @@ function f(t = false) {
 
 // node_modules/@capacitor/geolocation/dist/esm/index.js
 var Geolocation = registerPlugin("Geolocation", {
-  web: () => import("./web-LGOLUEPX.js").then((m) => new m.GeolocationWeb())
+  web: () => import("./web-I2TZXER6.js").then((m) => new m.GeolocationWeb())
 });
 f();
 export {
