@@ -13,7 +13,7 @@ import {
   personCircleOutline, saveOutline, carOutline,
   logOutOutline, timeOutline, checkmarkOutline,
   personOutline, homeOutline, radioButtonOn, location, mapOutline,
-  star, starOutline
+  star, starOutline,
 } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { HttpClient} from '@angular/common/http'; 
+import { HttpClient } from '@angular/common/http'; 
 import { Router, RouterLink } from '@angular/router'; // Añadimos RouterLink para el menú
 import * as L from 'leaflet';
 import 'leaflet-routing-machine'; 
@@ -10,13 +10,14 @@ import { Geolocation } from '@capacitor/geolocation';
 import { addIcons } from 'ionicons'; // Necesario para los iconos del menú
 import { personOutline, carOutline, logOutOutline } from 'ionicons/icons'; // Iconos del menú
 import { AuthService } from '../services/auth';
+
 @Component({
   selector: 'app-pantallausuario',
   templateUrl: './pantallausuario.page.html',
   styleUrls: ['./pantallausuario.page.scss'],
   standalone: true,
   // Añadimos HttpClientModule y RouterLink a los imports
-  imports: [IonicModule, CommonModule, FormsModule,RouterLink]
+  imports: [IonicModule, CommonModule, FormsModule, RouterLink]
 })
 export class PantallausuarioPage implements OnInit {
   map!: L.Map;
@@ -25,23 +26,81 @@ export class PantallausuarioPage implements OnInit {
   destino: string = '';
   miUbicacion: L.LatLng | null = null;
   mostrarTaxis: boolean = false;
+  // Para el nombre personalizado del menu 
+  userData: any = null;
 
+  
   listaTaxis = [
     { conductor: 'Maty', modelo: 'Toyota Prius', precio: 15.00 },
     { conductor: 'Vale', modelo: 'Ford Focus', precio: 12.50 },
     { conductor: 'Mon', modelo: 'Hyundai Accent', precio: 14.00 }
   ];
 
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {
+  constructor(
+    private http: HttpClient, 
+    private router: Router, 
+    private authService: AuthService
+  ) {
     // Registramos los iconos que usa el menú que me diste
     addIcons({ personOutline, carOutline, logOutOutline });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // Cargar datos del usuario al iniciar
+    this.cargarDatosUsuario();
+  }
+
+  // Función para cargar los datos del usuario
+  cargarDatosUsuario() {
+    try {
+      // Opción 1: Intentar obtener del AuthService
+      const authData = this.authService.getUserData();
+      
+      if (authData) {
+        this.userData = authData;
+        console.log('Datos cargados desde AuthService:', this.userData);
+      } else {
+        // Opción 2: Intentar obtener del localStorage
+        const storedData = localStorage.getItem('user_session');
+        if (storedData) {
+          this.userData = JSON.parse(storedData);
+          console.log('Datos cargados desde localStorage:', this.userData);
+        } else {
+          // Opción 3: Datos de prueba (cuando no hay sesión)
+          this.userData = {
+            nombre: 'Usuario',
+            apellido: 'Demo',
+            email: 'demo@email.com',
+            telefono: '555-1234'
+          };
+          console.log('Usando datos de prueba');
+        }
+      }
+    } catch (error) {
+      console.error('Error cargando datos de usuario:', error);
+      this.userData = {
+        nombre: 'Usuario',
+        apellido: 'Demo',
+        email: 'demo@email.com'
+      };
+    }
+  }
 
   // Función de logout para el botón del menú
   logout() {
     console.log('Cerrando sesión...');
+    
+    // Limpiar datos de sesión
+    localStorage.removeItem('user_session');
+    localStorage.removeItem('token');
+    sessionStorage.clear();
+    
+    // Llamar al método logout del servicio si existe
+    if (this.authService && this.authService.logout) {
+      this.authService.logout();
+    }
+    
+    // Navegar al home
     this.router.navigate(['/home']);
   }
 
@@ -51,6 +110,9 @@ export class PantallausuarioPage implements OnInit {
     setTimeout(() => {
       if (this.map) this.map.invalidateSize();
     }, 300);
+    
+    // Recargar datos cada vez que entra a la vista
+    this.cargarDatosUsuario();
   }
 
   irANotificaciones() {
@@ -76,7 +138,13 @@ export class PantallausuarioPage implements OnInit {
 
   initMap() {
     if (!this.miUbicacion) return;
-    if (this.map) { this.map.remove(); }
+    
+    // Solución para los iconos de Leaflet
+    this.fixLeafletIcons();
+    
+    if (this.map) { 
+      this.map.remove(); 
+    }
 
     this.map = L.map('map').setView([this.miUbicacion.lat, this.miUbicacion.lng], 15);
     
@@ -90,6 +158,17 @@ export class PantallausuarioPage implements OnInit {
       .openPopup();
       
     this.map.invalidateSize();
+  }
+
+  // Método para corregir los iconos de Leaflet
+  fixLeafletIcons() {
+    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    });
   }
 
   buscarDestino() {

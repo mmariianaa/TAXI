@@ -15,12 +15,10 @@
         <ion-icon slot="start" name="car-outline" style="color: #FFC31F;"></ion-icon>
         <ion-label>Viajes</ion-label>
       </ion-item>
-
       <ion-item button (click)="setTab('historial')" style="--background: transparent; color: #E6E1DB;">
         <ion-icon slot="start" name="time-outline" style="color: #FFC31F;"></ion-icon>
         <ion-label>Rechazados</ion-label>
       </ion-item>
-
       <ion-item button (click)="logout()"
         style="--background: rgba(235, 129, 7, 0.1); color: #EB8107; margin-top: 30px; border-radius: 10px; margin-inline: 10px;">
         <ion-icon slot="start" name="log-out-outline"></ion-icon>
@@ -30,6 +28,7 @@
   </ion-content>
 </ion-menu>
 
+<!-- CONTENIDO PRINCIPAL -->
 <div class="ion-page" id="main-content">
   <ion-header class="ion-no-border">
     <ion-toolbar style="--background: #FFC31F;">
@@ -46,9 +45,9 @@
     </div>
   </ion-header>
 
-  <ion-content [className]="'tab-' + activeTab">
+  <ion-content class="ion-padding" [className]="'tab-' + activeTab">
+    <!-- TODO EL RESTO DE TU CONTENIDO -->
     <div class="main-container">
-
       <!-- SECCIÓN PERFIL -->
       <section class="perfil-section">
         <div class="status-card-elegant">
@@ -87,7 +86,6 @@
 
       <!-- SECCIÓN VIAJES -->
       <section class="viajes-section">
-
         <!-- Tarjeta de viaje disponible -->
         <div class="trip-request-card" *ngIf="viajePendiente && !viajeAceptado">
           <div class="req-header">VIAJE DISPONIBLE</div>
@@ -143,7 +141,6 @@
           <p style="color: #888; font-size: 11px;">{{ v.hora }}</p>
         </div>
       </section>
-
     </div>
   </ion-content>
 
