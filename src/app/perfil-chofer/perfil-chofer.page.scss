@@ -30,6 +30,9 @@
     z-index: 1;
   }
 
+  // ===========================================
+  // HEADER
+  // ===========================================
   .header-perfil {
     display: flex;
     justify-content: space-between;
@@ -93,6 +96,9 @@
     }
   }
 
+  // ===========================================
+  // SECCIÓN FOTO
+  // ===========================================
   .foto-section {
     display: flex;
     flex-direction: column;
@@ -104,33 +110,38 @@
       margin-bottom: 8px;
 
       .foto-perfil {
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
         border: 3px solid #FFC31F;
         box-shadow: 0 4px 15px rgba(255, 195, 31, 0.3);
         
         img {
           object-fit: cover;
+          width: 100%;
+          height: 100%;
         }
       }
 
-      .editar-foto {
+      .foto-menu {
         position: absolute;
         bottom: 0;
         right: 0;
-        background: #FFC31F;
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid white;
-        cursor: pointer;
+        gap: 5px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 25px;
+        padding: 5px;
         
-        ion-icon {
-          color: #1a1a2e;
-          font-size: 16px;
+        .foto-btn {
+          --color: #FFC31F;
+          --padding-start: 8px;
+          --padding-end: 8px;
+          margin: 0;
+          
+          ion-icon {
+            font-size: 18px;
+          }
         }
       }
     }
@@ -157,6 +168,9 @@
     }
   }
 
+  // ===========================================
+  // TARJETA PRINCIPAL
+  // ===========================================
   .perfil-card {
     background: white;
     border-radius: 30px;
@@ -165,6 +179,9 @@
     animation: slideUp 0.5s ease;
   }
 
+  // ===========================================
+  // SECCIONES DE DATOS
+  // ===========================================
   .seccion-perfil {
     margin-bottom: 30px;
 
@@ -217,14 +234,11 @@
         border-radius: 12px;
         border: 1px solid transparent;
         transition: all 0.3s ease;
+        width: 100%;
 
         &:focus-within {
           border-color: #FFC31F;
           --background: white;
-        }
-
-        &.password-input {
-          padding-right: 40px;
         }
       }
 
@@ -232,6 +246,7 @@
         position: relative;
         display: flex;
         align-items: center;
+        width: 100%;
 
         .password-toggle {
           position: absolute;
@@ -253,32 +268,11 @@
         margin-top: 5px;
       }
     }
-
-    // Para inputs tipo texto normales (los que usamos para contraseñas)
-    input[type="text"],
-    input[type="tel"],
-    input[type="password"] {
-      width: 100%;
-      padding: 12px 15px;
-      background: #F5F7FA;
-      border: 1px solid transparent;
-      border-radius: 12px;
-      color: #1a1a2e;
-      font-size: 15px;
-      transition: all 0.3s ease;
-
-      &:focus {
-        outline: none;
-        border-color: #FFC31F;
-        background: white;
-      }
-
-      &::placeholder {
-        color: #999;
-      }
-    }
   }
 
+  // ===========================================
+  // MENSAJES
+  // ===========================================
   .mensaje {
     padding: 12px 16px;
     border-radius: 12px;
@@ -299,6 +293,9 @@
     }
   }
 
+  // ===========================================
+  // BOTÓN CERRAR SESIÓN
+  // ===========================================
   .cerrar-sesion {
     margin-top: 30px;
     padding-top: 20px;
@@ -325,6 +322,9 @@
     }
   }
 
+  // ===========================================
+  // CARGANDO
+  // ===========================================
   .cargando-container {
     display: flex;
     flex-direction: column;
@@ -345,6 +345,9 @@
     }
   }
 
+  // ===========================================
+  // AJUSTES IOS
+  // ===========================================
   .ios & {
     .header-perfil {
       padding-top: 20px;
@@ -352,6 +355,9 @@
   }
 }
 
+// ===========================================
+// ANIMACIONES
+// ===========================================
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -363,10 +369,84 @@
   }
 }
 
-// Estilos globales para inputs
+// ===========================================
+// ALERTA DE CERRAR SESIÓN
+// ===========================================
+// ===========================================
+// ALERTA DE CERRAR SESIÓN
+// ===========================================
+.alerta-cerrar .alert-wrapper {
+  border-radius: 20px !important;
+  background: white !important;
+  
+  .alert-head {
+    text-align: center;
+    padding: 20px 20px 10px;
+    
+    .alert-title {
+      color: #1a1a2e;
+      font-size: 18px;
+      font-weight: 700;
+    }
+  }
+  
+  .alert-message {
+    color: #666;
+    font-size: 14px;
+    padding: 10px 20px;
+    text-align: center;
+  }
+  
+  .alert-button-group {
+    padding: 15px;
+    gap: 10px;
+    
+    .cancel-btn {
+      color: #999;
+      font-weight: 500;
+    }
+    
+    .alert-button:last-child {
+      background: #ff4444;
+      color: white;
+      border-radius: 10px;
+      font-weight: 600;
+      
+      &:hover {
+        background: #ff6666;
+      }
+    }
+  }
+}
+
+// ===========================================
+// ESTILOS GLOBALES
+// ===========================================
+input[type="text"],
+input[type="tel"],
+input[type="password"],
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
+  width: 100%;
+  padding: 12px 15px;
+  background: #F5F7FA;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: #1a1a2e;
+  font-size: 15px;
+  transition: all 0.3s ease;
   -webkit-box-shadow: 0 0 0px 1000px #F5F7FA inset;
-  transition: background-color 5000s ease-in-out 0s;
+  box-shadow: 0 0 0px 1000px #F5F7FA inset;
+
+  &:focus {
+    outline: none;
+    border-color: #FFC31F;
+    background: white;
+  }
+
+  &::placeholder {
+    color: #999;
+  }
 }
+

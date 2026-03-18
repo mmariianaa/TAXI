@@ -9,9 +9,6 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 // 2. Importamos el interceptor que creamos (ajusta la ruta si es necesario)
 import { authInterceptor } from './app/auth.interceptor'; 
 
-import { defineCustomElements } from '@ionic/pwa-elements/loader';
-defineCustomElements(window);//agregado para el capacitor para acceder a archivos de imagen
-
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
