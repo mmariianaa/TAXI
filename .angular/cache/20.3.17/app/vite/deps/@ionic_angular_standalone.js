@@ -223,10 +223,10 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-Q2UYNWHK.js";
+import "./chunk-UQGLAMHP.js";
 import {
   fromEvent
 } from "./chunk-576P5TAG.js";
-import "./chunk-UQGLAMHP.js";
 import {
   __decorate
 } from "./chunk-2K3BB2X3.js";
