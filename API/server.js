@@ -120,9 +120,27 @@ app.post('/api/registrochofer', async (req, res) => {
 // ============================================
 // REGISTRO DE USUARIO (CLIENTE)
 // ============================================
+// ============================================
+// REGISTRO DE USUARIO (CLIENTE) - CORREGIDO
+// ============================================
 app.post('/api/registrousuario', async (req, res) => {
     try {
-        const { nombre, apellido, edad, correo, telefono, contrasena } = req.body;
+        const { 
+            nombre, 
+            apellido, 
+            edad, 
+            correo, 
+            telefono, 
+            contrasena,
+            tipo_documento,    // <--- AGREGAR
+            numero_documento    // <--- AGREGAR
+        } = req.body;
+
+        // Validar campos requeridos
+        if (!nombre || !apellido || !edad || !correo || !contrasena || !tipo_documento || !numero_documento) {
+            return res.status(400).json({ error: 'Faltan campos requeridos' });
+        }
+
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10);
 
         const query = `INSERT INTO Usuario 
@@ -130,13 +148,34 @@ app.post('/api/registrousuario', async (req, res) => {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
         conexion.query(query, [
-            nombre, apellido, edad, 'CC', 'DOC_' + Date.now(),
-            correo, telefono, contrasenaEncriptada
+            nombre, 
+            apellido, 
+            edad, 
+            tipo_documento,     // <--- Usar el que viene del frontend
+            numero_documento,    // <--- Usar el que viene del frontend
+            correo, 
+            telefono, 
+            contrasenaEncriptada
         ], (err, result) => {
-            if (err) return res.status(500).json({ error: 'Error al registrar usuario' });
-            res.status(201).json({ message: 'Usuario registrado con éxito' });
+            if (err) {
+                console.error('Error SQL:', err);
+                
+                // Verificar si es error de email duplicado
+                if (err.code === 'ER_DUP_ENTRY') {
+                    return res.status(400).json({ error: 'El correo o documento ya está registrado' });
+                }
+                
+                return res.status(500).json({ error: 'Error al registrar usuario' });
+            }
+            
+            res.status(201).json({ 
+                success: true,
+                message: 'Usuario registrado con éxito',
+                userId: result.insertId 
+            });
         });
     } catch (error) {
+        console.error('Error en registro:', error);
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });

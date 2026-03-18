@@ -21,8 +21,7 @@ import { AlertController } from '@ionic/angular';  // 📌 NUEVO: Para la alerta
   standalone: true,
   imports: [
     IonSpinner, CommonModule, FormsModule, IonButton, IonIcon,
-    IonContent, IonAvatar, IonItem, IonLabel, IonList,
-    IonListHeader, IonText, IonInput
+    IonContent, IonAvatar, IonInput
   ],
 })
 export class PerfilChoferPage implements OnInit {

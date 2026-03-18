@@ -1,94 +1,173 @@
 <ion-menu contentId="main-content" type="overlay">
-  <ion-header>
-    <ion-toolbar color="primary">
+  <ion-header class="ion-no-border">
+    <ion-toolbar style="--background: #1F1F1F; --color: #FFC31F;">
       <ion-title>Menú Taxi</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <ion-content>
-    <ion-list lines="none">
-      <ion-menu-toggle auto-hide="true">
-        <ion-item button routerLink="/perfil-chofer">
-          <ion-icon slot="start" name="person-outline"></ion-icon>
-          <ion-label>Mi Perfil Detallado</ion-label>
-        </ion-item>
-      </ion-menu-toggle>
+  <ion-content style="--background: #1F1F1F;">
+    <ion-list lines="none" style="background: #1F1F1F;">
+      <ion-item button (click)="irAPerfil()" style="--background: transparent; color: #E6E1DB;">
+        <ion-icon slot="start" name="person-outline" style="color: #FFC31F;"></ion-icon>
+        <ion-label>Mi Perfil</ion-label>
+      </ion-item>
+      <ion-item button (click)="setTab('viajes')" style="--background: transparent; color: #E6E1DB;">
+        <ion-icon slot="start" name="car-outline" style="color: #FFC31F;"></ion-icon>
+        <ion-label>Viajes</ion-label>
+      </ion-item>
 
-      <ion-menu-toggle auto-hide="true">
-        <ion-item button routerLink="/viajenotificacion-chofer">
-          <ion-icon slot="start" name="car-outline"></ion-icon>
-          <ion-label>Historial de Viajes</ion-label>
-        </ion-item>
-      </ion-menu-toggle>
+      <ion-item button (click)="setTab('historial')" style="--background: transparent; color: #E6E1DB;">
+        <ion-icon slot="start" name="time-outline" style="color: #FFC31F;"></ion-icon>
+        <ion-label>Rechazados</ion-label>
+      </ion-item>
 
-      <ion-menu-toggle auto-hide="true">
-        <ion-item button (click)="logout()" color="danger">
-          <ion-icon slot="start" name="log-out-outline"></ion-icon>
-          <ion-label>Cerrar Sesión</ion-label>
-        </ion-item>
-      </ion-menu-toggle>
+      <ion-item button (click)="logout()"
+        style="--background: rgba(235, 129, 7, 0.1); color: #EB8107; margin-top: 30px; border-radius: 10px; margin-inline: 10px;">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        <ion-label>Cerrar Sesión</ion-label>
+      </ion-item>
     </ion-list>
   </ion-content>
 </ion-menu>
 
 <div class="ion-page" id="main-content">
   <ion-header class="ion-no-border">
-    <ion-toolbar color="primary">
+    <ion-toolbar style="--background: #FFC31F;">
       <ion-buttons slot="start">
-        <ion-menu-button></ion-menu-button>
+        <ion-menu-button color="dark"></ion-menu-button>
       </ion-buttons>
-      <ion-title>Panel Chofer</ion-title>
+      <ion-title style="color: #1F1F1F; font-weight: bold;">Panel Chofer</ion-title>
     </ion-toolbar>
+
+    <div class="custom-tabs">
+      <div class="tab-btn" [class.active]="activeTab === 'perfil'" (click)="setTab('perfil')">Perfil</div>
+      <div class="tab-btn" [class.active]="activeTab === 'viajes'" (click)="setTab('viajes')">Viajes</div>
+      <div class="tab-btn" [class.active]="activeTab === 'historial'" (click)="setTab('historial')">Rechazados</div>
+    </div>
   </ion-header>
 
-  <ion-content>
-    <div class="app-container">
-      <main class="content">
-        
-        <div class="status-card">
-          <span class="status-label">Estado:</span>
-          <div class="toggle-container">
-            <label class="switch">
-              <input type="checkbox" [checked]="isActive" (change)="toggleStatus()">
-              <span class="slider"></span>
-            </label>
-            <span class="status-text" [class.active-text]="isActive" [class.inactive-text]="!isActive">
-              {{ isActive ? 'Activo' : 'Inactivo' }}
+  <ion-content [className]="'tab-' + activeTab">
+    <div class="main-container">
+
+      <!-- SECCIÓN PERFIL -->
+      <section class="perfil-section">
+        <div class="status-card-elegant">
+          <div class="status-info">
+            <span class="label">Estado Actual</span>
+            <span class="status-text" [style.color]="isActive ? '#34C759' : '#FF3B30'">
+              {{ isActive ? 'CONECTADO' : 'DESCONECTADO' }}
             </span>
           </div>
+          <label class="ios-switch">
+            <input type="checkbox" [checked]="isActive" (change)="toggleStatus()">
+            <span class="slider"></span>
+          </label>
         </div>
 
-        <div class="info-section">
-          <div class="info-text">
-            <h2>Info Actual:</h2>
-            <div class="info-group">
-              <label>Nombre del Chofer</label>
-              <p>{{ driverInfo.nombre }} {{ driverInfo.apellido }}</p>
+        <div class="driver-card-dark">
+          <div class="card-header">
+            <ion-icon name="person-circle-outline" style="font-size: 48px; color: #FFC31F;"></ion-icon>
+            <div class="header-text">
+              <h3>{{ driverInfo.nombre }} {{ driverInfo.apellido }}</h3>
+              <p>Conductor Calvillo</p>
             </div>
-            <div class="info-group">
-              <label>Placas</label>
+          </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">PLACAS</span>
               <p>{{ driverInfo.vehiculo?.placa || 'Sin placa' }}</p>
             </div>
-            <div class="info-group">
-              <label>Vehículo</label>
-              <p>{{ driverInfo.vehiculo?.marca }} {{ driverInfo.vehiculo?.modelo }}</p>
+            <div class="info-item">
+              <span class="info-label">VEHÍCULO</span>
+              <p>{{ driverInfo.vehiculo?.marca || 'Sin marca' }} {{ driverInfo.vehiculo?.modelo || '' }}</p>
             </div>
           </div>
-          
-          <div class="photo-box">
-            <ion-icon name="person-circle-outline" style="font-size: 60px; color: #ccc;"></ion-icon>
-            <span>Foto del<br>Chofer</span>
+        </div>
+      </section>
+
+      <!-- SECCIÓN VIAJES -->
+      <section class="viajes-section">
+
+        <!-- Tarjeta de viaje disponible -->
+        <div class="trip-request-card" *ngIf="viajePendiente && !viajeAceptado">
+          <div class="req-header">VIAJE DISPONIBLE</div>
+          <div class="req-body">
+            <h2>{{ viajePendiente?.ganancia }}</h2>
+            <p class="pass-name">Pasajero: {{ viajePendiente?.pasajero }}</p>
+            <div class="route-box">
+              <div class="route-item">
+                <ion-icon name="radio-button-on" style="color: #FFC31F;"></ion-icon>
+                {{ viajePendiente?.origen }}
+              </div>
+              <div class="line"></div>
+              <div class="route-item">
+                <ion-icon name="location" style="color: #EB8107;"></ion-icon>
+                {{ viajePendiente?.destino }}
+              </div>
+            </div>
+          </div>
+
+          <div class="req-footer">
+            <button class="btn-decline" (click)="rechazarViaje()">IGNORAR</button>
+            <button class="btn-confirm" (click)="aceptarViaje()">ACEPTAR</button>
           </div>
         </div>
 
-        <div class="spacer"></div>
-
-        <div class="action-buttons">
-          <button class="btn-primary" (click)="saveProfile()">
-            <ion-icon name="checkmark-outline"></ion-icon> Guardar Cambios
-          </button>
+        <!-- Viaje activo con mapa -->
+        <div class="trip-active" *ngIf="viajeAceptado">
+          <div id="map" class="map-container"></div>
+          <button class="btn-finish-trip" (click)="finalizarViaje()">FINALIZAR SERVICIO</button>
         </div>
-      </main>
+
+        <!-- Buscando pasajeros -->
+        <div class="searching-box" *ngIf="isActive && !viajePendiente && !viajeAceptado">
+          <div class="radar-pulse"></div>
+          <p>Buscando pasajeros cerca...</p>
+        </div>
+      </section>
+
+      <!-- SECCIÓN HISTORIAL (RECHAZADOS) -->
+      <section class="historial-section">
+        <h3 style="font-weight: bold; margin-bottom: 15px;">Viajes Rechazados</h3>
+
+        <div *ngIf="viajesRechazados.length === 0" class="empty-state">
+          <ion-icon name="time-outline"></ion-icon>
+          <p>No tienes viajes rechazados</p>
+        </div>
+
+        <div class="rejected-card" *ngFor="let v of viajesRechazados">
+          <div>
+            <h4>{{ v.ganancia }}</h4>
+            <p style="font-size: 12px;">{{ v.destino }}</p>
+          </div>
+          <p style="color: #888; font-size: 11px;">{{ v.hora }}</p>
+        </div>
+      </section>
+
     </div>
   </ion-content>
+
+  <!-- MODAL DE CALIFICACIÓN -->
+  <div class="modal-overlay" [style.display]="mostrarModalCalificar ? 'flex' : 'none'">
+    <div class="rating-modal">
+      <div class="modal-header">
+        <h3>Calificar Pasajero</h3>
+        <p>¿Cómo fue tu experiencia con {{ viajePendiente?.pasajero }}?</p>
+      </div>
+
+      <div class="stars-container">
+        <ion-icon *ngFor="let starNum of [1,2,3,4,5]" [name]="ratingActual >= starNum ? 'star' : 'star-outline'"
+          (click)="setRating(starNum)">
+        </ion-icon>
+      </div>
+
+      <div class="comment-section">
+        <ion-textarea placeholder="Escribe un comentario opcional..." [(ngModel)]="comentarioUsuario" rows="3"
+          class="custom-textarea">
+        </ion-textarea>
+      </div>
+
+      <button class="btn-send-rating" (click)="enviarCalificacion()">ENVIAR CALIFICACIÓN</button>
+    </div>
+  </div>
 </div>

@@ -1,8 +1,17 @@
+// Variables
+$naranja: #EB8107;
+$amarillo: #FFC31F;
+$negro: #1F1F1F;
+$crema: #E6E1DB;
+
+// Estilos principales
 .main-container {
-  padding: 16px;
+  padding: 15px;
+  background: $crema;
+  min-height: 100%;
 }
 
-/* Caja de estado similar a la de tu imagen de referencia */
+// Status Box
 .status-box {
   background: white;
   padding: 20px;
@@ -13,16 +22,128 @@
   margin-bottom: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: 0.3s ease;
-
+  
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  
+  h2 {
+    margin: 5px 0 0;
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
   &.active-mode {
-    background: #f0fff4; // Verde muy clarito
+    background: #f0fff4;
     border: 1px solid #c6f6d5;
   }
-
-  p { margin: 0; font-size: 0.85rem; color: #718096; }
-  h2 { margin: 5px 0 0; font-size: 1.25rem; font-weight: bold; }
 }
 
+// Status Card Elegant
+.status-card-elegant {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+// Secciones
+.perfil-section,
+.viajes-section,
+.historial-section {
+  display: none;
+}
+
+.tab-perfil .perfil-section,
+.tab-viajes .viajes-section,
+.tab-historial .historial-section {
+  display: block;
+}
+
+// Header Section
+.header-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 15px;
+  
+  .user-avatar {
+    font-size: 60px;
+    color: #cbd5e0;
+  }
+  
+  h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #a0aec0;
+  }
+}
+
+// Trip Request Card
+.trip-request-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  
+  .req-header {
+    background: $negro;
+    color: $amarillo;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .req-body {
+    padding: 20px;
+    
+    h2 {
+      font-size: 32px;
+      text-align: center;
+      color: $negro;
+      margin: 0;
+    }
+    
+    .pass-name {
+      text-align: center;
+      color: #444;
+      margin-bottom: 15px;
+    }
+  }
+  
+  .req-footer {
+    display: flex;
+    
+    button {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      font-weight: bold;
+    }
+    
+    .btn-decline {
+      background: #eee;
+    }
+    
+    .btn-confirm {
+      background: $amarillo;
+    }
+  }
+}
+
+// Card Container
 .card-container {
   background: white;
   border-radius: 15px;
@@ -31,41 +152,327 @@
   min-height: 300px;
 }
 
-.header-section {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 25px;
-  border-bottom: 1px solid #edf2f7;
-  padding-bottom: 15px;
-
-  .user-avatar { font-size: 60px; color: #cbd5e0; }
-  h3 { margin: 0; font-size: 1.15rem; font-weight: 700; }
-  p { margin: 0; font-size: 0.8rem; color: #a0aec0; }
+// Route Box
+.route-box {
+  background: #f4f4f4;
+  padding: 12px;
+  border-radius: 10px;
+  
+  .route-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #000;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  .line {
+    width: 2px;
+    height: 10px;
+    background: #ccc;
+    margin-left: 8px;
+  }
 }
 
+// Map Container
+.map-container {
+  height: 350px;
+  width: 100%;
+  background: #ddd;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  z-index: 1;
+}
+
+// Buttons
+.btn-finish-trip {
+  width: 100%;
+  background: $negro;
+  color: white;
+  padding: 18px;
+  border-radius: 12px;
+  font-weight: bold;
+  border: none;
+}
+
+// Info Grid
 .info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-
+  
   .data-item {
-    label { font-size: 0.7rem; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.5px; }
-    p { margin: 4px 0 0; font-weight: 600; color: #2d3748; }
-    .plate { font-family: 'Courier New', Courier, monospace; color: var(--ion-color-primary); }
+    label {
+      font-size: 0.7rem;
+      color: #a0aec0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    p {
+      margin: 4px 0 0;
+      font-weight: 600;
+      color: #2d3748;
+    }
+    
+    .plate {
+      font-family: 'Courier New', Courier, monospace;
+      color: var(--ion-color-primary);
+    }
   }
 }
 
+// MODAL DE CALIFICACIÓN
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.rating-modal {
+  background: white;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 25px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  
+  .modal-header {
+    margin-bottom: 20px;
+    
+    h3 {
+      font-weight: bold;
+      color: $negro;
+      margin: 0;
+    }
+    
+    p {
+      color: #666;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+  }
+  
+  .stars-container {
+    margin-bottom: 25px;
+    
+    ion-icon {
+      font-size: 40px;
+      color: $amarillo;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+  }
+  
+  .comment-section {
+    margin-bottom: 20px;
+    
+    .custom-textarea {
+      --background: #f9f9f9;
+      --padding-start: 15px;
+      --padding-end: 15px;
+      --padding-top: 15px;
+      --border-radius: 15px;
+      border: 1px solid #eee;
+      font-size: 14px;
+      color: $negro;
+    }
+  }
+}
+
+// Action Area
 .action-area {
   margin-top: 30px;
+  
   ion-button {
     --box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
   }
+  
+  .btn-send-rating {
+    width: 100%;
+    background: $amarillo;
+    color: $negro;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    
+    &:active {
+      background: #e6b01a;
+    }
+  }
 }
 
+// Empty State
 .empty-state {
   text-align: center;
   padding-top: 50px;
   color: #a0aec0;
-  ion-icon { font-size: 48px; }
+  
+  ion-icon {
+    font-size: 48px;
+  }
+}
+
+// Custom Tabs
+.custom-tabs {
+  display: flex;
+  background: white;
+  
+  .tab-btn {
+    flex: 1;
+    text-align: center;
+    padding: 15px;
+    font-weight: bold;
+    color: #999;
+    
+    &.active {
+      color: $negro;
+      border-bottom: 3px solid $amarillo;
+    }
+  }
+}
+
+// iOS Switch
+.ios-switch {
+  position: relative;
+  width: 50px;
+  height: 26px;
+  
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+    
+    &:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+  }
+  
+  input:checked + .slider {
+    background-color: #34C759;
+    
+    &:before {
+      transform: translateX(24px);
+    }
+  }
+}
+
+// Driver Card Dark
+.driver-card-dark {
+  background: $negro;
+  color: white;
+  border-radius: 20px;
+  padding: 20px;
+  
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    
+    .info-item {
+      background: rgba(255,255,255,0.05);
+      padding: 12px;
+      border-radius: 12px;
+      
+      .info-label {
+        font-size: 10px;
+        color: $amarillo;
+        font-weight: bold;
+      }
+      
+      p {
+        margin: 5px 0 0;
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+// Rejected Card
+.rejected-card {
+  background: $negro;
+  color: white;
+  padding: 15px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  border-left: 4px solid $naranja;
+  
+  h4 {
+    color: $amarillo;
+    margin: 0;
+  }
+}
+
+// Radar Pulse
+.radar-pulse {
+  width: 50px;
+  height: 50px;
+  background: $amarillo;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    box-shadow: 0 0 0 0 rgba(255, 195, 31, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 15px rgba(255, 195, 31, 0);
+  }
+  100% {
+    transform: scale(0.8);
+  }
+}
+
+// Searching Box
+.searching-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
 }

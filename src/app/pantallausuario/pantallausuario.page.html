@@ -22,7 +22,8 @@
       </ion-menu-toggle>
 
       <ion-menu-toggle auto-hide="true">
-        <ion-item button color="danger">
+        <ion-item button (click)="logout()" color="danger"
+          style="margin-top: 30px; border-radius: 10px; margin-inline: 10px;">
           <ion-icon slot="start" name="log-out-outline"></ion-icon>
           <ion-label>Cerrar Sesión</ion-label>
         </ion-item>
@@ -37,9 +38,9 @@
       <ion-buttons slot="start">
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
-      
+
       <ion-title>Usuario</ion-title>
-      
+
       <ion-buttons slot="end">
         <ion-button (click)="irANotificaciones()">
           <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
@@ -49,25 +50,17 @@
   </ion-header>
 
   <ion-content [fullscreen]="true" class="ion-padding">
-    
+
     <div class="search-container">
       <ion-item lines="none" class="custom-input">
         <ion-icon name="location-outline" slot="start" color="primary"></ion-icon>
-        <ion-input 
-          label="Origen" 
-          labelPlacement="stacked" 
-          placeholder="Mi ubicación" 
-          [(ngModel)]="origen">
+        <ion-input label="Origen" labelPlacement="stacked" placeholder="Mi ubicación" [(ngModel)]="origen">
         </ion-input>
       </ion-item>
 
       <ion-item lines="none" class="custom-input">
         <ion-icon name="flag-outline" slot="start" color="danger"></ion-icon>
-        <ion-input 
-          label="Destino" 
-          labelPlacement="stacked" 
-          placeholder="¿A dónde vas?" 
-          [(ngModel)]="destino"
+        <ion-input label="Destino" labelPlacement="stacked" placeholder="¿A dónde vas?" [(ngModel)]="destino"
           (keyup.enter)="buscarDestino()">
         </ion-input>
         <ion-button slot="end" fill="clear" (click)="buscarDestino()">
@@ -88,22 +81,22 @@
 
       <ion-list lines="full">
         @for (taxi of listaTaxis; track taxi.conductor) {
-          <ion-item button (click)="seleccionarTaxi(taxi)">
-            <ion-icon name="car-sport" slot="start"></ion-icon>
-            <ion-label>
-              <h2>{{ taxi.conductor }}</h2>
-              <p>{{ taxi.modelo }}</p>
-            </ion-label>
-            <ion-note slot="end" color="success">${{ taxi.precio }}</ion-note>
-          </ion-item>
+        <ion-item button (click)="seleccionarTaxi(taxi)">
+          <ion-icon name="car-sport" slot="start"></ion-icon>
+          <ion-label>
+            <h2>{{ taxi.conductor }}</h2>
+            <p>{{ taxi.modelo }}</p>
+          </ion-label>
+          <ion-note slot="end" color="success">${{ taxi.precio }}</ion-note>
+        </ion-item>
         } @empty {
-          <ion-item>No hay taxis cerca</ion-item>
+        <ion-item>No hay taxis cerca</ion-item>
         }
       </ion-list>
 
       <ion-button expand="block" shape="round" color="secondary" (click)="sugerirRuta()" class="ion-margin-top">
         <ion-icon name="dice-outline" slot="start"></ion-icon>
-         Sugerir Ruta Rápida
+        Sugerir Ruta Rápida
       </ion-button>
     </div>
 

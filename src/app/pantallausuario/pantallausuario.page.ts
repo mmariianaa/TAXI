@@ -9,7 +9,7 @@ import 'leaflet-routing-machine';
 import { Geolocation } from '@capacitor/geolocation';
 import { addIcons } from 'ionicons'; // Necesario para los iconos del menú
 import { personOutline, carOutline, logOutOutline } from 'ionicons/icons'; // Iconos del menú
-
+import { AuthService } from '../services/auth';
 @Component({
   selector: 'app-pantallausuario',
   templateUrl: './pantallausuario.page.html',
@@ -32,7 +32,7 @@ export class PantallausuarioPage implements OnInit {
     { conductor: 'Mon', modelo: 'Hyundai Accent', precio: 14.00 }
   ];
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {
     // Registramos los iconos que usa el menú que me diste
     addIcons({ personOutline, carOutline, logOutOutline });
   }
@@ -134,4 +134,5 @@ export class PantallausuarioPage implements OnInit {
     this.destino = "Palacio de Bellas Artes, CDMX"; 
     this.buscarDestino();
   }
+  
 }
