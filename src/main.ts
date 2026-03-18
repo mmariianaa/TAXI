@@ -9,6 +9,9 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 // 2. Importamos el interceptor que creamos (ajusta la ruta si es necesario)
 import { authInterceptor } from './app/auth.interceptor'; 
 
+import { defineCustomElements } from '@ionic/pwa-elements/loader';//agregado segunda vez
+defineCustomElements(window);
+
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
