@@ -17,7 +17,7 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 export class PerfiladministradorPage implements OnInit {
   perfilForm: FormGroup;
   // Imagen por defecto
-  avatarUrl: string = 'assets/default-avatar.png'; 
+  avatarUrl: string = 'assets/avatar.png'; 
 
   constructor(
     private fb: FormBuilder,
@@ -59,7 +59,7 @@ export class PerfiladministradorPage implements OnInit {
   }
 
   quitarFoto() {
-    this.avatarUrl = 'assets/default-avatar.png'; // Regresa a la imagen por defecto
+    this.avatarUrl = 'assets/avatar.png'; // Regresa a la imagen por defecto
   }
 
   // --- LÓGICA DEL FORMULARIO ---
