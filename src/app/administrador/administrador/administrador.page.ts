@@ -5,6 +5,7 @@ import { AlertController, LoadingController, IonicModule } from '@ionic/angular'
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { personOutline, carOutline, documentTextOutline, mapOutline, cashOutline, peopleOutline, checkmarkCircleOutline } from 'ionicons/icons';
+import { Router } from '@angular/router'; 
 
 @Component({
   selector: 'app-administrador',
@@ -17,8 +18,6 @@ export class AdministradorPage implements OnInit {
   // Variables para el Dashboard
   stats = { viajes: 0, ingresos: 0, choferes: 0, disponibles: 0 };
   listaChoferes: any[] = [];
-  
-  // Variables para el Modal y Edición
   isModalOpen = false;
   choferSel: any = null;
   editForm: FormGroup;
@@ -27,7 +26,8 @@ export class AdministradorPage implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private router: Router
   ) {
     addIcons({ personOutline, carOutline, documentTextOutline, mapOutline, cashOutline, peopleOutline, checkmarkCircleOutline });
     
@@ -58,9 +58,9 @@ export class AdministradorPage implements OnInit {
     });
   }
 
+  
   abrirDetalle(chofer: any) {
     this.choferSel = chofer;
-    // Rellenamos el form con los datos actuales del chofer
     this.editForm.patchValue({
       marca: chofer.marca,
       modelo: chofer.modelo,
@@ -97,9 +97,18 @@ export class AdministradorPage implements OnInit {
       next: () => {
         loading.dismiss();
         this.isModalOpen = false;
-        this.cargarChoferes(); // Refrescar lista
+        this.cargarChoferes(); 
       },
       error: () => loading.dismiss()
     });
   }
+
+  irPerfil() {
+  this.router.navigate(['/perfiladministrador']);
+}
+
+cambiarFiltro(event: any) {
+ this.cargarResumen(event.detail.value);
+}
+
 }

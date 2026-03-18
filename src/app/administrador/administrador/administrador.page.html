@@ -8,7 +8,7 @@
   
   <ion-toolbar color="taxi-header" class="nav-toolbar">
     <div class="nav-container">
-      <ion-button fill="clear" (click)="irAPerfil()">
+      <ion-button fill="clear" (click)="irPerfil()">
         <ion-icon name="person-outline"></ion-icon> Perfil
       </ion-button>
       <ion-button fill="clear" class="active">
@@ -60,18 +60,20 @@
   <div class="section-title">Gestión de Choferes</div>
   
   <ion-list mode="ios" class="driver-list">
-    <ion-item *ngFor="let chofer of listaChoferes" button (click)="abrirDetalle(chofer)" detail="true">
-      <ion-avatar slot="start">
-        <img [src]="chofer.foto || 'assets/avatar.png'">
-      </ion-avatar>
-      <ion-label>
-        <h2>{{ chofer.nombre }} {{ chofer.apellido }}</h2>
-        <p>Placa: {{ chofer.placa }}</p>
-      </ion-label>
-      <ion-badge slot="end" [color]="chofer.estado === 'activo' ? 'success' : 'medium'">
-        {{ chofer.estado }}
-      </ion-badge>
-    </ion-item>
+    @for (chofer of listaChoferes; track chofer.id_chofer) {
+      <ion-item button (click)="abrirDetalle(chofer)" detail="true">
+        <ion-avatar slot="start">
+          <img [src]="chofer.foto || 'assets/avatar.png'">
+        </ion-avatar>
+        <ion-label>
+          <h2>{{ chofer.nombre }} {{ chofer.apellido }}</h2>
+          <p>Placa: {{ chofer.placa }}</p>
+        </ion-label>
+        <ion-badge slot="end" [color]="chofer.estado === 'activo' ? 'success' : 'medium'">
+          {{ chofer.estado }}
+        </ion-badge>
+      </ion-item>
+    }
   </ion-list>
 
   <ion-modal [isOpen]="isModalOpen" (didDismiss)="isModalOpen = false" mode="ios">
@@ -92,22 +94,26 @@
 
         <h3 class="group-title">Datos Personales (Lectura)</h3>
         <ion-list lines="none">
-          <ion-item>
-            <ion-label>Nombre: {{ choferSel?.nombre }} {{ choferSel?.apellido }}</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>Correo: {{ choferSel?.correo }}</ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label>Documento: {{ choferSel?.tipo_doc }} - {{ choferSel?.num_doc }}</ion-label>
-          </ion-item>
+          <ion-item><ion-label>Nombre: {{ choferSel?.nombre }} {{ choferSel?.apellido }}</ion-label></ion-item>
+          <ion-item><ion-label>Correo: {{ choferSel?.correo }}</ion-label></ion-item>
+          <ion-item><ion-label>Teléfono: {{ choferSel?.telefono }}</ion-label></ion-item>
+          <ion-item><ion-label>Edad: {{ choferSel?.edad }} años</ion-label></ion-item>
+          <ion-item><ion-label>Documento: {{ choferSel?.tipo_doc }} - {{ choferSel?.num_doc }}</ion-label></ion-item>
         </ion-list>
 
-        <h3 class="group-title">Datos del Vehículo y Profesionales (Editable)</h3>
+        <h3 class="group-title">Datos del Vehículo (Editable)</h3>
         <form [formGroup]="editForm">
           <ion-item class="input-item">
             <ion-label position="stacked">Marca</ion-label>
             <ion-input formControlName="marca"></ion-input>
+          </ion-item>
+          <ion-item class="input-item">
+            <ion-label position="stacked">Modelo</ion-label>
+            <ion-input formControlName="modelo"></ion-input>
+          </ion-item>
+          <ion-item class="input-item">
+            <ion-label position="stacked">Color</ion-label>
+            <ion-input formControlName="color"></ion-input>
           </ion-item>
           <ion-item class="input-item">
             <ion-label position="stacked">Placa</ion-label>
@@ -118,7 +124,7 @@
             <ion-input formControlName="licencia"></ion-input>
           </ion-item>
 
-          <ion-button expand="block" color="taxi-yellow" class="btn-save" (click)="confirmarCambios()">
+          <ion-button expand="block" fill="solid" class="btn-savee"  (click)="confirmarCambios()">
             Guardar Cambios
           </ion-button>
         </form>
