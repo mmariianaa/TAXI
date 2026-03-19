@@ -5,7 +5,7 @@ const DB = require('./database');
 const conexion = DB.connDB;
 const cors = require('cors');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken'); // <--- Asegúrate de haber hecho: npm install jsonwebtoken
+const jwt = require('jsonwebtoken');
 
 app.use(express.json());
 app.use(cors());
@@ -17,9 +17,8 @@ app.get('/ojo', (req, res) => {
     res.send('API de TaxiDB funcionando correctamente');
 });
 
-// ============================================
-// ENDPOINT DE LOGIN (EL QUE FALTABA)
-// ============================================
+
+// ENDPOINT DE LOGIN 
 app.post('/api/login', (req, res) => {
     const { correo, contrasena } = req.body;
 
@@ -73,9 +72,8 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// ============================================
 // REGISTRO DEL CHOFER
-// ============================================
+
 app.post('/api/registrochofer', async (req, res) => {
     try {
         const {
@@ -87,18 +85,17 @@ app.post('/api/registrochofer', async (req, res) => {
 
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10);
 
-        // Iniciar transacción manual o inserts en cadena
-        // 1. Insertar Taxi
+        // Insertar Taxi
         const queryTaxi = `INSERT INTO Taxi (marca, modelo, color, placa, capacidad) VALUES (?, ?, ?, ?, ?)`;
         conexion.query(queryTaxi, [marca_vehiculo, modelo_vehiculo, color_vehiculo, placa, capacidad], (err, taxiRes) => {
             if (err) return res.status(500).json({ error: 'Error al registrar vehículo' });
 
-            // 2. Insertar Chofer
+            // Insertar Chofer
             const queryChofer = `INSERT INTO Chofer (licencia, experiencia, id_taxi) VALUES (?, ?, ?)`;
             conexion.query(queryChofer, [licencia, experiencia, taxiRes.insertId], (err, choferRes) => {
                 if (err) return res.status(500).json({ error: 'Error al registrar chofer' });
 
-                // 3. Insertar Usuario
+                //Insertar Usuario
                 const queryUser = `INSERT INTO Usuario 
                     (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena, id_chofer) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -117,12 +114,7 @@ app.post('/api/registrochofer', async (req, res) => {
     }
 });
 
-// ============================================
-// REGISTRO DE USUARIO (CLIENTE)
-// ============================================
-// ============================================
-// REGISTRO DE USUARIO (CLIENTE) - CORREGIDO
-// ============================================
+// REGISTRO DE USUARIO 
 app.post('/api/registrousuario', async (req, res) => {
     try {
         const { 
@@ -132,8 +124,8 @@ app.post('/api/registrousuario', async (req, res) => {
             correo, 
             telefono, 
             contrasena,
-            tipo_documento,    // <--- AGREGAR
-            numero_documento    // <--- AGREGAR
+            tipo_documento,  
+            numero_documento    
         } = req.body;
 
         // Validar campos requeridos
@@ -151,8 +143,8 @@ app.post('/api/registrousuario', async (req, res) => {
             nombre, 
             apellido, 
             edad, 
-            tipo_documento,     // <--- Usar el que viene del frontend
-            numero_documento,    // <--- Usar el que viene del frontend
+            tipo_documento,    
+            numero_documento,  
             correo, 
             telefono, 
             contrasenaEncriptada
@@ -180,9 +172,7 @@ app.post('/api/registrousuario', async (req, res) => {
     }
 });
 
-// ============================================
 // CONSULTAS
-// ============================================
 app.get('/getTodosChoferes', (req, res) => {
     const query = `
         SELECT c.*, u.nombre, u.apellido, u.correo, t.marca, t.placa
@@ -200,12 +190,11 @@ app.listen(port, () => {
     console.log(`API corriendo en http://localhost:${port}`);
 });
 
-// ============================================
 // CAMBIAR CONTRASEÑA
-// ============================================
+
 app.put('/api/usuarios/:id/password', async (req, res) => {
     const { id } = req.params;
-    const { nueva } = req.body;  // 👈 SOLO recibe nueva contraseña
+    const { nueva } = req.body;  //recibe una nuea contraseña, no la actual.
 
     if (!nueva || nueva.length < 6) {
         return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
@@ -231,9 +220,8 @@ app.put('/api/usuarios/:id/password', async (req, res) => {
     }
 });
 
-// ============================================
-// ACTUALIZAR TELÉFONO (¡FALTABA!)
-// ============================================
+// ACTUALIZAR TELÉFONO
+
 app.put('/api/usuarios/:id', (req, res) => {
     const { id } = req.params;
     const { telefono } = req.body;

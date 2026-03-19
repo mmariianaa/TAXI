@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { conexion } = require("../database"); // Asegúrate que el nombre coincida con tu export
+const { conexion } = require("../database");
 
 const router = express.Router();
 
@@ -21,23 +21,21 @@ router.post("/login", (req, res) => {
 
         const user = results[0];
 
-        // 1. Verificar contraseña (BCRYPT)
-        // Nota: Si tus contraseñas en la DB aún no están encriptadas, 
-        // usa: if (contrasena !== user.contrasena) para probar.
+        // verificamos las contraseñas para ver si son iguales
         const isMatch = await bcrypt.compare(contrasena, user.contrasena);
         if (!isMatch) return res.status(401).json({ error: "Contraseña incorrecta" });
 
-        // 2. Determinar el ROL
+        // se delimita el rol del usuario, si tiene un id_chofer es chofer, sino es usuario normal
         const rol = user.id_chofer ? 'chofer' : 'usuario';
 
-        // 3. Generar el Token
+        // se genera el token con el id del usuario y su rol, para que en el frontend se pueda manejar la sesión y los permisos
         const token = jwt.sign(
             { id: user.id_usuario, rol: rol },
-            "tu_clave_secreta", // Cámbialo por algo seguro
+            "tu_clave_secreta", 
             { expiresIn: "24h" }
         );
 
-        // 4. Enviar respuesta
+        // se envia una respuesta con el token y los datos del usuario, incluyendo su rol y si es chofer, su id_chofer
         res.json({
             token,
             user: {
