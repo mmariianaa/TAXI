@@ -8,7 +8,7 @@ import {
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { pencilSharp, person, shieldCheckmark, lockClosed, helpCircle, checkmarkCircle } from 'ionicons/icons';
+import { pencilSharp, person, shieldCheckmark, lockClosed, helpCircle, checkmarkCircle,starOutline, arrowBackOutline } from 'ionicons/icons';
 import { AuthService } from '../services/auth'; // <-- IMPORTAR AuthService
 import { HttpClient } from '@angular/common/http'; // <-- Para llamadas API
 import { lastValueFrom } from 'rxjs';
@@ -55,7 +55,7 @@ export class PerfilusuarioPage implements OnInit {
 
   constructor() {
     // Registrar iconos
-    addIcons({pencilSharp,person,shieldCheckmark,lockClosed,helpCircle,checkmarkCircle});
+    addIcons({pencilSharp,person,shieldCheckmark,lockClosed,helpCircle,checkmarkCircle, starOutline, arrowBackOutline});
   }
 
   ngOnInit() {

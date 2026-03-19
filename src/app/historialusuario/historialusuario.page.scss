@@ -1,0 +1,156 @@
+$noche: #121212;      // Un negro más profundo
+$carbon: #1E1E1E;     // Gris para tarjetas
+$crema: #F5F5F5;      
+$oro: #FFC31F;
+$naranja: #EB8107;
+
+:host {
+    --ion-background-color: #{$noche};
+}
+
+ion-toolbar {
+    --background: #{$noche};
+    --color: #{$crema};
+    --border-width: 0;
+    font-weight: 700;
+}
+
+.custom-back-button {
+    --color: #{$crema}; // Blanco para que no distraiga del título
+}
+
+.history-list {
+    padding: 20px;
+    background: #{$noche};
+}
+
+.trip-card {
+    background: $carbon;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid rgba($crema, 0.05); // Borde casi invisible para definición
+    transition: transform 0.2s ease;
+
+    &:active {
+        transform: scale(0.98);
+        background: lighten($carbon, 3%);
+    }
+
+    &.cancelled {
+        .icon-bg { background: #333; color: #666; }
+        .amount { color: #666; text-decoration: line-through; }
+        opacity: 0.7;
+    }
+
+    .card-top {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+
+        .icon-bg {
+            background: rgba($oro, 0.1); // Fondo suave
+            color: $oro;
+            padding: 12px;
+            border-radius: 14px;
+            font-size: 1.4rem;
+            display: flex;
+        }
+
+        .info {
+            flex: 1;
+            h2 {
+                margin: 0;
+                font-size: 1rem;
+                color: $crema;
+                font-weight: 700;
+            }
+            p {
+                margin: 4px 0 0;
+                font-size: 0.8rem;
+                color: rgba($crema, 0.4);
+            }
+        }
+
+        .price {
+            text-align: right;
+            .amount {
+                display: block;
+                color: $crema;
+                font-weight: 700;
+                font-size: 1.1rem;
+            }
+            .promo {
+                color: #ff4444; // Rojo para cancelados
+                font-size: 0.7rem;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+        }
+    }
+
+    .card-bottom {
+        display: flex;
+        gap: 15px;
+        align-items: stretch;
+
+        .route-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px 0;
+
+            .dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                &.gold { background: $oro; box-shadow: 0 0 8px rgba($oro, 0.4); }
+                &.orange { background: $naranja; }
+            }
+
+            .line {
+                width: 2px;
+                flex: 1;
+                background: linear-gradient(to bottom, $oro, $naranja);
+                margin: 4px 0;
+                opacity: 0.3;
+            }
+        }
+
+        .addresses {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 15px;
+
+            span {
+                font-size: 0.85rem;
+                color: rgba($crema, 0.7);
+                font-weight: 400;
+            }
+        }
+
+        .detail-arrow {
+            display: flex;
+            align-items: center;
+            color: rgba($crema, 0.2);
+            font-size: 1.2rem;
+        }
+    }
+}
+
+.empty-msg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    color: rgba($crema, 0.2);
+
+    ion-icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+    }
+}
