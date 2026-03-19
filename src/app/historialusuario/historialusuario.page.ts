@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { 
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-  IonList, IonItem, IonLabel, IonIcon, IonBadge, IonBackButton, 
-  IonRefresher, IonRefresherContent 
+  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonIcon, IonBackButton, 
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common'; // Necesario para @for y @if
 import { addIcons } from 'ionicons';
@@ -22,19 +20,13 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    IonBackButton, 
     IonHeader, 
     IonToolbar, 
     IonTitle, 
     IonContent, 
-    IonButtons, 
-    IonList, 
-    IonItem, 
-    IonLabel, 
-    IonIcon, 
-    IonBadge,
-    IonRefresher,
-    IonRefresherContent
+    IonButtons,
+    IonBackButton, 
+    IonIcon, // ← AGREGADO: Faltaba importar IonIcon
   ]
 })
 export class HistorialusuarioPage implements OnInit {

@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $noche: #121212;      // Un negro más profundo
 $carbon: #1E1E1E;     // Gris para tarjetas
 $crema: #F5F5F5;      
@@ -34,7 +36,8 @@ ion-toolbar {
 
     &:active {
         transform: scale(0.98);
-        background: lighten($carbon, 3%);
+        // CORREGIDO: Usar color.adjust con la sintaxis correcta
+        background: color.adjust($carbon, $lightness: 3%);
     }
 
     &.cancelled {

@@ -2,10 +2,10 @@ import {
   CapacitorException,
   WebPlugin,
   registerPlugin
-} from "./chunk-WWWA2D3E.js";
+} from "./chunk-TP5VDVRX.js";
 import {
   __async
-} from "./chunk-XCTEB7MY.js";
+} from "./chunk-N3534FJA.js";
 
 // node_modules/@capacitor/camera/dist/esm/definitions.js
 var CameraSource;

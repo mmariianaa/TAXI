@@ -46,32 +46,32 @@ export class HomePage {
   }
 
   // --- FUNCIÓN DE LOGIN REAL ---
-  iniciarSesion() {
-    // 1. Validar campos
-    if (!this.loginData.email || !this.loginData.password) {
-      alert('Por favor completa todos los campos');
-      return;
-    }
-
-    // 2. Llamar al servidor mediante el AuthService
-    this.authService.login(this.loginData.email, this.loginData.password).subscribe({
-      next: (res) => {
-        console.log('Inicio de sesión exitoso', res);
-        
-        // El servidor nos dirá si es 'chofer' o 'usuario'
-        if (res.user.rol === 'chofer') {
-          this.router.navigate(['/chofer']); // Pantalla principal de chofer
-        } else {
-          this.router.navigate(['/pantallausuario']); // Pantalla principal de cliente
-        }
-      },
-      error: (err) => {
-        console.error('Error en login:', err);
-        // Mostramos el mensaje de error que viene del backend (ej: "Contraseña incorrecta")
-        alert(err.error?.error || 'Error al conectar con el servidor');
-      }
-    });
+iniciarSesion() {
+  if (!this.loginData.email || !this.loginData.password) {
+    alert('Por favor completa todos los campos');
+    return;
   }
+
+  this.authService.login(this.loginData.email, this.loginData.password).subscribe({
+    next: (res) => {
+      console.log('Inicio de sesión exitoso', res);
+      
+      // ✅ ESTAS LÍNEAS SON LAS QUE FALTAN
+      localStorage.setItem('user', JSON.stringify(res.user));
+      localStorage.setItem('token', res.token);
+      
+      if (res.user.rol === 'chofer') {
+        this.router.navigate(['/chofer']);
+      } else {
+        this.router.navigate(['/pantallausuario']);
+      }
+    },
+    error: (err) => {
+      console.error('Error en login:', err);
+      alert(err.error?.error || 'Error al conectar con el servidor');
+    }
+  });
+}
 
   // Lógica visual para mostrar/ocultar contraseña
   togglePassword(inputId: string, iconId: string) {

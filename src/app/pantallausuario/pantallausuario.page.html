@@ -22,8 +22,7 @@
       </ion-menu-toggle>
 
       <ion-menu-toggle auto-hide="true">
-        <ion-item button (click)="logout()" color="danger"
-          style="margin-top: 30px; border-radius: 10px; margin-inline: 10px;">
+        <ion-item button (click)="logout()" color="danger" class="logout-item">
           <ion-icon slot="start" name="log-out-outline"></ion-icon>
           <ion-label>Cerrar Sesión</ion-label>
         </ion-item>
@@ -39,16 +38,7 @@
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
 
-      <ion-title>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <ion-icon name="person-circle-outline" style="font-size: 24px;"></ion-icon>
-          @if (userData?.nombre) {
-            <span>{{ userData.nombre }}</span>
-          } @else {
-            <span>Usuario</span>
-          }
-        </div>
-      </ion-title>
+      <ion-title>Usuario</ion-title>
 
       <ion-buttons slot="end">
         <ion-button (click)="irANotificaciones()">
@@ -59,6 +49,7 @@
   </ion-header>
 
   <ion-content [fullscreen]="true" class="ion-padding">
+
     <div class="search-container">
       <ion-item lines="none" class="custom-input">
         <ion-icon name="location-outline" slot="start" color="primary"></ion-icon>
@@ -79,43 +70,39 @@
 
     <div class="map-box">
       <div id="map"></div>
-      @if (mostrarTaxis) {
-        <ion-badge color="light" class="map-badge">Ruta activa</ion-badge>
-      }
+      <ion-badge *ngIf="mostrarTaxis" color="light" class="map-badge">Ruta activa</ion-badge>
     </div>
 
-    @if (mostrarTaxis) {
-      <div>
-        <ion-list-header>
-          <ion-label>Taxis disponibles</ion-label>
-        </ion-list-header>
+    <div *ngIf="mostrarTaxis">
+      <ion-list-header>
+        <ion-label>Taxis disponibles</ion-label>
+      </ion-list-header>
 
-        <ion-list lines="full">
-          @for (taxi of listaTaxis; track taxi.conductor) {
-            <ion-item button (click)="seleccionarTaxi(taxi)">
-              <ion-icon name="car-sport" slot="start"></ion-icon>
-              <ion-label>
-                <h2>{{ taxi.conductor }}</h2>
-                <p>{{ taxi.modelo }}</p>
-              </ion-label>
-              <ion-note slot="end" color="success">${{ taxi.precio }}</ion-note>
-            </ion-item>
-          } @empty {
-            <ion-item>
-              <ion-label class="ion-text-center">No hay taxis cerca</ion-label>
-            </ion-item>
-          }
-        </ion-list>
+      <ion-list lines="full">
+        @for (taxi of listaTaxis; track taxi.id_chofer) {
+        <ion-item button (click)="seleccionarTaxi(taxi)">
+          <ion-icon name="car-sport" slot="start"></ion-icon>
+          <ion-label>
+            <h2>{{ taxi.nombre || 'Chofer' }} {{ taxi.apellido || '' }}</h2>
+            <p>{{ taxi.marca }} - {{ taxi.placa }}</p>
+            <p *ngIf="taxi.experiencia">Experiencia: {{ taxi.experiencia }} años</p>
+          </ion-label>
+          <ion-note slot="end" color="success">${{ taxi.precio || '0' }}</ion-note>
+        </ion-item>
+        } @empty {
+        <ion-item>No hay taxis cerca</ion-item>
+        }
+      </ion-list>
 
-        <ion-button expand="block" shape="round" color="secondary" (click)="sugerirRuta()" class="ion-margin-top">
-          <ion-icon name="dice-outline" slot="start"></ion-icon>
-          Sugerir Ruta Rápida
-        </ion-button>
-      </div>
-    } @else {
-      <div class="ion-text-center ion-padding">
-        <p>Ingresa un destino para ver taxis disponibles</p>
-      </div>
-    }
+      <ion-button expand="block" shape="round" color="secondary" (click)="sugerirRuta()" class="ion-margin-top">
+        <ion-icon name="dice-outline" slot="start"></ion-icon>
+        Sugerir Ruta Rápida
+      </ion-button>
+    </div>
+
+    <div *ngIf="!mostrarTaxis" class="ion-text-center ion-padding">
+      <p>Ingresa un destino para ver taxis disponibles</p>
+    </div>
+
   </ion-content>
-</div>
+</div>\

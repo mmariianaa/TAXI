@@ -1,4 +1,6 @@
 const express = require('express');
+const http = require('http');
+const socketIO = require('socket.io');
 const app = express();
 const port = 3000;
 const DB = require('./database');
@@ -8,15 +10,133 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:8100',
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
 
-// Secreto para firmar los tokens (En producción usa una variable de entorno)
+const server = http.createServer(app);
+const io = socketIO(server, {
+    cors: {
+        origin: "http://localhost:8100", // Mismo origen que tu app Ionic
+        methods: ["GET", "POST"],
+        credentials: true
+    }
+});
+
+// Secreto para firmar los tokens
 const JWT_SECRET = 'tu_llave_secreta_super_segura_123';
+
+// ============================================
+// WEBSOCKETS
+// ============================================
+const usuariosConectados = new Map(); // id_usuario -> socketId
+
+io.on('connection', (socket) => {
+    console.log('Nuevo cliente conectado:', socket.id);
+
+    // Usuario o Chofer se conecta a su sala personal
+    socket.on('unirse_sala', (userId) => {
+        console.log(`Usuario ${userId} se unió a su sala`);
+        socket.join(`usuario_${userId}`);
+        usuariosConectados.set(userId, socket.id);
+    });
+
+    // Usuario solicita taxi
+    socket.on('solicitar_taxi', (data) => {
+        const { id_chofer_usuario, nombre_cliente, id_cliente, placa_taxi } = data;
+        
+        console.log('Solicitud de taxi recibida:', data);
+        
+        const query = `
+            SELECT c.id_chofer, c.estado
+            FROM Chofer c
+            WHERE c.id_chofer = ?
+        `;
+        
+        conexion.query(query, [id_chofer_usuario], (err, results) => {
+            if (err || results.length === 0) {
+                console.error('Chofer no encontrado');
+                return;
+            }
+            
+            const chofer = results[0];
+            
+            const viajeQuery = `
+                INSERT INTO Viajes (destino, fecha_viaje) 
+                VALUES (?, NOW())
+            `;
+            
+            const destinoTemp = 'Solicitud de taxi';
+            conexion.query(viajeQuery, [destinoTemp], (err, viajeResult) => {
+                if (err) {
+                    console.error('Error al crear viaje:', err);
+                    return;
+                }
+                
+                const id_viaje = viajeResult.insertId;
+                
+                io.to(`usuario_${id_chofer_usuario}`).emit('notificacion_chofer', {
+                    id_viaje: id_viaje,
+                    nombre_cliente: nombre_cliente,
+                    id_cliente: id_cliente,
+                    placa_taxi: placa_taxi,
+                    timestamp: new Date()
+                });
+                
+                console.log(`Notificación enviada al chofer ${id_chofer_usuario}`);
+            });
+        });
+    });
+
+    // Chofer acepta viaje
+    socket.on('aceptar_viaje', (data) => {
+        const { id_viaje, id_chofer, id_cliente } = data;
+        
+        const clienteQuery = 'SELECT nombre, apellido FROM Usuario WHERE id_usuario = ?';
+        conexion.query(clienteQuery, [id_cliente], (err, clienteResults) => {
+            if (err || clienteResults.length === 0) return;
+            
+            io.to(`usuario_${id_cliente}`).emit('viaje_aceptado', {
+                id_viaje: id_viaje,
+                mensaje: 'Tu viaje ha sido aceptado',
+                chofer: {
+                    nombre: 'Chofer',
+                }
+            });
+        });
+    });
+
+    // Chofer rechaza viaje
+    socket.on('rechazar_viaje', (data) => {
+        const { id_viaje, id_cliente } = data;
+        
+        io.to(`usuario_${id_cliente}`).emit('viaje_rechazado', {
+            id_viaje: id_viaje,
+            mensaje: 'El chofer ha rechazado el viaje'
+        });
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Cliente desconectado:', socket.id);
+        
+        for (let [key, value] of usuariosConectados.entries()) {
+            if (value === socket.id) {
+                usuariosConectados.delete(key);
+                break;
+            }
+        }
+    });
+});
+
+// ============================================
+// ENDPOINTS REST
+// ============================================
 
 app.get('/ojo', (req, res) => {
     res.send('API de TaxiDB funcionando correctamente');
 });
-
 
 // ENDPOINT DE LOGIN 
 app.post('/api/login', (req, res) => {
@@ -26,7 +146,6 @@ app.post('/api/login', (req, res) => {
         return res.status(400).json({ error: 'Faltan correo o contraseña' });
     }
 
-    // Consulta para traer datos de Usuario, Chofer y su Taxi (si tiene)
     const query = `
         SELECT 
             u.id_usuario, u.nombre, u.apellido, u.correo, u.contrasena, u.id_chofer,
@@ -43,14 +162,11 @@ app.post('/api/login', (req, res) => {
 
         const user = results[0];
 
-        // Comparar contraseña encriptada
         const match = await bcrypt.compare(contrasena, user.contrasena);
         if (!match) return res.status(401).json({ error: 'Contraseña incorrecta' });
 
-        // Crear Token
         const token = jwt.sign({ id: user.id_usuario }, JWT_SECRET, { expiresIn: '24h' });
 
-        // Responder con datos estructurados para tu Perfil Chofer
         res.json({
             token,
             user: {
@@ -61,6 +177,7 @@ app.post('/api/login', (req, res) => {
                 rol: user.id_chofer ? 'chofer' : 'usuario',
                 telefono: user.telefono,
                 documento: user.numero_documento,
+                id_chofer: user.id_chofer,
                 vehiculo: user.id_chofer ? {
                     marca: user.marca,
                     modelo: user.modelo,
@@ -72,8 +189,37 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// REGISTRO DEL CHOFER
+// ENDPOINT DE TAXIS DISPONIBLES
+app.get('/api/taxis/disponibles', (req, res) => {
+    const query = `
+        SELECT 
+            c.id_chofer,
+            u.id_usuario,
+            u.nombre,
+            u.apellido,
+            u.telefono,
+            t.marca,
+            t.modelo,
+            t.color,
+            t.placa,
+            t.capacidad,
+            c.estado
+        FROM Chofer c
+        INNER JOIN Taxi t ON c.id_taxi = t.id_taxi
+        LEFT JOIN Usuario u ON c.id_chofer = u.id_chofer
+        WHERE c.estado IN ('activo', 'disponible')
+    `;
+    
+    conexion.query(query, (err, results) => {
+        if (err) {
+            console.error('Error al obtener taxis:', err);
+            return res.status(500).json({ error: 'Error al obtener taxis disponibles' });
+        }
+        res.json(results);
+    });
+});
 
+// REGISTRO DEL CHOFER
 app.post('/api/registrochofer', async (req, res) => {
     try {
         const {
@@ -85,17 +231,14 @@ app.post('/api/registrochofer', async (req, res) => {
 
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10);
 
-        // Insertar Taxi
         const queryTaxi = `INSERT INTO Taxi (marca, modelo, color, placa, capacidad) VALUES (?, ?, ?, ?, ?)`;
         conexion.query(queryTaxi, [marca_vehiculo, modelo_vehiculo, color_vehiculo, placa, capacidad], (err, taxiRes) => {
             if (err) return res.status(500).json({ error: 'Error al registrar vehículo' });
 
-            // Insertar Chofer
             const queryChofer = `INSERT INTO Chofer (licencia, experiencia, id_taxi) VALUES (?, ?, ?)`;
             conexion.query(queryChofer, [licencia, experiencia, taxiRes.insertId], (err, choferRes) => {
                 if (err) return res.status(500).json({ error: 'Error al registrar chofer' });
 
-                //Insertar Usuario
                 const queryUser = `INSERT INTO Usuario 
                     (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena, id_chofer) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -128,7 +271,6 @@ app.post('/api/registrousuario', async (req, res) => {
             numero_documento    
         } = req.body;
 
-        // Validar campos requeridos
         if (!nombre || !apellido || !edad || !correo || !contrasena || !tipo_documento || !numero_documento) {
             return res.status(400).json({ error: 'Faltan campos requeridos' });
         }
@@ -152,7 +294,6 @@ app.post('/api/registrousuario', async (req, res) => {
             if (err) {
                 console.error('Error SQL:', err);
                 
-                // Verificar si es error de email duplicado
                 if (err.code === 'ER_DUP_ENTRY') {
                     return res.status(400).json({ error: 'El correo o documento ya está registrado' });
                 }
@@ -186,25 +327,17 @@ app.get('/getTodosChoferes', (req, res) => {
     });
 });
 
-app.listen(port, () => {
-    console.log(`API corriendo en http://localhost:${port}`);
-});
-
 // CAMBIAR CONTRASEÑA
-
 app.put('/api/usuarios/:id/password', async (req, res) => {
     const { id } = req.params;
-    const { nueva } = req.body;  //recibe una nuea contraseña, no la actual.
+    const { nueva } = req.body;
 
     if (!nueva || nueva.length < 6) {
         return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
     }
 
     try {
-        // Encriptar nueva contraseña directamente
         const nuevaEncriptada = await bcrypt.hash(nueva, 10);
-
-        // Actualizar sin verificar la actual
         const queryUpdate = 'UPDATE Usuario SET contrasena = ? WHERE id_usuario = ?';
 
         conexion.query(queryUpdate, [nuevaEncriptada, id], (err2) => {
@@ -221,7 +354,6 @@ app.put('/api/usuarios/:id/password', async (req, res) => {
 });
 
 // ACTUALIZAR TELÉFONO
-
 app.put('/api/usuarios/:id', (req, res) => {
     const { id } = req.params;
     const { telefono } = req.body;
@@ -248,4 +380,13 @@ app.put('/api/usuarios/:id', (req, res) => {
             telefono: telefono
         });
     });
+});
+
+// ============================================
+// INICIAR SERVIDOR
+// ============================================
+server.listen(port, () => {
+    console.log(`🚀 Servidor unificado corriendo en http://localhost:${port}`);
+    console.log(`📡 REST API disponible en http://localhost:${port}`);
+    console.log(`🔌 WebSocket Server disponible en ws://localhost:${port}`);
 });

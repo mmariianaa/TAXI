@@ -4,7 +4,7 @@ const connDB = mysql.createConnection({
     host: 'localhost',    
     user: 'root',
     password: '12345',
-    database: 'TaxiDBtaxi'
+    database: 'TaxiDBtaxi1'
 })
 connDB.connect((err) => {
     if (err) {
