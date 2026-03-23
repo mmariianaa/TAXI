@@ -382,7 +382,6 @@ app.put('/api/usuarios/:id', (req, res) => {
     });
 });
 
-<<<<<<< HEAD
 // ============================================
 // INICIAR SERVIDOR
 // ============================================
@@ -390,7 +389,6 @@ server.listen(port, () => {
     console.log(`🚀 Servidor unificado corriendo en http://localhost:${port}`);
     console.log(`📡 REST API disponible en http://localhost:${port}`);
     console.log(`🔌 WebSocket Server disponible en ws://localhost:${port}`);
-=======
 // 1. OBTENER HISTORIAL (GET)
 app.get('/api/historialusuario/:id', (req, res) => {
     const { id } = req.params;
@@ -444,5 +442,5 @@ app.post('/api/historialusuario', (req, res) => {
         }
         res.status(201).json({ success: true, id_viaje: result.insertId });
     });
->>>>>>> Monybbranch
+});
 });

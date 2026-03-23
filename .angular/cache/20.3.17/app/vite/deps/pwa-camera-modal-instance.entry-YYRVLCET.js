@@ -3,13 +3,8 @@ import {
   getElement,
   h,
   registerInstance
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/pwa-camera-modal-instance.entry-YYRVLCET.js
 } from "./chunk-MPV7TFXB.js";
 import "./chunk-N3534FJA.js";
-========
-} from "./chunk-O7T6ZS7K.js";
-import "./chunk-XCTEB7MY.js";
->>>>>>>> Monybbranch:.angular/cache/20.3.17/app/vite/deps/pwa-camera-modal-instance.entry-FJVCKECJ.js
 
 // node_modules/@ionic/pwa-elements/dist/esm-es5/pwa-camera-modal-instance.entry.js
 var __awaiter = function(e, t, n, o) {
@@ -166,8 +161,4 @@ PWACameraModal.style = cameraModalInstanceCss;
 export {
   PWACameraModal as pwa_camera_modal_instance
 };
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/pwa-camera-modal-instance.entry-YYRVLCET.js
 //# sourceMappingURL=pwa-camera-modal-instance.entry-YYRVLCET.js.map
-========
-//# sourceMappingURL=pwa-camera-modal-instance.entry-FJVCKECJ.js.map
->>>>>>>> Monybbranch:.angular/cache/20.3.17/app/vite/deps/pwa-camera-modal-instance.entry-FJVCKECJ.js

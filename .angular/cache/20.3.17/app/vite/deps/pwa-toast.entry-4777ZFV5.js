@@ -3,13 +3,8 @@ import {
   getElement,
   h,
   registerInstance
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/pwa-toast.entry-4777ZFV5.js
 } from "./chunk-MPV7TFXB.js";
 import "./chunk-N3534FJA.js";
-========
-} from "./chunk-O7T6ZS7K.js";
-import "./chunk-XCTEB7MY.js";
->>>>>>>> Monybbranch:.angular/cache/20.3.17/app/vite/deps/pwa-toast.entry-VPCCYEGB.js
 
 // node_modules/@ionic/pwa-elements/dist/esm-es5/pwa-toast.entry.js
 var toastCss = ':host{position:fixed;bottom:20px;left:0;right:0;display:-ms-flexbox;display:flex;opacity:0}:host(.in){-webkit-transition:opacity 300ms;transition:opacity 300ms;opacity:1}:host(.out){-webkit-transition:opacity 1s;transition:opacity 1s;opacity:0}.wrapper{-ms-flex:1;flex:1;display:-ms-flexbox;display:flex;-ms-flex-align:center;align-items:center;-ms-flex-pack:center;justify-content:center}.toast{font-family:-apple-system, system-ui, "Helvetica Neue", Roboto, sans-serif;background-color:#eee;color:black;border-radius:5px;padding:10px 15px;font-size:14px;font-weight:500;-webkit-box-shadow:0px 1px 2px rgba(0, 0, 0, 0.20);box-shadow:0px 1px 2px rgba(0, 0, 0, 0.20)}';
@@ -58,8 +53,4 @@ PWAToast.style = toastCss;
 export {
   PWAToast as pwa_toast
 };
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/pwa-toast.entry-4777ZFV5.js
 //# sourceMappingURL=pwa-toast.entry-4777ZFV5.js.map
-========
-//# sourceMappingURL=pwa-toast.entry-VPCCYEGB.js.map
->>>>>>>> Monybbranch:.angular/cache/20.3.17/app/vite/deps/pwa-toast.entry-VPCCYEGB.js

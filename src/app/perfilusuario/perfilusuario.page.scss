@@ -1,17 +1,11 @@
-<<<<<<< HEAD
 // 1. IMPORTANTE: El @use SIEMPRE debe ir en la primera línea
 @use 'sass:color';
 
-// Variables de marca SmartTaxi
-$taxi-black: #1F1F1F;
-$taxi-dark-gray: #4B4847;
-=======
 /* ==========================================================================
    VARIABLES DE MARCA - SMARTTAXI
    ========================================================================== */
 $taxi-black:      #1F1F1F;
 $taxi-dark-gray:  #4B4847;
->>>>>>> Monybbranch
 $taxi-light-gray: #F5F3F0; 
 $taxi-yellow:     #FFC31F;
 $taxi-orange:     #EB8107;
@@ -60,16 +54,11 @@ ion-header {
     overflow-x: auto;
     background: white;
     padding: 0 10px;
-<<<<<<< HEAD
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    border-bottom: 1px solid #{$border-soft};
 
     &::-webkit-scrollbar { 
         display: none; 
     }
-=======
-    border-bottom: 1px solid $border-soft;
-    &::-webkit-scrollbar { display: none; }
->>>>>>> Monybbranch
 
     .uber-tab {
         padding: 14px 18px;
@@ -191,12 +180,8 @@ ion-header {
 
         &:active {
             transform: scale(0.97);
-<<<<<<< HEAD
-            // CORRECCIÓN: Uso moderno de color.adjust
+            // Uso moderno de color.adjust para oscurecer
             background: color.adjust($taxi-light-gray, $lightness: -5%);
-=======
-            background: darken($taxi-light-gray, 5%);
->>>>>>> Monybbranch
         }
 
         &.full-width {
@@ -218,14 +203,10 @@ ion-header {
 
             span { color: white; font-size: 14px; }
 
-<<<<<<< HEAD
             &:active {
-                // CORRECCIÓN: Uso moderno de color.adjust para evitar el warning de lighten()
+                // Uso moderno de color.adjust para aclarar
                 background: color.adjust($taxi-black, $lightness: 10%);
             }
-=======
-            &:active { background: lighten($taxi-black, 10%); }
->>>>>>> Monybbranch
         }
     }
 }

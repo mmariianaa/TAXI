@@ -1,36 +1,28 @@
-<<<<<<< HEAD
 @use 'sass:color';
 
-$noche: #121212;      // Un negro más profundo
-$carbon: #1E1E1E;     // Gris para tarjetas
-$crema: #F5F5F5;      
-$oro: #FFC31F;
-$naranja: #EB8107;
-=======
 // ============================================
-// VARIABLES DE PALETA (Basadas en tu imagen)
+// VARIABLES DE PALETA (Limpias y Unificadas)
 // ============================================
 $negro-puro: #1F1F1F;
 $gris-carbon: #4B4847;
 $gris-fondo: #E6E1DB;
 $amarillo-taxi: #FFC31F;
 $naranja-accent: #EB8107;
->>>>>>> Monybbranch
+$blanco: #FFFFFF;
 
 // ============================================
 // ESTILOS GENERALES Y HEADER
 // ============================================
 :host {
     ion-content {
-        --background: #{$gris-fondo}; // Fondo gris suave para resaltar las cards
+        --background: #{$gris-fondo}; 
     }
 }
 
-// Estilo para el header "SmartTaxi"
 ion-header {
     &.ion-no-border {
         ion-toolbar {
-            --background: white; // Fondo limpio para el modo light
+            --background: #{$blanco};
             --color: #{$negro-puro};
             --border-width: 0;
             padding-top: 8px;
@@ -43,7 +35,6 @@ ion-header {
         font-size: 1.2rem;
         letter-spacing: -0.5px;
 
-        // Un toque de color al nombre
         span {
             color: $naranja-accent;
         }
@@ -61,23 +52,17 @@ ion-header {
 ion-card {
     margin: 16px;
     border-radius: 20px;
-    background: white;
+    background: $blanco;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
     border: none;
     overflow: hidden;
-    transition: transform 0.2s ease;
+    transition: all 0.2s ease;
 
     &:active {
-<<<<<<< HEAD
-        transform: scale(0.98);
-        // CORREGIDO: Usar color.adjust con la sintaxis correcta
-        background: color.adjust($carbon, $lightness: 3%);
-=======
-        transform: scale(0.98); // Efecto de pulsación
->>>>>>> Monybbranch
+        transform: scale(0.98); 
+        background: color.adjust($blanco, $lightness: -3%); // Efecto visual al presionar
     }
 
-    // Línea decorativa superior estilo Taxi
     &::before {
         content: '';
         display: block;
@@ -109,7 +94,9 @@ ion-item {
     }
 }
 
-// Badge de estado
+// ============================================
+// COMPONENTES INTERNOS
+// ============================================
 ion-badge {
     padding: 6px 12px;
     border-radius: 10px;
@@ -129,7 +116,6 @@ ion-badge {
     }
 }
 
-// Contenido de la tarjeta
 ion-card-content {
     padding: 16px;
 
@@ -167,7 +153,6 @@ ion-card-content {
         margin: 16px 0;
     }
 
-    // Sección del precio final
     .price-section {
         display: flex;
         justify-content: space-between;

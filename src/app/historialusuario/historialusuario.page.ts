@@ -2,15 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { 
-<<<<<<< HEAD
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonIcon, IonBackButton, 
-=======
-  IonContent, IonHeader, IonTitle, IonToolbar, 
-  IonList, IonItem, IonLabel, IonBadge, 
-  IonCard, IonCardContent, IonIcon, IonText, 
-  IonSpinner, IonBackButton, IonButtons, IonButton 
->>>>>>> Monybbranch
-} from '@ionic/angular/standalone';
+  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonIcon, IonBackButton, IonSpinner, IonButton, IonCard, IonItem, IonLabel, IonBadge, IonCardContent } from '@ionic/angular/standalone';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth'; // <-- Ajusta la ruta si es necesario
@@ -30,8 +22,7 @@ import {
   templateUrl: './historialusuario.page.html',
   styleUrls: ['./historialusuario.page.scss'],
   standalone: true,
-  imports: [
-<<<<<<< HEAD
+  imports: [IonCardContent, IonBadge, IonLabel, IonItem, IonCard, IonButton, IonSpinner, 
     CommonModule,
     IonHeader, 
     IonToolbar, 
@@ -40,12 +31,10 @@ import {
     IonButtons,
     IonBackButton, 
     IonIcon, // ← AGREGADO: Faltaba importar IonIcon
-=======
     IonButton, IonButtons, IonBackButton, 
     CommonModule, FormsModule, IonContent, IonHeader, IonTitle, 
     IonToolbar,IonItem, IonLabel, IonBadge, 
     IonCard, IonCardContent, IonIcon, IonSpinner
->>>>>>> Monybbranch
   ]
 })
 export class HistorialusuarioPage implements OnInit {
@@ -136,8 +125,6 @@ export class HistorialusuarioPage implements OnInit {
       this.cargando = false;
     }
   }
-<<<<<<< HEAD
-=======
 
   // Navegación al hacer clic en el botón de "Pedir mi primer Taxi"
   irAPantallausuario(event: Event) {
@@ -149,5 +136,4 @@ export class HistorialusuarioPage implements OnInit {
     this.obtenerHistorial();
     event.target.complete();
   }
->>>>>>> Monybbranch
 }

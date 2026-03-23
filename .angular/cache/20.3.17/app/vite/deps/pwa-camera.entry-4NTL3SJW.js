@@ -3,13 +3,8 @@ import {
   getElement,
   h,
   registerInstance
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/pwa-camera.entry-4NTL3SJW.js
 } from "./chunk-MPV7TFXB.js";
 import "./chunk-N3534FJA.js";
-========
-} from "./chunk-O7T6ZS7K.js";
-import "./chunk-XCTEB7MY.js";
->>>>>>>> Monybbranch:.angular/cache/20.3.17/app/vite/deps/pwa-camera.entry-QEKXOU5A.js
 
 // node_modules/@ionic/pwa-elements/dist/esm-es5/pwa-camera.entry.js
 var __awaiter = function(e, t, i, n) {
@@ -633,8 +628,4 @@ export {
    * limitations under the License.
    *)
 */
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/pwa-camera.entry-4NTL3SJW.js
 //# sourceMappingURL=pwa-camera.entry-4NTL3SJW.js.map
-========
-//# sourceMappingURL=pwa-camera.entry-QEKXOU5A.js.map
->>>>>>>> Monybbranch:.angular/cache/20.3.17/app/vite/deps/pwa-camera.entry-QEKXOU5A.js

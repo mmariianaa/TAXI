@@ -1138,7 +1138,6 @@ var loadModule = function(e, t, n) {
     };
     switch (a) {
       case "pwa-action-sheet":
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-MPV7TFXB.js
         return import("./pwa-action-sheet.entry-FT7I6HOU.js").then(s, consoleError);
       case "pwa-camera-modal":
         return import("./pwa-camera-modal.entry-YUM5WVRV.js").then(s, consoleError);
@@ -1148,17 +1147,6 @@ var loadModule = function(e, t, n) {
         return import("./pwa-camera-modal-instance.entry-YYRVLCET.js").then(s, consoleError);
       case "pwa-camera":
         return import("./pwa-camera.entry-4NTL3SJW.js").then(s, consoleError);
-========
-        return import("./pwa-action-sheet.entry-YQ6XPTTY.js").then(s, consoleError);
-      case "pwa-camera-modal":
-        return import("./pwa-camera-modal.entry-OAQOJDAZ.js").then(s, consoleError);
-      case "pwa-toast":
-        return import("./pwa-toast.entry-VPCCYEGB.js").then(s, consoleError);
-      case "pwa-camera-modal-instance":
-        return import("./pwa-camera-modal-instance.entry-FJVCKECJ.js").then(s, consoleError);
-      case "pwa-camera":
-        return import("./pwa-camera.entry-QEKXOU5A.js").then(s, consoleError);
->>>>>>>> Monybbranch:.angular/cache/20.3.17/app/vite/deps/chunk-O7T6ZS7K.js
     }
   }
   return import("./".concat(a, ".entry.js").concat("")).then((function(e2) {
@@ -1243,8 +1231,4 @@ export {
   registerInstance,
   promiseResolve
 };
-<<<<<<<< HEAD:.angular/cache/20.3.17/app/vite/deps/chunk-MPV7TFXB.js
 //# sourceMappingURL=chunk-MPV7TFXB.js.map
-========
-//# sourceMappingURL=chunk-O7T6ZS7K.js.map
->>>>>>>> Monybbranch:.angular/cache/20.3.17/app/vite/deps/chunk-O7T6ZS7K.js
