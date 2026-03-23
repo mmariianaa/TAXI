@@ -405,7 +405,7 @@ server.listen(port, () => {
     console.log(`🚀 Servidor unificado corriendo en http://localhost:${port}`);
     console.log(`📡 REST API disponible en http://localhost:${port}`);
     console.log(`🔌 WebSocket Server disponible en ws://localhost:${port}`);
-<<<<<<< HEAD
+
 // 1. OBTENER HISTORIAL (GET)
 app.get('/api/historialusuario/:id', (req, res) => {
     const { id } = req.params;
@@ -460,7 +460,6 @@ app.post('/api/historialusuario', (req, res) => {
         res.status(201).json({ success: true, id_viaje: result.insertId });
     });
 });
-=======
 });
 // Endpoint para ver solo USUARIOS NORMALES (no choferes)
 app.get('/api/ver-usuarios-normales', (req, res) => {
@@ -478,5 +477,4 @@ app.get('/api/ver-usuarios-normales', (req, res) => {
         }
         res.json(results);
     });
->>>>>>> maty_branch
 });

@@ -1,13 +1,13 @@
 import {
   menuController
-} from "./chunk-FKVK4QX7.js";
+} from "./chunk-SU7OIZ2M.js";
 import {
   getTimeGivenProgression
 } from "./chunk-34QX6F67.js";
 import {
   IonicSafeString,
   setupConfig
-} from "./chunk-4TK5PDV6.js";
+} from "./chunk-CSDP65NW.js";
 import {
   actionSheetController,
   alertController,
@@ -16,38 +16,38 @@ import {
   pickerController,
   popoverController,
   toastController
-} from "./chunk-ISN4WXJK.js";
-import "./chunk-DVRBQROL.js";
+} from "./chunk-SP54NWTI.js";
+import "./chunk-3QTHNQQJ.js";
 import {
   openURL
 } from "./chunk-V2RXVE47.js";
-import "./chunk-NIG7OBP7.js";
-import {
-  iosTransitionAnimation
-} from "./chunk-QKFTB4PG.js";
-import {
-  mdTransitionAnimation
-} from "./chunk-TJIQT74M.js";
-import {
-  getIonPageElement
-} from "./chunk-BRTNMXPG.js";
-import {
-  createAnimation
-} from "./chunk-Q3WQL7HB.js";
-import "./chunk-LCMILTBF.js";
 import {
   getPlatforms,
   initialize,
   isPlatform
-} from "./chunk-BJ6RSHJ7.js";
-import "./chunk-YFFFVBSZ.js";
-import {
-  bootstrapLazy
-} from "./chunk-YBDIEOBZ.js";
+} from "./chunk-MPQ6HHKC.js";
 import {
   createGesture
 } from "./chunk-Z3OEOVFM.js";
 import "./chunk-QA2SYHF5.js";
+import "./chunk-OS4VM2KE.js";
+import {
+  iosTransitionAnimation
+} from "./chunk-OJJY7SSC.js";
+import {
+  mdTransitionAnimation
+} from "./chunk-LGLN7WNQ.js";
+import {
+  getIonPageElement
+} from "./chunk-LMFXPCG6.js";
+import {
+  createAnimation
+} from "./chunk-CM6B3FB4.js";
+import "./chunk-3UFUDYY3.js";
+import "./chunk-LCMILTBF.js";
+import {
+  bootstrapLazy
+} from "./chunk-27IMF5LL.js";
 import {
   AngularDelegate,
   Config,
@@ -72,27 +72,16 @@ import {
   provideComponentInputBinding,
   raf,
   setIonicClasses
-<<<<<<< HEAD
-} from "./chunk-WUTO6V4B.js";
-=======
-} from "./chunk-6JANVOBV.js";
->>>>>>> maty_branch
-import "./chunk-WKL7DPVR.js";
-import "./chunk-ZUJ5CDRJ.js";
-import "./chunk-J7D5364M.js";
+} from "./chunk-GAISGWA4.js";
+import "./chunk-5GPJNYMU.js";
+import "./chunk-ZJFSA3WZ.js";
+import "./chunk-PAPWYQZR.js";
 import "./chunk-XUXNI4T2.js";
 import "./chunk-4554YRK6.js";
 import "./chunk-6U2AQA2C.js";
-import "./chunk-SPOKOHWF.js";
-import "./chunk-QEE7QVES.js";
+import "./chunk-VYRO5QLB.js";
 import "./chunk-2H3NLAAY.js";
-<<<<<<< HEAD
-import {
-  ActivatedRoute,
-  Router
-} from "./chunk-XT4WEHOZ.js";
-=======
->>>>>>> maty_branch
+import "./chunk-QEE7QVES.js";
 import {
   MaxValidator,
   MinValidator,
@@ -102,15 +91,15 @@ import {
 import {
   ActivatedRoute,
   Router
-} from "./chunk-DGIFWITJ.js";
-import "./chunk-XUDU6ESO.js";
+} from "./chunk-XT4WEHOZ.js";
+import "./chunk-7XPNVI5H.js";
+import "./chunk-PCG7JBQ6.js";
 import {
   CommonModule,
   Location,
   NgIf,
   NgTemplateOutlet
 } from "./chunk-ALZUJKZN.js";
-import "./chunk-PCG7JBQ6.js";
 import "./chunk-R6U7IGMG.js";
 import {
   APP_INITIALIZER,

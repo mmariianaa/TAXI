@@ -41,7 +41,7 @@ export class TaxiFareService {
 }
 
 // ============================================
-// 3. COMPONENTES MODALES (Notificación y Confirmación)
+// 3. COMPONENTES MODALES
 // ============================================
 @Component({
   selector: 'app-notificacion-modal',
@@ -89,7 +89,7 @@ export class ConfirmarViajeModalComponent {
 }
 
 // ============================================
-// 4. PÁGINA PRINCIPAL (Fusionada)
+// 4. PÁGINA PRINCIPAL
 // ============================================
 @Component({
   selector: 'app-pantallausuario',
@@ -105,7 +105,6 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
   origen: string = 'Mi ubicación';
   destino: string = '';
   
-  // Estados de interfaz
   viajeSolicitado = false;
   viajeEnCurso = false;
   mostrarTaxis = false;
@@ -117,11 +116,9 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
   tiempoEstimado = 0;
   listaTaxis: Taxi[] = [];
   
-  socket: Socket;
+  socket!: Socket;
   usuarioLogueado: Usuario | null = null;
 
-<<<<<<< HEAD
-  // Configuración de Cobertura
   readonly CENTRO_OPERATIVO = { lat: 21.8600, lng: -102.5000 }; 
   readonly RADIO_MAXIMO_METROS = 45000; 
 
@@ -137,109 +134,65 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
       cashOutline, closeOutline, checkmarkCircle, warningOutline, 
       informationCircle, closeCircle, bulbOutline, refreshOutline, 
       closeCircleOutline, alarmOutline 
-=======
-constructor(private http: HttpClient, private router: Router) {
-  addIcons({ personOutline, carOutline, logOutOutline });
-  
-  try {
-    const userData = localStorage.getItem('user');
-    console.log('userData desde localStorage:', userData);
-    if (userData) {
-      this.usuarioLogueado = JSON.parse(userData);
-    } else {
-      console.warn('No se encontró "user" en localStorage');
-    }
-  } catch (e) {
-    console.error('Error al parsear usuario del localStorage:', e);
-    this.usuarioLogueado = null;
-  }
-  console.log('usuarioLogueado después de parsear:', this.usuarioLogueado);
-  
-  this.socket = io('http://localhost:3000');
-}
-  ngOnInit() {
-    // ===== NUEVO: UNIRSE A LA SALA CON EL ID DEL USUARIO =====
-    if (this.usuarioLogueado) {
-      console.log('🔌 Usuario conectándose a sala con ID:', this.usuarioLogueado.id);
-      this.socket.emit('unirse_sala', this.usuarioLogueado.id);
-    } else {
-      console.warn('⚠️ No hay usuario logueado, no se puede unir a sala');
-    }
-    // ===== FIN NUEVO =====
-
-    // Escuchar notificaciones del chofer
-    this.socket.on('notificacion_chofer', (data) => {
-      console.log('Notificación del chofer:', data);
->>>>>>> maty_branch
     });
+
+    this.cargarUsuarioDesdeStorage();
+  }
+
+  ngOnInit() {
+    this.initSocket();
+  }
+
+  private cargarUsuarioDesdeStorage() {
+    try {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        this.usuarioLogueado = JSON.parse(userData);
+        console.log('Usuario cargado:', this.usuarioLogueado);
+      }
+    } catch (e) {
+      console.error('Error al cargar usuario del storage', e);
+    }
+  }
+
+  private initSocket() {
     this.socket = io('http://localhost:3000');
-    this.cargarUsuario();
-  }
 
-<<<<<<< HEAD
-  ngOnInit() {
-    this.socket.on('viaje_aceptado', (data) => {
-      this.viajeSolicitado = false;
-      this.viajeEnCurso = true;
-      this.abrirModalNotificacion('¡Viaje Aceptado!', 'Tu chofer está en camino', 'checkmark-circle', 'success');
-      this.router.navigate(['/viajenotificacion'], { state: { viaje: data, precio: this.precioEstimado } });
-    });
+    if (this.usuarioLogueado) {
+      this.socket.emit('unirse_sala', this.usuarioLogueado.id);
+    }
 
-    this.socket.on('viaje_rechazado', () => {
-      this.viajeSolicitado = false;
-      this.mostrarTaxis = true;
-      this.abrirModalNotificacion('Lo sentimos', 'El chofer no pudo tomar tu viaje.', 'close-circle', 'error');
-=======
     // Escuchar cuando el chofer acepta el viaje
     this.socket.on('viaje_aceptado', (data: any) => {
-      console.log('🔥🔥🔥 VIAJE ACEPTADO RECIBIDO 🔥🔥🔥', data);
       this.viajeSolicitado = false;
       this.viajeEnCurso = true;
-      
-      // Mostrar notificación
-      this.mostrarNotificacion(
+      this.abrirModalNotificacion(
         '¡Viaje Aceptado! 🚖', 
-        `Tu chofer ${data.chofer?.nombre || 'está'} en camino.\nVehículo: ${data.chofer?.vehiculo || 'Taxi'} - Placa: ${data.chofer?.placa || '---'}`
+        `Tu chofer ${data.chofer?.nombre || 'está'} en camino.\nVehículo: ${data.chofer?.vehiculo || 'Taxi'} - Placa: ${data.chofer?.placa || '---'}`,
+        'checkmark-circle',
+        'success'
       );
-      
-      // Redirigir a pantalla de seguimiento
       this.router.navigate(['/viajenotificacion'], { 
-        state: { 
-          viaje: data,
-          estado: 'aceptado'
-        } 
+        state: { viaje: data, precio: this.precioEstimado, estado: 'aceptado' } 
       });
     });
 
     // Escuchar cuando el chofer rechaza el viaje
     this.socket.on('viaje_rechazado', (data: any) => {
-      console.log('❌ Viaje rechazado:', data);
       this.viajeSolicitado = false;
       this.mostrarTaxis = true;
-      
-      this.mostrarNotificacion(
-        'Viaje Rechazado ❌', 
-        'El chofer no pudo tomar tu viaje. Por favor intenta con otro.'
+      this.abrirModalNotificacion(
+        'Lo sentimos ❌', 
+        'El chofer no pudo tomar tu viaje. Por favor intenta con otro.',
+        'close-circle',
+        'error'
       );
     });
 
-    // Escuchar errores
     this.socket.on('error_solicitud', (data: any) => {
-      console.error('Error en solicitud:', data);
       this.viajeSolicitado = false;
-      this.mostrarTaxis = true;
-      
-      this.mostrarNotificacion(
-        'Error', 
-        data.mensaje || 'No se pudo procesar tu solicitud'
-      );
->>>>>>> maty_branch
+      this.abrirModalNotificacion('Error', data.mensaje || 'No se pudo procesar tu solicitud', 'warning-outline', 'error');
     });
-  }
-
-  cargarUsuario() {
-    const data = localStorage.getItem('user');
-    if (data) this.usuarioLogueado = JSON.parse(data);
   }
 
   // --- Lógica de Localización y Mapa ---
@@ -247,11 +200,10 @@ constructor(private http: HttpClient, private router: Router) {
     try {
       const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
       this.miUbicacion = L.latLng(pos.coords.latitude, pos.coords.longitude);
-      this.initMap();
     } catch {
-      this.miUbicacion = L.latLng(21.8469, -102.7188); // Default Calvillo
-      this.initMap();
+      this.miUbicacion = L.latLng(21.8469, -102.7188); // Default
     }
+    this.initMap();
   }
 
   initMap() {
@@ -260,7 +212,6 @@ constructor(private http: HttpClient, private router: Router) {
     this.map = L.map('map').setView([this.miUbicacion.lat, this.miUbicacion.lng], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
     
-    // Círculo de cobertura
     L.circle([this.CENTRO_OPERATIVO.lat, this.CENTRO_OPERATIVO.lng], {
       color: '#2dd36f', radius: this.RADIO_MAXIMO_METROS, fillOpacity: 0.1
     }).addTo(this.map);
@@ -272,7 +223,6 @@ constructor(private http: HttpClient, private router: Router) {
     L.marker([this.miUbicacion.lat, this.miUbicacion.lng], { icon }).addTo(this.map);
   }
 
-  // --- Lógica de Negocio ---
   buscarDestino() {
     if (!this.destino || !this.miUbicacion) return;
     this.cargandoTaxis = true;
@@ -284,10 +234,8 @@ constructor(private http: HttpClient, private router: Router) {
       next: (data) => {
         if (data.length > 0) {
           const coordsDestino = L.latLng(parseFloat(data[0].lat), parseFloat(data[0].lon));
-          
           if (this.estaEnZonaPermitida(coordsDestino)) {
             this.dibujarRuta(coordsDestino);
-            // Simulación de distancia para el precio (o puedes obtenerla de routingControl)
             this.distanciaActual = this.miUbicacion!.distanceTo(coordsDestino) / 1000;
             this.precioEstimado = this.fareService.calcularTarifaEscalonada(this.distanciaActual);
             this.obtenerTaxis();
@@ -359,7 +307,6 @@ constructor(private http: HttpClient, private router: Router) {
     }
   }
 
-  // --- Utilidades ---
   async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tipo: string) {
     const modal = await this.modalCtrl.create({
       component: NotificacionModalComponent,
@@ -369,7 +316,7 @@ constructor(private http: HttpClient, private router: Router) {
   }
 
   logout() {
-    this.socket.disconnect();
+    if (this.socket) this.socket.disconnect();
     localStorage.clear();
     this.router.navigate(['/home']);
   }
@@ -378,10 +325,10 @@ constructor(private http: HttpClient, private router: Router) {
     this.viajeSolicitado = false;
     this.socket.emit('cancelar_viaje', { id_cliente: this.usuarioLogueado?.id });
   }
-  // Función para sugerir una ruta rápida al centro
+
   sugerirRuta() {
-    this.destino = "Centro Histórico, Aguascalientes"; // O el destino que prefieras
-    this.buscarDestino(); // Llama automáticamente a la búsqueda
+    this.destino = "Centro Histórico, Aguascalientes";
+    this.buscarDestino();
   }
 
   ionViewDidEnter() { this.obtenerUbicacionActual(); }
