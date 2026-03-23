@@ -1,30 +1,34 @@
-// Variables de marca SmartTaxi
-$taxi-black: #1F1F1F;
-$taxi-dark-gray: #4B4847;
+/* ==========================================================================
+   VARIABLES DE MARCA - SMARTTAXI
+   ========================================================================== */
+$taxi-black:      #1F1F1F;
+$taxi-dark-gray:  #4B4847;
 $taxi-light-gray: #F5F3F0; 
-$taxi-yellow: #FFC31F;
-$taxi-orange: #EB8107;
-$taxi-success: #2dd36f;
+$taxi-yellow:     #FFC31F;
+$taxi-orange:     #EB8107;
+$taxi-success:    #2dd36f;
+$border-soft:     rgba(0, 0, 0, 0.08);
 
-/* Estilos de la página */
+/* ==========================================================================
+   ESTILOS BASE / LAYOUT
+   ========================================================================== */
 ion-content {
     --background: white;
 }
 
-/* Header e Ionic Toolbar */
 ion-header {
     background: white;
+    
+    ion-toolbar {
+        --background: white;
+        --color: #{$taxi-black};
+        --border-style: none;
+        --padding-top: 8px;
+        --padding-bottom: 8px;
+    }
 }
 
-ion-toolbar {
-    --background: white;
-    --color: #{$taxi-black};
-    --border-style: none;
-    --padding-top: 8px;
-    --padding-bottom: 8px;
-}
-
-/* Botón de regreso personalizado */
+/* Botón de regreso */
 .custom-back-button {
     --color: #{$taxi-black};
     font-weight: 700;
@@ -37,14 +41,17 @@ ion-toolbar {
     }
 }
 
-/* Sistema de Pestañas Estilo Uber */
+/* ==========================================================================
+   COMPONENTES
+   ========================================================================== */
+
+/* 1. Sistema de Pestañas (Estilo Uber) */
 .uber-tabs-container {
     display: flex;
     overflow-x: auto;
     background: white;
     padding: 0 10px;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
-
+    border-bottom: 1px solid $border-soft;
     &::-webkit-scrollbar { display: none; }
 
     .uber-tab {
@@ -73,7 +80,7 @@ ion-toolbar {
     }
 }
 
-/* Perfil y Avatar */
+/* 2. Perfil y Avatar */
 .profile-header {
     padding: 25px 20px;
     text-align: center;
@@ -93,7 +100,7 @@ ion-toolbar {
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            background: $taxi-light-gray; // Placeholder mientras carga
+            background: $taxi-light-gray;
         }
 
         .edit-icon {
@@ -113,12 +120,10 @@ ion-toolbar {
 
             ion-icon {
                 font-size: 16px;
-                color: $taxi-yellow; // Toque de color de marca
+                color: $taxi-yellow;
             }
             
-            &:active {
-                transform: scale(0.9);
-            }
+            &:active { transform: scale(0.9); }
         }
     }
 
@@ -138,7 +143,7 @@ ion-toolbar {
     }
 }
 
-/* Grid de Tarjetas */
+/* 3. Grid de Tarjetas */
 .uber-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -151,7 +156,6 @@ ion-toolbar {
         padding: 18px;
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
         transition: all 0.2s ease;
         border: 1px solid rgba(0,0,0,0.03);
 
@@ -169,7 +173,7 @@ ion-toolbar {
 
         &:active {
             transform: scale(0.97);
-            background: #e0e0e0;
+            background: darken($taxi-light-gray, 5%);
         }
 
         &.full-width {
@@ -188,19 +192,14 @@ ion-toolbar {
                 }
             }
 
-            span {
-                color: white;
-                font-size: 14px;
-            }
+            span { color: white; font-size: 14px; }
 
-            &:active {
-                background: lighten($taxi-black, 10%);
-            }
+            &:active { background: lighten($taxi-black, 10%); }
         }
     }
 }
 
-/* Bloques de Edición */
+/* 4. Formularios y Edición */
 .edit-block {
     ion-item {
         --padding-start: 20px;
@@ -239,7 +238,7 @@ ion-toolbar {
     }
 }
 
-/* Inputs mejorados */
+/* 5. Inputs y Botones Globales */
 .uber-input {
     --background: #{$taxi-light-gray};
     --border-radius: 10px;
@@ -260,7 +259,6 @@ ion-toolbar {
     }
 }
 
-/* Botones */
 .btn-black {
     --background: #{$taxi-black};
     --color: #{$taxi-yellow};
@@ -272,7 +270,9 @@ ion-toolbar {
     margin: 0;
 }
 
-/* Animaciones */
+/* ==========================================================================
+   ANIMACIONES
+   ========================================================================== */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-8px); }
     to { opacity: 1; transform: translateY(0); }

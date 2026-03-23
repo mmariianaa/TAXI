@@ -87,7 +87,7 @@ import {
   setIonicClasses,
   setOverlayId,
   toastController
-} from "./chunk-RFNAHHYH.js";
+} from "./chunk-KPFSA4UI.js";
 import {
   iosTransitionAnimation
 } from "./chunk-ZM27KGMO.js";
@@ -155,14 +155,14 @@ import {
   printIonWarning
 } from "./chunk-2H3NLAAY.js";
 import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-4XCEG27B.js";
+import {
   ActivatedRoute,
   Router
 } from "./chunk-V7DPN5VY.js";
 import "./chunk-J43DCUEE.js";
 import "./chunk-QL46KADR.js";
-import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-4XCEG27B.js";
 import {
   CommonModule,
   Location,
