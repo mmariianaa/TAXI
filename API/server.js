@@ -19,102 +19,129 @@ app.use(cors({
 const server = http.createServer(app);
 const io = socketIO(server, {
     cors: {
-        origin: "http://localhost:8100", // Mismo origen que tu app Ionic
+        origin: "http://localhost:8100",
         methods: ["GET", "POST"],
         credentials: true
     }
 });
 
-// Secreto para firmar los tokens
 const JWT_SECRET = 'tu_llave_secreta_super_segura_123';
 
 // ============================================
 // WEBSOCKETS
 // ============================================
-const usuariosConectados = new Map(); // id_usuario -> socketId
+const usuariosConectados = new Map();
 
 io.on('connection', (socket) => {
     console.log('Nuevo cliente conectado:', socket.id);
 
-    // Usuario o Chofer se conecta a su sala personal
     socket.on('unirse_sala', (userId) => {
         console.log(`Usuario ${userId} se unió a su sala`);
         socket.join(`usuario_${userId}`);
         usuariosConectados.set(userId, socket.id);
     });
 
-    // Usuario solicita taxi
+    // ============================================
+    // SOLICITUD DE TAXI (ÚNICA PARTE MODIFICADA)
+    // ============================================
     socket.on('solicitar_taxi', (data) => {
         const { id_chofer_usuario, nombre_cliente, id_cliente, placa_taxi } = data;
         
-        console.log('Solicitud de taxi recibida:', data);
+        console.log('Solicitud recibida para id_chofer:', id_chofer_usuario);
         
-        const query = `
-            SELECT c.id_chofer, c.estado
-            FROM Chofer c
-            WHERE c.id_chofer = ?
+        // Buscamos el id_usuario real vinculado a ese chofer
+        const queryUsuario = `
+            SELECT u.id_usuario 
+            FROM Usuario u 
+            WHERE u.id_chofer = ?
         `;
         
-        conexion.query(query, [id_chofer_usuario], (err, results) => {
+        conexion.query(queryUsuario, [id_chofer_usuario], (err, results) => {
             if (err || results.length === 0) {
-                console.error('Chofer no encontrado');
+                console.error('No se encontró un usuario vinculado al chofer:', id_chofer_usuario);
                 return;
             }
-            
-            const chofer = results[0];
-            
+
+            const idUsuarioReal = results[0].id_usuario;
+
             const viajeQuery = `
                 INSERT INTO Viajes (destino, fecha_viaje) 
                 VALUES (?, NOW())
             `;
             
-            const destinoTemp = 'Solicitud de taxi';
-            conexion.query(viajeQuery, [destinoTemp], (err, viajeResult) => {
+            conexion.query(viajeQuery, ['Solicitud de taxi'], (err, viajeResult) => {
                 if (err) {
-                    console.error('Error al crear viaje:', err);
+                    console.error('Error al crear registro de viaje:', err);
                     return;
                 }
                 
                 const id_viaje = viajeResult.insertId;
                 
-                io.to(`usuario_${id_chofer_usuario}`).emit('notificacion_chofer', {
+                console.log(`Redirigiendo: Chofer ${id_chofer_usuario} -> Sala usuario_${idUsuarioReal}`);
+                
+                io.to(`usuario_${idUsuarioReal}`).emit('notificacion_chofer', {
                     id_viaje: id_viaje,
                     nombre_cliente: nombre_cliente,
                     id_cliente: id_cliente,
                     placa_taxi: placa_taxi,
+                    origen: data.origen,
+                    destino: data.destino,
                     timestamp: new Date()
                 });
-                
-                console.log(`Notificación enviada al chofer ${id_chofer_usuario}`);
             });
         });
     });
 
-    // Chofer acepta viaje
-    socket.on('aceptar_viaje', (data) => {
-        const { id_viaje, id_chofer, id_cliente } = data;
+    // ============================================
+    // EVENTOS DE RESPUESTA DEL CHOFER
+    // ============================================
+
+socket.on('aceptar_viaje', (data) => {
+    const { id_viaje, id_chofer, id_cliente } = data;
+    
+    // Buscar información completa del chofer
+    const choferQuery = `
+        SELECT u.nombre, u.apellido, t.marca, t.modelo, t.placa, t.color
+        FROM Chofer c
+        JOIN Usuario u ON c.id_chofer = u.id_chofer
+        JOIN Taxi t ON c.id_taxi = t.id_taxi
+        WHERE c.id_chofer = ?
+    `;
+    
+    conexion.query(choferQuery, [id_chofer], (err, choferResults) => {
+        if (err || choferResults.length === 0) {
+            console.error('Error al obtener info del chofer:', err);
+            return;
+        }
         
-        const clienteQuery = 'SELECT nombre, apellido FROM Usuario WHERE id_usuario = ?';
-        conexion.query(clienteQuery, [id_cliente], (err, clienteResults) => {
-            if (err || clienteResults.length === 0) return;
-            
-            io.to(`usuario_${id_cliente}`).emit('viaje_aceptado', {
-                id_viaje: id_viaje,
-                mensaje: 'Tu viaje ha sido aceptado',
-                chofer: {
-                    nombre: 'Chofer',
-                }
-            });
+        const chofer = choferResults[0];
+        
+        // Notificar al usuario
+        io.to(`usuario_${id_cliente}`).emit('viaje_aceptado', {
+            id_viaje: id_viaje,
+            mensaje: '¡Tu viaje ha sido aceptado! El chofer va en camino.',
+            chofer: {
+                nombre: `${chofer.nombre} ${chofer.apellido}`,
+                vehiculo: `${chofer.marca} ${chofer.modelo}`,
+                placa: chofer.placa,
+                color: chofer.color
+            }
         });
+        
+        console.log(`✅ Viaje ${id_viaje} ACEPTADO. Avisando a usuario_${id_cliente}`);
+        
+        // Actualizar estado del viaje en BD
+        conexion.query('UPDATE Viajes SET estado = "aceptado" WHERE id_viaje = ?', [id_viaje]);
     });
-
-    // Chofer rechaza viaje
+});
     socket.on('rechazar_viaje', (data) => {
         const { id_viaje, id_cliente } = data;
         
+        console.log(`Viaje ${id_viaje} RECHAZADO. Avisando a usuario_${id_cliente}`);
+
         io.to(`usuario_${id_cliente}`).emit('viaje_rechazado', {
             id_viaje: id_viaje,
-            mensaje: 'El chofer ha rechazado el viaje'
+            mensaje: 'El chofer no puede tomar tu viaje en este momento. Por favor, selecciona otro taxi.'
         });
     });
 
@@ -131,14 +158,13 @@ io.on('connection', (socket) => {
 });
 
 // ============================================
-// ENDPOINTS REST
+// ENDPOINTS REST (COMPLETOS, SIN CAMBIOS)
 // ============================================
 
 app.get('/ojo', (req, res) => {
     res.send('API de TaxiDB funcionando correctamente');
 });
 
-// ENDPOINT DE LOGIN 
 app.post('/api/login', (req, res) => {
     const { correo, contrasena } = req.body;
 
@@ -161,7 +187,6 @@ app.post('/api/login', (req, res) => {
         if (results.length === 0) return res.status(401).json({ error: 'El correo no está registrado' });
 
         const user = results[0];
-
         const match = await bcrypt.compare(contrasena, user.contrasena);
         if (!match) return res.status(401).json({ error: 'Contraseña incorrecta' });
 
@@ -189,7 +214,6 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// ENDPOINT DE TAXIS DISPONIBLES
 app.get('/api/taxis/disponibles', (req, res) => {
     const query = `
         SELECT 
@@ -219,7 +243,6 @@ app.get('/api/taxis/disponibles', (req, res) => {
     });
 });
 
-// REGISTRO DEL CHOFER
 app.post('/api/registrochofer', async (req, res) => {
     try {
         const {
@@ -257,7 +280,6 @@ app.post('/api/registrochofer', async (req, res) => {
     }
 });
 
-// REGISTRO DE USUARIO 
 app.post('/api/registrousuario', async (req, res) => {
     try {
         const { 
@@ -313,7 +335,6 @@ app.post('/api/registrousuario', async (req, res) => {
     }
 });
 
-// CONSULTAS
 app.get('/getTodosChoferes', (req, res) => {
     const query = `
         SELECT c.*, u.nombre, u.apellido, u.correo, t.marca, t.placa
@@ -327,7 +348,6 @@ app.get('/getTodosChoferes', (req, res) => {
     });
 });
 
-// CAMBIAR CONTRASEÑA
 app.put('/api/usuarios/:id/password', async (req, res) => {
     const { id } = req.params;
     const { nueva } = req.body;
@@ -353,7 +373,6 @@ app.put('/api/usuarios/:id/password', async (req, res) => {
     }
 });
 
-// ACTUALIZAR TELÉFONO
 app.put('/api/usuarios/:id', (req, res) => {
     const { id } = req.params;
     const { telefono } = req.body;
@@ -382,11 +401,25 @@ app.put('/api/usuarios/:id', (req, res) => {
     });
 });
 
-// ============================================
-// INICIAR SERVIDOR
-// ============================================
 server.listen(port, () => {
     console.log(`🚀 Servidor unificado corriendo en http://localhost:${port}`);
     console.log(`📡 REST API disponible en http://localhost:${port}`);
     console.log(`🔌 WebSocket Server disponible en ws://localhost:${port}`);
+});
+// Endpoint para ver solo USUARIOS NORMALES (no choferes)
+app.get('/api/ver-usuarios-normales', (req, res) => {
+    const query = `
+        SELECT id_usuario, nombre, apellido, correo, telefono, tipo_documento, numero_documento
+        FROM Usuario
+        WHERE id_chofer IS NULL
+        ORDER BY id_usuario DESC
+    `;
+    
+    conexion.query(query, (err, results) => {
+        if (err) {
+            console.error('Error:', err);
+            return res.status(500).json({ error: 'Error al obtener usuarios' });
+        }
+        res.json(results);
+    });
 });

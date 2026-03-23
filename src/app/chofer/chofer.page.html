@@ -46,8 +46,15 @@
   </ion-header>
 
   <ion-content class="ion-padding" [className]="'tab-' + activeTab">
-    <!-- TODO EL RESTO DE TU CONTENIDO -->
     <div class="main-container">
+
+      <!-- ALERTA DE NUEVA SOLICITUD -->
+      <div *ngIf="mostrarAlertaSolicitud" class="alerta-solicitud" (click)="verSolicitudes()">
+        <ion-icon name="car-outline"></ion-icon>
+        <span>Tienes una nueva solicitud de viaje</span>
+        <button class="btn-cerrar-alerta" (click)="cerrarAlerta(); $event.stopPropagation()">✕</button>
+      </div>
+
       <!-- SECCIÓN PERFIL -->
       <section class="perfil-section">
         <div class="status-card-elegant">
@@ -86,39 +93,43 @@
 
       <!-- SECCIÓN VIAJES -->
       <section class="viajes-section">
-        <!-- Tarjeta de viaje disponible -->
-        <div class="trip-request-card" *ngIf="viajePendiente && !viajeAceptado">
-          <div class="req-header">VIAJE DISPONIBLE</div>
+
+        <!-- SOLICITUDES PENDIENTES -->
+        <div *ngFor="let solicitud of solicitudesPendientes" class="trip-request-card">
+          <div class="req-header">NUEVA SOLICITUD</div>
           <div class="req-body">
-            <h2>{{ viajePendiente?.ganancia }}</h2>
-            <p class="pass-name">Pasajero: {{ viajePendiente?.pasajero }}</p>
+            <h2>$120.00</h2>
+            <p class="pass-name">Pasajero: {{ solicitud.nombre_cliente }}</p>
             <div class="route-box">
               <div class="route-item">
                 <ion-icon name="radio-button-on" style="color: #FFC31F;"></ion-icon>
-                {{ viajePendiente?.origen }}
+                {{ solicitud.origen?.direccion || 'Origen no especificado' }}
               </div>
               <div class="line"></div>
               <div class="route-item">
                 <ion-icon name="location" style="color: #EB8107;"></ion-icon>
-                {{ viajePendiente?.destino }}
+                {{ solicitud.destino?.direccion || 'Destino no especificado' }}
               </div>
             </div>
           </div>
-
           <div class="req-footer">
-            <button class="btn-decline" (click)="rechazarViaje()">IGNORAR</button>
-            <button class="btn-confirm" (click)="aceptarViaje()">ACEPTAR</button>
+            <button class="btn-decline" (click)="rechazarViajeSocket(solicitud)">RECHAZAR</button>
+            <button class="btn-confirm" (click)="aceptarViajeSocket(solicitud)">ACEPTAR</button>
           </div>
         </div>
 
         <!-- Viaje activo con mapa -->
-        <div class="trip-active" *ngIf="viajeAceptado">
-          <div id="map" class="map-container"></div>
-          <button class="btn-finish-trip" (click)="finalizarViaje()">FINALIZAR SERVICIO</button>
-        </div>
+<div class="trip-active" *ngIf="viajeAceptado">
+  <div id="map" class="map-container"></div>
+  <div class="leyenda-rutas">
+    <span class="ruta-chofer">🟡 Ruta del chofer</span>
+    <span class="ruta-usuario">🔵 Ruta del usuario</span>
+  </div>
+  <button class="btn-finish-trip" (click)="finalizarViaje()">FINALIZAR SERVICIO</button>
+</div>
 
-        <!-- Buscando pasajeros -->
-        <div class="searching-box" *ngIf="isActive && !viajePendiente && !viajeAceptado">
+        <!-- Buscando pasajeros (solo si no hay viaje activo ni solicitudes) -->
+        <div class="searching-box" *ngIf="isActive && !viajePendiente && !viajeAceptado && solicitudesPendientes.length === 0">
           <div class="radar-pulse"></div>
           <p>Buscando pasajeros cerca...</p>
         </div>

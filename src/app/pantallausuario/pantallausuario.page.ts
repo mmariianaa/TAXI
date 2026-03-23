@@ -53,6 +53,15 @@ constructor(private http: HttpClient, private router: Router) {
   this.socket = io('http://localhost:3000');
 }
   ngOnInit() {
+    // ===== NUEVO: UNIRSE A LA SALA CON EL ID DEL USUARIO =====
+    if (this.usuarioLogueado) {
+      console.log('🔌 Usuario conectándose a sala con ID:', this.usuarioLogueado.id);
+      this.socket.emit('unirse_sala', this.usuarioLogueado.id);
+    } else {
+      console.warn('⚠️ No hay usuario logueado, no se puede unir a sala');
+    }
+    // ===== FIN NUEVO =====
+
     // Escuchar notificaciones del chofer
     this.socket.on('notificacion_chofer', (data) => {
       console.log('Notificación del chofer:', data);
@@ -60,14 +69,14 @@ constructor(private http: HttpClient, private router: Router) {
 
     // Escuchar cuando el chofer acepta el viaje
     this.socket.on('viaje_aceptado', (data: any) => {
-      console.log('Viaje aceptado:', data);
+      console.log('🔥🔥🔥 VIAJE ACEPTADO RECIBIDO 🔥🔥🔥', data);
       this.viajeSolicitado = false;
       this.viajeEnCurso = true;
       
       // Mostrar notificación
       this.mostrarNotificacion(
-        '¡Viaje Aceptado!', 
-        `Tu chofer está en camino`
+        '¡Viaje Aceptado! 🚖', 
+        `Tu chofer ${data.chofer?.nombre || 'está'} en camino.\nVehículo: ${data.chofer?.vehiculo || 'Taxi'} - Placa: ${data.chofer?.placa || '---'}`
       );
       
       // Redirigir a pantalla de seguimiento
@@ -81,12 +90,12 @@ constructor(private http: HttpClient, private router: Router) {
 
     // Escuchar cuando el chofer rechaza el viaje
     this.socket.on('viaje_rechazado', (data: any) => {
-      console.log('Viaje rechazado:', data);
+      console.log('❌ Viaje rechazado:', data);
       this.viajeSolicitado = false;
       this.mostrarTaxis = true;
       
       this.mostrarNotificacion(
-        'Viaje Rechazado', 
+        'Viaje Rechazado ❌', 
         'El chofer no pudo tomar tu viaje. Por favor intenta con otro.'
       );
     });

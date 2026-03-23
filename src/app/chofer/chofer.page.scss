@@ -476,3 +476,108 @@ $crema: #E6E1DB;
   align-items: center;
   margin-top: 50px;
 }
+/* ===== ALERTA DE NUEVA SOLICITUD ===== */
+.alerta-solicitud {
+  background: #FFC31F;
+  color: #1F1F1F;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  animation: pulse 0.5s ease-out;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+
+  ion-icon {
+    font-size: 24px;
+  }
+
+  span {
+    flex: 1;
+    font-weight: 600;
+  }
+
+  .btn-cerrar-alerta {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #1F1F1F;
+    padding: 0 8px;
+  }
+}
+/* ===== ALERTA DE NUEVA SOLICITUD ===== */
+.alerta-solicitud {
+  background: #FFC31F;
+  color: #1F1F1F;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  animation: pulse 0.5s ease-out;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+
+  ion-icon {
+    font-size: 24px;
+  }
+
+  span {
+    flex: 1;
+    font-weight: 600;
+  }
+
+  .btn-cerrar-alerta {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #1F1F1F;
+    padding: 0 8px;
+  }
+}
+/* ===== LEYENDA DE RUTAS ===== */
+.leyenda-rutas {
+  position: absolute;
+  bottom: 70px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 8px 12px;
+  border-radius: 8px;
+  z-index: 1000;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  gap: 15px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  
+  .ruta-chofer {
+    color: #FFC31F;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .ruta-usuario {
+    color: #4285F4;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+}
+
+/* Asegurar que el mapa tenga posición relativa para la leyenda */
+.trip-active {
+  position: relative;
+}
+
+.map-container {
+  position: relative;
+  z-index: 1;
+}

@@ -1,2 +1,3 @@
-node_modules
-.angular/cache/20.3.17/app/.tsbuildinfo
+node_modules/
+.angular/
+dist/

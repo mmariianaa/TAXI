@@ -3,7 +3,7 @@ import {
   getElement,
   h,
   registerInstance
-} from "./chunk-MPV7TFXB.js";
+} from "./chunk-7WHOEL2W.js";
 import "./chunk-N3534FJA.js";
 
 // node_modules/@ionic/pwa-elements/dist/esm-es5/pwa-toast.entry.js
