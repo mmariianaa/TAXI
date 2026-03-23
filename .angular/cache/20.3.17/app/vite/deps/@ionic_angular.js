@@ -1,13 +1,21 @@
 import {
   menuController
+<<<<<<< HEAD
 } from "./chunk-SMHS5BAP.js";
+=======
+} from "./chunk-3BWOZMBE.js";
+>>>>>>> Monybbranch
 import {
   getTimeGivenProgression
 } from "./chunk-34QX6F67.js";
 import {
   IonicSafeString,
   setupConfig
+<<<<<<< HEAD
 } from "./chunk-Q542G2TB.js";
+=======
+} from "./chunk-7SDTDERZ.js";
+>>>>>>> Monybbranch
 import {
   actionSheetController,
   alertController,
@@ -16,15 +24,24 @@ import {
   pickerController,
   popoverController,
   toastController
+<<<<<<< HEAD
 } from "./chunk-LNXGVV2P.js";
 import "./chunk-WYZJBALO.js";
 import {
   openURL
 } from "./chunk-V2RXVE47.js";
+=======
+} from "./chunk-JRUMHTXQ.js";
+import "./chunk-EHMIKLFE.js";
+import {
+  openURL
+} from "./chunk-P6CXHDWB.js";
+>>>>>>> Monybbranch
 import {
   createGesture
 } from "./chunk-Z3OEOVFM.js";
 import "./chunk-QA2SYHF5.js";
+<<<<<<< HEAD
 import "./chunk-TR4FPYWS.js";
 import {
   iosTransitionAnimation
@@ -38,16 +55,39 @@ import {
 import {
   createAnimation
 } from "./chunk-GDLMT5GW.js";
+=======
+import "./chunk-GVCXOIPU.js";
+import {
+  iosTransitionAnimation
+} from "./chunk-RYICDG2X.js";
+import {
+  mdTransitionAnimation
+} from "./chunk-O2XLB7ZT.js";
+import {
+  getIonPageElement
+} from "./chunk-3RYQA5MK.js";
+import {
+  createAnimation
+} from "./chunk-2HGPBSXC.js";
+>>>>>>> Monybbranch
 import "./chunk-LCMILTBF.js";
 import {
   getPlatforms,
   initialize,
   isPlatform
+<<<<<<< HEAD
 } from "./chunk-64ZD6UHQ.js";
 import "./chunk-IAIW5OFA.js";
 import {
   bootstrapLazy
 } from "./chunk-MKEXY72Z.js";
+=======
+} from "./chunk-NHY6JM3D.js";
+import "./chunk-QVPAWLQG.js";
+import {
+  bootstrapLazy
+} from "./chunk-QNHT3IYI.js";
+>>>>>>> Monybbranch
 import {
   AngularDelegate,
   Config,
@@ -72,21 +112,32 @@ import {
   provideComponentInputBinding,
   raf,
   setIonicClasses
+<<<<<<< HEAD
 } from "./chunk-GQHSWG2U.js";
 import "./chunk-5GPJNYMU.js";
 import "./chunk-ZJFSA3WZ.js";
 import "./chunk-PAPWYQZR.js";
 import "./chunk-XUXNI4T2.js";
+=======
+} from "./chunk-KPFSA4UI.js";
+import "./chunk-ZM27KGMO.js";
+import "./chunk-RTTHXQHQ.js";
+import "./chunk-SND3HBTK.js";
+import "./chunk-77UNVSHX.js";
+>>>>>>> Monybbranch
 import "./chunk-4554YRK6.js";
 import "./chunk-6U2AQA2C.js";
 import "./chunk-VYRO5QLB.js";
 import "./chunk-2H3NLAAY.js";
 import "./chunk-QEE7QVES.js";
 import {
+<<<<<<< HEAD
   ActivatedRoute,
   Router
 } from "./chunk-XT4WEHOZ.js";
 import {
+=======
+>>>>>>> Monybbranch
   MaxValidator,
   MinValidator,
   NG_VALIDATORS,
@@ -94,6 +145,12 @@ import {
 } from "./chunk-N56GCOTY.js";
 import "./chunk-7XPNVI5H.js";
 import "./chunk-PCG7JBQ6.js";
+import {
+  ActivatedRoute,
+  Router
+} from "./chunk-V7DPN5VY.js";
+import "./chunk-J43DCUEE.js";
+import "./chunk-QL46KADR.js";
 import {
   CommonModule,
   Location,

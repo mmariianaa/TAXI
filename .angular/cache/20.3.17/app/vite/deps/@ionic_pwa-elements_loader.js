@@ -2,8 +2,13 @@ import {
   bootstrapLazy,
   promiseResolve,
   setNonce
+<<<<<<< HEAD
 } from "./chunk-MPV7TFXB.js";
 import "./chunk-N3534FJA.js";
+=======
+} from "./chunk-O7T6ZS7K.js";
+import "./chunk-XCTEB7MY.js";
+>>>>>>> Monybbranch
 
 // node_modules/@ionic/pwa-elements/dist/esm/polyfills/index.js
 function applyPolyfills() {

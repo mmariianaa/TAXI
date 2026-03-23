@@ -382,6 +382,7 @@ app.put('/api/usuarios/:id', (req, res) => {
     });
 });
 
+<<<<<<< HEAD
 // ============================================
 // INICIAR SERVIDOR
 // ============================================
@@ -389,4 +390,59 @@ server.listen(port, () => {
     console.log(`🚀 Servidor unificado corriendo en http://localhost:${port}`);
     console.log(`📡 REST API disponible en http://localhost:${port}`);
     console.log(`🔌 WebSocket Server disponible en ws://localhost:${port}`);
+=======
+// 1. OBTENER HISTORIAL (GET)
+app.get('/api/historialusuario/:id', (req, res) => {
+    const { id } = req.params;
+    const { tipo } = req.query; 
+
+    const columnaFiltro = (tipo === 'chofer') ? 'v.id_chofer' : 'v.id_usuario';
+
+    const query = `
+        SELECT 
+            v.id_viaje, 
+            v.origen, 
+            v.destino, 
+            v.fecha_inicio AS fecha_viaje, -- 1. CAMBIO: Usamos AS para que Ionic lo lea como fecha_viaje
+            v.precio, 
+            v.estado,
+            u_pasajero.nombre AS nombre_pasajero,
+            u_chofer.nombre AS nombre_chofer,
+            t.placa AS placa_taxi, 
+            t.modelo AS modelo_taxi,
+            tp.tipo_pago
+        FROM Viajes v
+        LEFT JOIN Usuario u_pasajero ON v.id_usuario = u_pasajero.id_usuario
+        LEFT JOIN Chofer c ON v.id_chofer = c.id_chofer
+        LEFT JOIN Usuario u_chofer ON c.id_chofer = u_chofer.id_chofer
+        LEFT JOIN Taxi t ON c.id_taxi = t.id_taxi
+        LEFT JOIN TiposPago tp ON v.id_pago = tp.id_pago
+        WHERE ${columnaFiltro} = ?
+        ORDER BY v.fecha_inicio DESC`; // 2. CAMBIO: Ordenamos por la columna real 'fecha_inicio'
+
+    conexion.query(query, [id], (err, results) => {
+        if (err) {
+            console.error('ERROR SQL DETALLADO:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(results);
+    });
+});
+
+// 2. CREAR NUEVO VIAJE (POST)
+app.post('/api/historialusuario', (req, res) => {
+    // 3. CAMBIO: Asegúrate de que el body use 'fecha_inicio' si lo envías desde el front
+    const { id_usuario, id_chofer, origen, destino, precio, id_pago, estado } = req.body;
+
+    const query = `INSERT INTO Viajes (id_usuario, id_chofer, origen, destino, precio, id_pago, estado, fecha_inicio) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`; // Usamos NOW() para la fecha actual de la DB
+
+    conexion.query(query, [id_usuario, id_chofer, origen, destino, precio, id_pago, estado], (err, result) => {
+        if (err) {
+            console.error('ERROR AL INSERTAR:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+        res.status(201).json({ success: true, id_viaje: result.insertId });
+    });
+>>>>>>> Monybbranch
 });

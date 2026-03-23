@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @use 'sass:color';
 
 $noche: #121212;      // Un negro más profundo
@@ -5,155 +6,220 @@ $carbon: #1E1E1E;     // Gris para tarjetas
 $crema: #F5F5F5;      
 $oro: #FFC31F;
 $naranja: #EB8107;
+=======
+// ============================================
+// VARIABLES DE PALETA (Basadas en tu imagen)
+// ============================================
+$negro-puro: #1F1F1F;
+$gris-carbon: #4B4847;
+$gris-fondo: #E6E1DB;
+$amarillo-taxi: #FFC31F;
+$naranja-accent: #EB8107;
+>>>>>>> Monybbranch
 
+// ============================================
+// ESTILOS GENERALES Y HEADER
+// ============================================
 :host {
-    --ion-background-color: #{$noche};
+    ion-content {
+        --background: #{$gris-fondo}; // Fondo gris suave para resaltar las cards
+    }
 }
 
-ion-toolbar {
-    --background: #{$noche};
-    --color: #{$crema};
-    --border-width: 0;
-    font-weight: 700;
+// Estilo para el header "SmartTaxi"
+ion-header {
+    &.ion-no-border {
+        ion-toolbar {
+            --background: white; // Fondo limpio para el modo light
+            --color: #{$negro-puro};
+            --border-width: 0;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+    }
+
+    ion-title {
+        font-weight: 800 !important;
+        font-size: 1.2rem;
+        letter-spacing: -0.5px;
+
+        // Un toque de color al nombre
+        span {
+            color: $naranja-accent;
+        }
+    }
+
+    ion-back-button {
+        --color: #{$negro-puro};
+        font-weight: 600;
+    }
 }
 
-.custom-back-button {
-    --color: #{$crema}; // Blanco para que no distraiga del título
-}
-
-.history-list {
-    padding: 20px;
-    background: #{$noche};
-}
-
-.trip-card {
-    background: $carbon;
+// ============================================
+// TARJETAS DE VIAJE (CARDS)
+// ============================================
+ion-card {
+    margin: 16px;
     border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 16px;
-    border: 1px solid rgba($crema, 0.05); // Borde casi invisible para definición
+    background: white;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    border: none;
+    overflow: hidden;
     transition: transform 0.2s ease;
 
     &:active {
+<<<<<<< HEAD
         transform: scale(0.98);
         // CORREGIDO: Usar color.adjust con la sintaxis correcta
         background: color.adjust($carbon, $lightness: 3%);
+=======
+        transform: scale(0.98); // Efecto de pulsación
+>>>>>>> Monybbranch
     }
 
-    &.cancelled {
-        .icon-bg { background: #333; color: #666; }
-        .amount { color: #666; text-decoration: line-through; }
-        opacity: 0.7;
+    // Línea decorativa superior estilo Taxi
+    &::before {
+        content: '';
+        display: block;
+        height: 4px;
+        background: linear-gradient(90deg, $amarillo-taxi, $naranja-accent);
     }
+}
 
-    .card-top {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 20px;
+ion-item {
+    --background: transparent;
+    --padding-start: 16px;
+    margin-top: 8px;
 
-        .icon-bg {
-            background: rgba($oro, 0.1); // Fondo suave
-            color: $oro;
-            padding: 12px;
-            border-radius: 14px;
-            font-size: 1.4rem;
-            display: flex;
+    ion-label {
+        h2 {
+            font-weight: 800;
+            color: $negro-puro;
+            font-size: 1.15rem;
+            margin-bottom: 4px;
         }
 
-        .info {
-            flex: 1;
-            h2 {
-                margin: 0;
-                font-size: 1rem;
-                color: $crema;
-                font-weight: 700;
-            }
-            p {
-                margin: 4px 0 0;
-                font-size: 0.8rem;
-                color: rgba($crema, 0.4);
-            }
-        }
-
-        .price {
-            text-align: right;
-            .amount {
-                display: block;
-                color: $crema;
-                font-weight: 700;
-                font-size: 1.1rem;
-            }
-            .promo {
-                color: #ff4444; // Rojo para cancelados
-                font-size: 0.7rem;
-                font-weight: 700;
-                text-transform: uppercase;
-            }
-        }
-    }
-
-    .card-bottom {
-        display: flex;
-        gap: 15px;
-        align-items: stretch;
-
-        .route-indicator {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 5px 0;
-
-            .dot {
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                &.gold { background: $oro; box-shadow: 0 0 8px rgba($oro, 0.4); }
-                &.orange { background: $naranja; }
-            }
-
-            .line {
-                width: 2px;
-                flex: 1;
-                background: linear-gradient(to bottom, $oro, $naranja);
-                margin: 4px 0;
-                opacity: 0.3;
-            }
-        }
-
-        .addresses {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 15px;
-
-            span {
-                font-size: 0.85rem;
-                color: rgba($crema, 0.7);
-                font-weight: 400;
-            }
-        }
-
-        .detail-arrow {
+        p {
+            color: $gris-carbon;
             display: flex;
             align-items: center;
-            color: rgba($crema, 0.2);
-            font-size: 1.2rem;
+            gap: 4px;
+            font-weight: 500;
         }
     }
 }
 
-.empty-msg {
+// Badge de estado
+ion-badge {
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+
+    &[color="success"] {
+        --background: #{$amarillo-taxi};
+        --color: #{$negro-puro};
+    }
+
+    &[color="warning"] {
+        --background: #{$gris-fondo};
+        --color: #{$gris-carbon};
+    }
+}
+
+// Contenido de la tarjeta
+ion-card-content {
+    padding: 16px;
+
+    .info-row {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+
+        ion-icon {
+            color: $gris-carbon;
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+
+        .text-container {
+            strong {
+                display: block;
+                color: $negro-puro;
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                margin-bottom: 2px;
+            }
+
+            span {
+                color: $gris-carbon;
+                font-size: 0.95rem;
+            }
+        }
+    }
+
+    .divider {
+        height: 1px;
+        background: rgba(0, 0, 0, 0.05);
+        margin: 16px 0;
+    }
+
+    // Sección del precio final
+    .price-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .payment-method {
+            font-size: 0.8rem;
+            color: $gris-carbon;
+            font-weight: 500;
+        }
+
+        .total-amount {
+            color: $negro-puro;
+            font-weight: 900;
+            font-size: 1.5rem;
+
+            &::before {
+                content: '$';
+                font-size: 1rem;
+                margin-right: 2px;
+                color: $naranja-accent;
+            }
+        }
+    }
+}
+
+// ============================================
+// ESTADOS VACÍOS O CARGA
+// ============================================
+.loading-container,
+.empty-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 60vh;
-    color: rgba($crema, 0.2);
+    height: 70vh;
+    color: $gris-carbon;
 
     ion-icon {
-        font-size: 5rem;
-        margin-bottom: 20px;
+        font-size: 4rem;
+        color: $amarillo-taxi;
+        margin-bottom: 16px;
     }
+
+    p {
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+}
+
+ion-spinner {
+    --color: #{$naranja-accent};
+    width: 50px;
+    height: 50px;
 }
