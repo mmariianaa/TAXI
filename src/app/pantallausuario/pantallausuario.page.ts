@@ -120,6 +120,7 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
   socket: Socket;
   usuarioLogueado: Usuario | null = null;
 
+<<<<<<< HEAD
   // Configuración de Cobertura
   readonly CENTRO_OPERATIVO = { lat: 21.8600, lng: -102.5000 }; 
   readonly RADIO_MAXIMO_METROS = 45000; 
@@ -136,11 +137,46 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
       cashOutline, closeOutline, checkmarkCircle, warningOutline, 
       informationCircle, closeCircle, bulbOutline, refreshOutline, 
       closeCircleOutline, alarmOutline 
+=======
+constructor(private http: HttpClient, private router: Router) {
+  addIcons({ personOutline, carOutline, logOutOutline });
+  
+  try {
+    const userData = localStorage.getItem('user');
+    console.log('userData desde localStorage:', userData);
+    if (userData) {
+      this.usuarioLogueado = JSON.parse(userData);
+    } else {
+      console.warn('No se encontró "user" en localStorage');
+    }
+  } catch (e) {
+    console.error('Error al parsear usuario del localStorage:', e);
+    this.usuarioLogueado = null;
+  }
+  console.log('usuarioLogueado después de parsear:', this.usuarioLogueado);
+  
+  this.socket = io('http://localhost:3000');
+}
+  ngOnInit() {
+    // ===== NUEVO: UNIRSE A LA SALA CON EL ID DEL USUARIO =====
+    if (this.usuarioLogueado) {
+      console.log('🔌 Usuario conectándose a sala con ID:', this.usuarioLogueado.id);
+      this.socket.emit('unirse_sala', this.usuarioLogueado.id);
+    } else {
+      console.warn('⚠️ No hay usuario logueado, no se puede unir a sala');
+    }
+    // ===== FIN NUEVO =====
+
+    // Escuchar notificaciones del chofer
+    this.socket.on('notificacion_chofer', (data) => {
+      console.log('Notificación del chofer:', data);
+>>>>>>> maty_branch
     });
     this.socket = io('http://localhost:3000');
     this.cargarUsuario();
   }
 
+<<<<<<< HEAD
   ngOnInit() {
     this.socket.on('viaje_aceptado', (data) => {
       this.viajeSolicitado = false;
@@ -153,6 +189,51 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
       this.viajeSolicitado = false;
       this.mostrarTaxis = true;
       this.abrirModalNotificacion('Lo sentimos', 'El chofer no pudo tomar tu viaje.', 'close-circle', 'error');
+=======
+    // Escuchar cuando el chofer acepta el viaje
+    this.socket.on('viaje_aceptado', (data: any) => {
+      console.log('🔥🔥🔥 VIAJE ACEPTADO RECIBIDO 🔥🔥🔥', data);
+      this.viajeSolicitado = false;
+      this.viajeEnCurso = true;
+      
+      // Mostrar notificación
+      this.mostrarNotificacion(
+        '¡Viaje Aceptado! 🚖', 
+        `Tu chofer ${data.chofer?.nombre || 'está'} en camino.\nVehículo: ${data.chofer?.vehiculo || 'Taxi'} - Placa: ${data.chofer?.placa || '---'}`
+      );
+      
+      // Redirigir a pantalla de seguimiento
+      this.router.navigate(['/viajenotificacion'], { 
+        state: { 
+          viaje: data,
+          estado: 'aceptado'
+        } 
+      });
+    });
+
+    // Escuchar cuando el chofer rechaza el viaje
+    this.socket.on('viaje_rechazado', (data: any) => {
+      console.log('❌ Viaje rechazado:', data);
+      this.viajeSolicitado = false;
+      this.mostrarTaxis = true;
+      
+      this.mostrarNotificacion(
+        'Viaje Rechazado ❌', 
+        'El chofer no pudo tomar tu viaje. Por favor intenta con otro.'
+      );
+    });
+
+    // Escuchar errores
+    this.socket.on('error_solicitud', (data: any) => {
+      console.error('Error en solicitud:', data);
+      this.viajeSolicitado = false;
+      this.mostrarTaxis = true;
+      
+      this.mostrarNotificacion(
+        'Error', 
+        data.mensaje || 'No se pudo procesar tu solicitud'
+      );
+>>>>>>> maty_branch
     });
   }
 

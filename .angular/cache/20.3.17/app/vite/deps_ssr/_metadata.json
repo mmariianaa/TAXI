@@ -1,8 +1,15 @@
 {
+<<<<<<< HEAD
   "hash": "0f8aad9f",
   "configHash": "bb3ce4c3",
   "lockfileHash": "8648d903",
   "browserHash": "e13460bf",
+=======
+  "hash": "376fa033",
+  "configHash": "231925c4",
+  "lockfileHash": "ffca0f7d",
+  "browserHash": "dc94df77",
+>>>>>>> maty_branch
   "optimized": {},
   "chunks": {}
 }

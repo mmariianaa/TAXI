@@ -1,4 +1,5 @@
 import {
+<<<<<<< HEAD
   isRTL
 } from "./chunk-IUXA2G6D.js";
 import {
@@ -24,6 +25,33 @@ import {
   startFocusVisible
 } from "./chunk-L6ISKHKK.js";
 import {
+=======
+  startFocusVisible
+} from "./chunk-L6ISKHKK.js";
+import {
+  isRTL
+} from "./chunk-IUXA2G6D.js";
+import {
+  KEYBOARD_DID_OPEN
+} from "./chunk-G5UZVNUA.js";
+import {
+  Keyboard,
+  KeyboardResize,
+  getCapacitor
+} from "./chunk-IKS2SDKY.js";
+import {
+  ION_CONTENT_CLASS_SELECTOR,
+  ION_CONTENT_ELEMENT_SELECTOR,
+  disableContentScrollY,
+  findClosestIonContent,
+  findIonContent,
+  getScrollElement,
+  isIonContent,
+  printIonContentErrorMsg,
+  resetContentScrollY
+} from "./chunk-AQTZL7QU.js";
+import {
+>>>>>>> maty_branch
   AngularDelegate,
   BACKDROP,
   Config,
@@ -87,7 +115,11 @@ import {
   setIonicClasses,
   setOverlayId,
   toastController
+<<<<<<< HEAD
 } from "./chunk-WUTO6V4B.js";
+=======
+} from "./chunk-6JANVOBV.js";
+>>>>>>> maty_branch
 import {
   iosTransitionAnimation
 } from "./chunk-WKL7DPVR.js";
@@ -155,20 +187,23 @@ import {
   printIonWarning
 } from "./chunk-2H3NLAAY.js";
 import {
-  ActivatedRoute,
-  Router
-} from "./chunk-XT4WEHOZ.js";
-import {
+<<<<<<< HEAD
+=======
   NG_VALUE_ACCESSOR
 } from "./chunk-N56GCOTY.js";
-import "./chunk-7XPNVI5H.js";
-import "./chunk-PCG7JBQ6.js";
+import {
+>>>>>>> maty_branch
+  ActivatedRoute,
+  Router
+} from "./chunk-DGIFWITJ.js";
+import "./chunk-XUDU6ESO.js";
 import {
   CommonModule,
   Location,
   NgIf,
   NgTemplateOutlet
 } from "./chunk-ALZUJKZN.js";
+import "./chunk-PCG7JBQ6.js";
 import "./chunk-R6U7IGMG.js";
 import {
   APP_INITIALIZER,

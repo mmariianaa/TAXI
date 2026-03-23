@@ -3,8 +3,8 @@ const mysql = require('mysql2');
 const connDB = mysql.createConnection({
     host: 'localhost',    
     user: 'root',
-    password: '12345',
-    database: 'TaxiDBtaxi1'
+    password: 'root',
+    database: 'TaxiDBtaxi'
 })
 connDB.connect((err) => {
     if (err) {
