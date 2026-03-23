@@ -1,0 +1,35 @@
+.modal-content {
+  text-align: center;
+  padding: 20px;
+}
+.icon-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+.icon-container.success {
+  background-color: #2dd36f20;
+  color: #2dd36f;
+}
+.icon-container.error {
+  background-color: #eb445a20;
+  color: #eb445a;
+}
+.icon-container.warning {
+  background-color: #ffc40920;
+  color: #ffc409;
+}
+.icon-container.info {
+  background-color: #3880ff20;
+  color: #3880ff;
+}
+.mensaje {
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: left;
+  white-space: pre-line;
+}

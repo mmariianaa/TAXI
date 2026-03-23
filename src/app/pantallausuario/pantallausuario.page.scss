@@ -89,13 +89,33 @@
   }
 }
 
-/* Estilizar marcadores personalizados */
+/* Estilizar marcadores de taxis */
+.taxi-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  div {
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* Estilizar marcador de ubicación del usuario */
 .ubicacion-usuario {
   display: flex;
   align-items: center;
   justify-content: center;
   
   div {
+    background-color: #4285F4;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     animation: pulse 2s infinite;
   }
@@ -141,6 +161,7 @@ ion-list-header {
   --border-radius: 12px;
   margin-bottom: 8px;
   --background: var(--ion-color-light);
+  transition: all 0.2s ease;
   
   .taxi-icon {
     color: var(--ion-color-primary);
@@ -152,6 +173,7 @@ ion-list-header {
     font-weight: 600;
     font-size: 1rem;
     margin-bottom: 4px;
+    color: var(--ion-color-dark);
   }
   
   p {
@@ -162,6 +184,13 @@ ion-list-header {
   
   .experiencia {
     color: var(--ion-color-warning);
+    font-weight: 500;
+    font-size: 0.75rem;
+    margin-top: 4px;
+  }
+  
+  .tiempo-llegada {
+    color: var(--ion-color-primary);
     font-weight: 500;
     font-size: 0.75rem;
     margin-top: 4px;
@@ -180,12 +209,12 @@ ion-list-header {
   &:active {
     --background: var(--ion-color-light-tint);
     transform: scale(0.98);
-    transition: transform 0.1s ease;
   }
 }
 
 /* ========== ESTADOS DE CARGA Y VACÍO ========== */
-.loading-state {
+.loading-state,
+.ion-text-center.ion-padding {
   text-align: center;
   padding: 30px 20px;
   
@@ -230,6 +259,7 @@ ion-list-header {
   border-radius: 16px;
   padding: 25px 20px;
   margin-top: 20px;
+  animation: fadeIn 0.3s ease;
   
   .solicitud-icon {
     font-size: 52px;
@@ -299,6 +329,38 @@ ion-list-header {
   }
 }
 
+/* ========== ANIMACIONES ========== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Aplicar animaciones a los elementos */
+.taxi-item {
+  animation: slideIn 0.3s ease;
+}
+
+.solicitud-enviada {
+  animation: fadeIn 0.3s ease;
+}
+
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
   .map-box {
@@ -312,5 +374,390 @@ ion-list-header {
     .precio {
       font-size: 1rem;
     }
+    
+    .taxi-icon {
+      font-size: 20px;
+    }
   }
+  
+  .search-container {
+    padding: 8px;
+  }
+  
+  .custom-input ion-icon {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-box {
+    height: 220px;
+  }
+  
+  .taxi-item {
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+    
+    h2 {
+      font-size: 0.9rem;
+    }
+    
+    p {
+      font-size: 0.75rem;
+    }
+  }
+  
+  .empty-state .empty-state-icon {
+    font-size: 48px;
+  }
+  /* ========== ESTILOS PARA MODALES ========== */
+.modal-content {
+  text-align: center;
+  padding: 20px;
+}
+
+.icon-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.icon-container.success {
+  background-color: var(--ion-color-success-tint, #2dd36f20);
+  color: var(--ion-color-success, #2dd36f);
+}
+
+.icon-container.error {
+  background-color: var(--ion-color-danger-tint, #eb445a20);
+  color: var(--ion-color-danger, #eb445a);
+}
+
+.icon-container.warning {
+  background-color: var(--ion-color-warning-tint, #ffc40920);
+  color: var(--ion-color-warning, #ffc409);
+}
+
+.icon-container.info {
+  background-color: var(--ion-color-primary-tint, #3880ff20);
+  color: var(--ion-color-primary, #3880ff);
+}
+
+.mensaje {
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: left;
+  white-space: pre-line;
+}
+
+/* ========== ESTILOS PARA MODAL DE CONFIRMACIÓN ========== */
+.taxi-info {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: var(--ion-color-light);
+  border-radius: 12px;
+}
+
+.icono-taxi {
+  width: 60px;
+  height: 60px;
+  background: #ffc31f20;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+}
+
+.icono-taxi ion-icon {
+  font-size: 32px;
+  color: #ffc31f;
+}
+
+.placa {
+  color: var(--ion-color-medium);
+  font-size: 14px;
+}
+
+.precio {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--ion-color-success);
+}
+
+.button-group {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ========== ESTILOS PARA MARCADORES DEL MAPA ========== */
+.taxi-marker-content {
+  background-color: #FFC31F;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.taxi-marker-content ion-icon {
+  color: #1F1F1F;
+  font-size: 18px;
+}
+
+.usuario-marker {
+  background-color: #4285F4;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(66, 133, 244, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(66, 133, 244, 0);
+  }
+}
+
+.popup-button {
+  background: #FFC31F;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-top: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.popup-button:hover {
+  background: #ffb300;
+}
+
+/* ========== MEJORAS RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .icon-container {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .icon-container ion-icon {
+    font-size: 32px;
+  }
+  
+  .mensaje {
+    font-size: 14px;
+  }
+  
+  .taxi-info {
+    padding: 15px;
+  }
+  
+  .precio {
+    font-size: 16px;
+  }
+}
+/* Agrega estos estilos al final de tu archivo SCSS existente */
+
+/* Estilos para el botón sugerir ruta */
+.suggest-button {
+  margin-top: 12px;
+  --border-radius: 25px;
+  --border-color: var(--ion-color-primary);
+  font-weight: 500;
+}
+
+/* Estilos para el badge de solicitud */
+.solicitud-badge {
+  background-color: var(--ion-color-warning);
+  color: var(--ion-color-warning-contrast);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  animation: pulse 1.5s infinite;
+}
+
+.badge-spinner {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+}
+
+/* Estilos para información de precio */
+.price-info {
+  margin-top: 16px;
+  animation: fadeInUp 0.5s ease;
+  
+  ion-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    
+    ion-card-header {
+      padding-bottom: 8px;
+    }
+    
+    ion-card-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    ion-card-content {
+      text-align: center;
+      
+      ion-col {
+        text-align: center;
+        
+        ion-icon {
+          font-size: 24px;
+          margin-bottom: 5px;
+        }
+        
+        p {
+          margin: 5px 0;
+          font-size: 12px;
+          color: var(--ion-color-medium);
+        }
+        
+        strong {
+          font-size: 16px;
+          font-weight: 600;
+        }
+        
+        .precio-text {
+          color: var(--ion-color-success);
+          font-size: 18px;
+        }
+      }
+    }
+  }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mejoras para los items de taxi */
+.taxi-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --border-radius: 12px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.taxi-icon {
+  font-size: 28px;
+  color: var(--ion-color-primary);
+}
+
+.experiencia {
+  font-size: 12px;
+  color: var(--ion-color-warning);
+  margin-top: 4px;
+}
+
+.tiempo-llegada {
+  font-size: 12px;
+  color: var(--ion-color-primary);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.precio {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* Estilos para lista vacía */
+.empty-list-item {
+  --padding-top: 30px;
+  --padding-bottom: 30px;
+  text-align: center;
+  
+  .empty-icon {
+    font-size: 48px;
+    color: var(--ion-color-medium);
+    opacity: 0.5;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin: 5px 0;
+  }
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .price-info ion-card-content ion-col strong {
+    font-size: 14px;
+  }
+  
+  .price-info ion-card-content ion-col .precio-text {
+    font-size: 16px;
+  }
+  
+  .taxi-icon {
+    font-size: 24px;
+  }
+  
+  .precio {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .price-info ion-card-content ion-grid ion-row {
+    flex-direction: column;
+    
+    ion-col {
+      margin-bottom: 10px;
+    }
+  }
+}
 }

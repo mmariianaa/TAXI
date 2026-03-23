@@ -10,19 +10,19 @@
       <ion-menu-toggle auto-hide="true">
         <ion-item button routerLink="/perfilusuario">
           <ion-icon slot="start" name="person-outline"></ion-icon>
-          <ion-label>Mi Perfil Detallado usuario</ion-label>
+          <ion-label>Mi Perfil</ion-label>
         </ion-item>
       </ion-menu-toggle>
 
       <ion-menu-toggle auto-hide="true">
-        <ion-item button routerLink="/cambiarrutaanotiusuario">
-          <ion-icon slot="start" name="car-outline"></ion-icon>
-          <ion-label>notificaciones</ion-label>
+        <ion-item button (click)="irANotificaciones()">
+          <ion-icon slot="start" name="notifications-outline"></ion-icon>
+          <ion-label>Notificaciones</ion-label>
         </ion-item>
       </ion-menu-toggle>
 
       <ion-menu-toggle auto-hide="true">
-        <ion-item button (click)="logout()" color="danger" class="logout-item">
+        <ion-item button (click)="logout()" color="danger">
           <ion-icon slot="start" name="log-out-outline"></ion-icon>
           <ion-label>Cerrar Sesión</ion-label>
         </ion-item>
@@ -37,9 +37,7 @@
       <ion-buttons slot="start">
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
-
-      <ion-title>Usuario</ion-title>
-
+      <ion-title>Hola, {{ usuarioLogueado?.nombre || 'Usuario' }}</ion-title>
       <ion-buttons slot="end">
         <ion-button (click)="irANotificaciones()">
           <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
@@ -53,56 +51,125 @@
     <div class="search-container">
       <ion-item lines="none" class="custom-input">
         <ion-icon name="location-outline" slot="start" color="primary"></ion-icon>
-        <ion-input label="Origen" labelPlacement="stacked" placeholder="Mi ubicación" [(ngModel)]="origen">
+        <ion-input 
+          label="Origen" 
+          labelPlacement="stacked" 
+          [(ngModel)]="origen"
+          readonly>
         </ion-input>
       </ion-item>
 
       <ion-item lines="none" class="custom-input">
         <ion-icon name="flag-outline" slot="start" color="danger"></ion-icon>
-        <ion-input label="Destino" labelPlacement="stacked" placeholder="¿A dónde vas?" [(ngModel)]="destino"
+        <ion-input 
+          label="Destino" 
+          labelPlacement="stacked" 
+          placeholder="¿A dónde vas?" 
+          [(ngModel)]="destino"
           (keyup.enter)="buscarDestino()">
         </ion-input>
-        <ion-button slot="end" fill="clear" (click)="buscarDestino()">
+        <ion-button slot="end" fill="clear" (click)="buscarDestino()" [disabled]="cargandoTaxis">
           <ion-icon name="search-outline" color="dark"></ion-icon>
         </ion-button>
       </ion-item>
-    </div>
-
-    <div class="map-box">
-      <div id="map"></div>
-      <ion-badge *ngIf="mostrarTaxis" color="light" class="map-badge">Ruta activa</ion-badge>
-    </div>
-
-    <div *ngIf="mostrarTaxis">
-      <ion-list-header>
-        <ion-label>Taxis disponibles</ion-label>
-      </ion-list-header>
-
-      <ion-list lines="full">
-        @for (taxi of listaTaxis; track taxi.id_chofer) {
-        <ion-item button (click)="seleccionarTaxi(taxi)">
-          <ion-icon name="car-sport" slot="start"></ion-icon>
-          <ion-label>
-            <h2>{{ taxi.nombre || 'Chofer' }} {{ taxi.apellido || '' }}</h2>
-            <p>{{ taxi.marca }} - {{ taxi.placa }}</p>
-            <p *ngIf="taxi.experiencia">Experiencia: {{ taxi.experiencia }} años</p>
-          </ion-label>
-          <ion-note slot="end" color="success">${{ taxi.precio || '0' }}</ion-note>
-        </ion-item>
-        } @empty {
-        <ion-item>No hay taxis cerca</ion-item>
-        }
-      </ion-list>
-
-      <ion-button expand="block" shape="round" color="secondary" (click)="sugerirRuta()" class="ion-margin-top">
-        <ion-icon name="dice-outline" slot="start"></ion-icon>
-        Sugerir Ruta Rápida
+      
+      <ion-button 
+        *ngIf="!mostrarTaxis"
+        expand="block" 
+        fill="outline" 
+        (click)="sugerirRuta()" 
+        class="suggest-button">
+        <ion-icon name="bulb-outline" slot="start"></ion-icon>
+        Sugerir ruta (Centro)
       </ion-button>
     </div>
 
-    <div *ngIf="!mostrarTaxis" class="ion-text-center ion-padding">
-      <p>Ingresa un destino para ver taxis disponibles</p>
+    <div class="map-box" style="height: 300px; margin-bottom: 15px; position: relative;">
+      <div id="map" style="height: 100%; width: 100%; border-radius: 15px;"></div>
+      
+      <ion-badge *ngIf="mostrandoPrecio" color="light" style="position: absolute; top: 10px; right: 10px; z-index: 1000;">
+        <ion-icon name="car-sport"></ion-icon> Ruta activa
+      </ion-badge>
+    </div>
+
+    <div *ngIf="mostrandoPrecio && !viajeSolicitado" class="price-info">
+      <ion-card mode="ios" style="margin: 0 0 15px 0;">
+        <ion-card-content>
+          <ion-grid>
+            <ion-row class="ion-text-center">
+              <ion-col size="4">
+                <ion-icon name="map-outline" color="primary"></ion-icon>
+                <p style="font-size: 0.8rem; margin: 0;">KM</p>
+                <strong>{{ distanciaActual.toFixed(2) }}</strong>
+              </ion-col>
+              <ion-col size="4">
+                <ion-icon name="time-outline" color="warning"></ion-icon>
+                <p style="font-size: 0.8rem; margin: 0;">Tiempo</p>
+                <strong>{{ tiempoEstimado }} min</strong>
+              </ion-col>
+              <ion-col size="4">
+                <ion-icon name="cash-outline" color="success"></ion-icon>
+                <p style="font-size: 0.8rem; margin: 0;">Tarifa</p>
+                <strong style="color: var(--ion-color-success);">${{ precioEstimado }}</strong>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <div *ngIf="cargandoTaxis" class="ion-text-center ion-padding">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Calculando ruta y buscando taxis...</p>
+    </div>
+
+    <div *ngIf="mostrarTaxis && !cargandoTaxis && !viajeSolicitado">
+      <ion-list-header>
+        <ion-label>
+          <h2 style="font-weight: bold;">Taxis disponibles</h2>
+        </ion-label>
+      </ion-list-header>
+
+      <ion-list lines="full">
+        <ion-item button *ngFor="let taxi of listaTaxis" (click)="seleccionarTaxi(taxi)">
+          <ion-icon name="car-sport" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h2>{{ taxi.nombre }} {{ taxi.apellido || '' }}</h2>
+            <p>{{ taxi.marca || 'Taxi' }} • {{ taxi.placa }}</p>
+            <p *ngIf="taxi.tiempoEstimadoLlegada" style="color: var(--ion-color-warning-shade);">
+              ⏱️ Llega en {{ taxi.tiempoEstimadoLlegada }} min
+            </p>
+          </ion-label>
+          <ion-note slot="end" color="success" style="font-weight: bold; font-size: 1.1rem;">
+            ${{ taxi.precio }}
+          </ion-note>
+        </ion-item>
+
+        <ion-item *ngIf="listaTaxis.length === 0" class="ion-text-center">
+          <ion-label>
+            <p>No hay taxis disponibles en este momento.</p>
+            <ion-button fill="clear" (click)="obtenerTaxis()">
+              <ion-icon name="refresh-outline" slot="start"></ion-icon> Reintentar
+            </ion-button>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <div *ngIf="viajeSolicitado" class="ion-text-center ion-padding" style="background: #fff9e6; border-radius: 15px; border: 1px solid #ffe58f;">
+      <ion-spinner name="dots" color="warning"></ion-spinner>
+      <h3 style="color: #856404;">Solicitud enviada</h3>
+      <p>Esperando que el chofer confirme...</p>
+      <ion-button expand="block" fill="outline" color="danger" (click)="cancelarSolicitud()">
+        <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+        Cancelar solicitud
+      </ion-button>
+    </div>
+
+    <div *ngIf="!mostrarTaxis && !cargandoTaxis && !mostrandoPrecio" class="ion-text-center ion-padding" style="margin-top: 20px; opacity: 0.6;">
+      <ion-icon name="map-outline" style="font-size: 4rem;"></ion-icon>
+      <p>Ingresa tu destino para calcular la tarifa y ver taxis disponibles.</p>
     </div>
 
   </ion-content>
-</div>\
+</div>

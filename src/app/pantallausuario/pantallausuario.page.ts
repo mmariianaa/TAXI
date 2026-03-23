@@ -1,16 +1,96 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injectable, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http'; 
 import { Router, RouterLink } from '@angular/router'; 
 import * as L from 'leaflet';
 import 'leaflet-routing-machine'; 
 import { Geolocation } from '@capacitor/geolocation';
 import { addIcons } from 'ionicons'; 
-import { personOutline, carOutline, logOutOutline } from 'ionicons/icons'; 
-import { io, Socket } from 'socket.io-client'; 
+import { 
+  personOutline, carOutline, logOutOutline, locationOutline, 
+  flagOutline, searchOutline, notificationsOutline, mapOutline, 
+  carSport, timeOutline, cashOutline, closeOutline, 
+  checkmarkCircle, warningOutline, informationCircle, closeCircle,
+  bulbOutline, refreshOutline, closeCircleOutline, alarmOutline 
+} from 'ionicons/icons'; 
+import { io, Socket } from 'socket.io-client';
 
+// ============================================
+// 1. INTERFACES
+// ============================================
+interface Usuario { id: number; nombre: string; apellido: string; correo: string; }
+interface Taxi { 
+  id_chofer: number; nombre: string; apellido?: string; placa: string; 
+  marca?: string; precio?: number; tiempoEstimadoLlegada?: number; 
+}
+
+// ============================================
+// 2. SERVICIO DE TARIFAS
+// ============================================
+@Injectable({ providedIn: 'root' })
+export class TaxiFareService {
+  private readonly TARIFA_BASE = 15;
+  calcularTarifaEscalonada(distanciaKm: number, esNocturno: boolean = false): number {
+    let factorPorKm = distanciaKm <= 2 ? 5 : distanciaKm <= 5 ? 6 : distanciaKm <= 10 ? 7 : 8;
+    if (esNocturno) factorPorKm++;
+    let tarifa = this.TARIFA_BASE + (distanciaKm * factorPorKm);
+    return Math.round(tarifa / 5) * 5; 
+  }
+}
+
+// ============================================
+// 3. COMPONENTES MODALES (Notificación y Confirmación)
+// ============================================
+@Component({
+  selector: 'app-notificacion-modal',
+  template: `
+    <ion-header><ion-toolbar [color]="tipo === 'success' ? 'success' : tipo === 'error' ? 'danger' : 'primary'"><ion-title>{{ titulo }}</ion-title></ion-toolbar></ion-header>
+    <ion-content class="ion-padding ion-text-center">
+      <ion-icon [name]="icono" size="large" [color]="tipo === 'success' ? 'success' : 'primary'"></ion-icon>
+      <p [innerHTML]="mensaje.replace('\\n', '<br>')"></p>
+      <ion-button expand="block" (click)="cerrar()">Entendido</ion-button>
+    </ion-content>
+  `,
+  standalone: true, imports: [IonicModule, CommonModule]
+})
+export class NotificacionModalComponent {
+  @Input() titulo: string = ''; @Input() mensaje: string = ''; @Input() icono: string = ''; @Input() tipo: string = '';
+  constructor(private modalCtrl: ModalController) {}
+  cerrar() { this.modalCtrl.dismiss(); }
+}
+
+@Component({
+  selector: 'app-confirmar-viaje-modal',
+  template: `
+    <ion-header><ion-toolbar color="primary"><ion-title>Detalles del Viaje</ion-title></ion-toolbar></ion-header>
+    <ion-content class="ion-padding">
+      <div style="text-align: center; background: #f4f5f8; padding: 15px; border-radius: 15px;">
+        <ion-icon name="car-sport" color="warning" size="large"></ion-icon>
+        <h2>{{ taxi?.nombre }}</h2>
+        <ion-badge color="dark">Placa: {{ taxi?.placa }}</ion-badge>
+      </div>
+      <ion-list lines="none">
+        <ion-item><ion-icon name="map-outline" slot="start"></ion-icon><ion-label>Distancia: {{ distancia.toFixed(2) }} km</ion-label></ion-item>
+        <ion-item><ion-icon name="cash-outline" slot="start" color="success"></ion-icon><ion-label><b>Precio: \${{ precio }} MXN</b></ion-label></ion-item>
+      </ion-list>
+      <ion-button expand="block" color="success" (click)="confirmar()">Confirmar Viaje</ion-button>
+      <ion-button expand="block" fill="clear" (click)="cancelar()">Cancelar</ion-button>
+    </ion-content>
+  `,
+  standalone: true, imports: [IonicModule, CommonModule]
+})
+export class ConfirmarViajeModalComponent {
+  @Input() taxi: any; @Input() distancia: number = 0; @Input() precio: number = 0;
+  constructor(private modalCtrl: ModalController) {}
+  confirmar() { this.modalCtrl.dismiss({ confirmado: true }); }
+  cancelar() { this.modalCtrl.dismiss({ confirmado: false }); }
+}
+
+// ============================================
+// 4. PÁGINA PRINCIPAL (Fusionada)
+// ============================================
 @Component({
   selector: 'app-pantallausuario',
   templateUrl: './pantallausuario.page.html',
@@ -21,290 +101,209 @@ import { io, Socket } from 'socket.io-client';
 export class PantallausuarioPage implements OnInit, OnDestroy {
   map!: L.Map;
   routingControl: any;
+  miUbicacion: L.LatLng | null = null;
   origen: string = 'Mi ubicación';
   destino: string = '';
-  miUbicacion: L.LatLng | null = null;
-  mostrarTaxis: boolean = false;
-  cargandoTaxis: boolean = false;
-
+  
+  // Estados de interfaz
+  viajeSolicitado = false;
+  viajeEnCurso = false;
+  mostrarTaxis = false;
+  cargandoTaxis = false;
+  mostrandoPrecio = false;
+  
+  distanciaActual = 0;
+  precioEstimado = 0;
+  tiempoEstimado = 0;
+  listaTaxis: Taxi[] = [];
+  
   socket: Socket;
-  usuarioLogueado: any;
-  listaTaxis: any[] = []; 
-  viajeSolicitado: boolean = false;
-  viajeEnCurso: boolean = false;
+  usuarioLogueado: Usuario | null = null;
 
-constructor(private http: HttpClient, private router: Router) {
-  addIcons({ personOutline, carOutline, logOutOutline });
-  
-  try {
-    const userData = localStorage.getItem('user');
-    console.log('userData desde localStorage:', userData);
-    if (userData) {
-      this.usuarioLogueado = JSON.parse(userData);
-    } else {
-      console.warn('No se encontró "user" en localStorage');
-    }
-  } catch (e) {
-    console.error('Error al parsear usuario del localStorage:', e);
-    this.usuarioLogueado = null;
-  }
-  console.log('usuarioLogueado después de parsear:', this.usuarioLogueado);
-  
-  this.socket = io('http://localhost:3000');
-}
-  ngOnInit() {
-    // Escuchar notificaciones del chofer
-    this.socket.on('notificacion_chofer', (data) => {
-      console.log('Notificación del chofer:', data);
+  // Configuración de Cobertura
+  readonly CENTRO_OPERATIVO = { lat: 21.8600, lng: -102.5000 }; 
+  readonly RADIO_MAXIMO_METROS = 45000; 
+
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private fareService: TaxiFareService,
+    private modalCtrl: ModalController
+  ) {
+    addIcons({ 
+      personOutline, carOutline, logOutOutline, locationOutline, flagOutline, 
+      searchOutline, notificationsOutline, mapOutline, carSport, timeOutline, 
+      cashOutline, closeOutline, checkmarkCircle, warningOutline, 
+      informationCircle, closeCircle, bulbOutline, refreshOutline, 
+      closeCircleOutline, alarmOutline 
     });
+    this.socket = io('http://localhost:3000');
+    this.cargarUsuario();
+  }
 
-    // Escuchar cuando el chofer acepta el viaje
-    this.socket.on('viaje_aceptado', (data: any) => {
-      console.log('Viaje aceptado:', data);
+  ngOnInit() {
+    this.socket.on('viaje_aceptado', (data) => {
       this.viajeSolicitado = false;
       this.viajeEnCurso = true;
-      
-      // Mostrar notificación
-      this.mostrarNotificacion(
-        '¡Viaje Aceptado!', 
-        `Tu chofer está en camino`
-      );
-      
-      // Redirigir a pantalla de seguimiento
-      this.router.navigate(['/viajenotificacion'], { 
-        state: { 
-          viaje: data,
-          estado: 'aceptado'
-        } 
-      });
+      this.abrirModalNotificacion('¡Viaje Aceptado!', 'Tu chofer está en camino', 'checkmark-circle', 'success');
+      this.router.navigate(['/viajenotificacion'], { state: { viaje: data, precio: this.precioEstimado } });
     });
 
-    // Escuchar cuando el chofer rechaza el viaje
-    this.socket.on('viaje_rechazado', (data: any) => {
-      console.log('Viaje rechazado:', data);
+    this.socket.on('viaje_rechazado', () => {
       this.viajeSolicitado = false;
       this.mostrarTaxis = true;
-      
-      this.mostrarNotificacion(
-        'Viaje Rechazado', 
-        'El chofer no pudo tomar tu viaje. Por favor intenta con otro.'
-      );
-    });
-
-    // Escuchar errores
-    this.socket.on('error_solicitud', (data: any) => {
-      console.error('Error en solicitud:', data);
-      this.viajeSolicitado = false;
-      this.mostrarTaxis = true;
-      
-      this.mostrarNotificacion(
-        'Error', 
-        data.mensaje || 'No se pudo procesar tu solicitud'
-      );
+      this.abrirModalNotificacion('Lo sentimos', 'El chofer no pudo tomar tu viaje.', 'close-circle', 'error');
     });
   }
 
-  ionViewDidEnter() {
-    this.obtenerUbicacionActual();
-    setTimeout(() => {
-      if (this.map) this.map.invalidateSize();
-    }, 300);
+  cargarUsuario() {
+    const data = localStorage.getItem('user');
+    if (data) this.usuarioLogueado = JSON.parse(data);
   }
 
-  ngOnDestroy() {
-    // Desconectar socket al salir de la página
-    if (this.socket) {
-      this.socket.disconnect();
-    }
-  }
-
-  // Función para mostrar notificaciones (puedes personalizarla)
-  mostrarNotificacion(titulo: string, mensaje: string) {
-    // Puedes usar AlertController de Ionic aquí
-    alert(`${titulo}\n\n${mensaje}`);
-  }
-
-  irANotificaciones() {
-    this.router.navigate(['/viajenotificacion']); 
-  }
-
+  // --- Lógica de Localización y Mapa ---
   async obtenerUbicacionActual() {
     try {
-      const coordinates = await Geolocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 10000 
-      });
-      this.miUbicacion = L.latLng(coordinates.coords.latitude, coordinates.coords.longitude);
+      const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+      this.miUbicacion = L.latLng(pos.coords.latitude, pos.coords.longitude);
       this.initMap();
-    } catch (error) {
-      console.warn('Error ubicación, usando CDMX', error);
-      this.miUbicacion = L.latLng(19.4326, -99.1332); 
+    } catch {
+      this.miUbicacion = L.latLng(21.8469, -102.7188); // Default Calvillo
       this.initMap();
     }
   }
 
   initMap() {
     if (!this.miUbicacion) return;
-    if (this.map) { this.map.remove(); }
+    if (this.map) this.map.remove();
+    this.map = L.map('map').setView([this.miUbicacion.lat, this.miUbicacion.lng], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
     
-    this.map = L.map('map').setView([this.miUbicacion.lat, this.miUbicacion.lng], 15);
-    
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
+    // Círculo de cobertura
+    L.circle([this.CENTRO_OPERATIVO.lat, this.CENTRO_OPERATIVO.lng], {
+      color: '#2dd36f', radius: this.RADIO_MAXIMO_METROS, fillOpacity: 0.1
     }).addTo(this.map);
-    
-    // Marcador personalizado para la ubicación del usuario
-    const usuarioIcon = L.divIcon({
-      className: 'ubicacion-usuario',
-      html: '<div style="background-color: #4285F4; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>',
-      iconSize: [22, 22]
+
+    const icon = L.divIcon({ 
+      className: 'user-marker', 
+      html: '<div style="background:#4285F4;width:14px;height:14px;border-radius:50%;border:2px solid white"></div>' 
     });
-    
-    L.marker([this.miUbicacion.lat, this.miUbicacion.lng], { icon: usuarioIcon })
-      .addTo(this.map)
-      .bindPopup('Estás aquí 📍')
-      .openPopup();
+    L.marker([this.miUbicacion.lat, this.miUbicacion.lng], { icon }).addTo(this.map);
   }
 
+  // --- Lógica de Negocio ---
   buscarDestino() {
-    if (!this.destino || !this.miUbicacion) {
-      alert('Por favor ingresa un destino');
-      return;
-    }
-    
+    if (!this.destino || !this.miUbicacion) return;
     this.cargandoTaxis = true;
-    
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(this.destino)}&limit=1`;
+
+    const query = `${this.destino}, Aguascalientes, Mexico`;
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
 
     this.http.get<any[]>(url).subscribe({
       next: (data) => {
         if (data.length > 0) {
           const coordsDestino = L.latLng(parseFloat(data[0].lat), parseFloat(data[0].lon));
-          this.dibujarRuta(coordsDestino);
-
-          // Obtener taxis disponibles
-          this.http.get<any[]>('http://localhost:3000/api/taxis/disponibles').subscribe({
-            next: (res) => {
-              this.listaTaxis = res; 
-              this.mostrarTaxis = true;
-              this.cargandoTaxis = false;
-              
-              if (res.length === 0) {
-                this.mostrarNotificacion(
-                  'Sin taxis disponibles', 
-                  'No hay choferes disponibles en este momento'
-                );
-              }
-            },
-            error: (err) => {
-              console.error('Error al obtener taxis:', err);
-              this.cargandoTaxis = false;
-              this.mostrarNotificacion(
-                'Error', 
-                'No se pudieron cargar los taxis disponibles'
-              );
-            }
-          });
-
+          
+          if (this.estaEnZonaPermitida(coordsDestino)) {
+            this.dibujarRuta(coordsDestino);
+            // Simulación de distancia para el precio (o puedes obtenerla de routingControl)
+            this.distanciaActual = this.miUbicacion!.distanceTo(coordsDestino) / 1000;
+            this.precioEstimado = this.fareService.calcularTarifaEscalonada(this.distanciaActual);
+            this.obtenerTaxis();
+          } else {
+            this.cargandoTaxis = false;
+            this.abrirModalNotificacion('Fuera de Rango', 'El destino está fuera de nuestra zona de servicio.', 'warning-outline', 'error');
+          }
         } else {
           this.cargandoTaxis = false;
-          alert('No se encontró la dirección. Intenta con otra.');
+          this.abrirModalNotificacion('No encontrado', 'No pudimos localizar esa dirección.', 'search-outline', 'primary');
         }
       },
-      error: (err) => {
-        console.error('Error al buscar destino:', err);
+      error: () => this.cargandoTaxis = false
+    });
+  }
+
+  estaEnZonaPermitida(coords: L.LatLng): boolean {
+    const centro = L.latLng(this.CENTRO_OPERATIVO.lat, this.CENTRO_OPERATIVO.lng);
+    return centro.distanceTo(coords) <= this.RADIO_MAXIMO_METROS;
+  }
+
+  dibujarRuta(destino: L.LatLng) {
+    if (this.routingControl) this.map.removeControl(this.routingControl);
+    this.routingControl = (L as any).Routing.control({
+      waypoints: [this.miUbicacion!, destino],
+      show: false,
+      addWaypoints: false,
+      router: new (L as any).Routing.OSRMv1({ serviceUrl: 'https://router.project-osrm.org/route/v1' })
+    }).addTo(this.map);
+  }
+
+  obtenerTaxis() {
+    this.http.get<Taxi[]>('http://localhost:3000/api/taxis/disponibles').subscribe({
+      next: (res) => {
+        this.listaTaxis = res.map(t => ({ ...t, precio: this.precioEstimado }));
+        this.mostrarTaxis = true;
         this.cargandoTaxis = false;
-        alert('Error al buscar la dirección');
+        this.mostrandoPrecio = true;
+      },
+      error: () => {
+        this.cargandoTaxis = false;
+        this.abrirModalNotificacion('Error', 'No hay taxis conectados actualmente.', 'car-outline', 'error');
       }
     });
   }
 
-  dibujarRuta(destino: L.LatLng) {
-    if (this.routingControl) { 
-      this.map.removeControl(this.routingControl); 
+  async seleccionarTaxi(taxi: Taxi) {
+    if (this.viajeSolicitado) return;
+
+    const modal = await this.modalCtrl.create({
+      component: ConfirmarViajeModalComponent,
+      componentProps: { taxi, distancia: this.distanciaActual, precio: this.precioEstimado }
+    });
+
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+
+    if (data?.confirmado) {
+      this.socket.emit('solicitar_taxi', {
+        id_chofer_usuario: taxi.id_chofer,
+        id_cliente: this.usuarioLogueado?.id,
+        nombre_cliente: this.usuarioLogueado?.nombre,
+        precio: this.precioEstimado,
+        origen: { lat: this.miUbicacion?.lat, lng: this.miUbicacion?.lng, direccion: this.origen },
+        destino: { direccion: this.destino }
+      });
+      this.viajeSolicitado = true;
+      this.mostrarTaxis = false;
     }
-    
-    this.routingControl = (L as any).Routing.control({
-      waypoints: [this.miUbicacion!, destino],
-      show: false,
-      fitSelectedRoutes: true,
-      lineOptions: { 
-        styles: [{ color: '#c738ff', weight: 6 }] 
-      },
-      router: new (L as any).Routing.OSRMv1({
-        serviceUrl: 'https://router.project-osrm.org/route/v1'
-      })
-    }).addTo(this.map);
   }
 
-  seleccionarTaxi(taxi: any) {
-    if (this.viajeSolicitado) {
-      this.mostrarNotificacion(
-        'Viaje en proceso', 
-        'Ya tienes un viaje solicitado. Espera la respuesta del chofer.'
-      );
-      return;
-    }
+  // --- Utilidades ---
+  async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tipo: string) {
+    const modal = await this.modalCtrl.create({
+      component: NotificacionModalComponent,
+      componentProps: { titulo, mensaje, icono, tipo }
+    });
+    await modal.present();
+  }
 
-    if (!this.usuarioLogueado) {
-      this.mostrarNotificacion(
-        'No has iniciado sesión', 
-        'Por favor inicia sesión para solicitar un taxi'
-      );
-      this.router.navigate(['/home']);
-      return;
-    }
-
-    const dataNotificacion = {
-      id_chofer_usuario: taxi.id_chofer,
-      nombre_cliente: `${this.usuarioLogueado?.nombre || 'Cliente'} ${this.usuarioLogueado?.apellido || ''}`.trim(),
-      id_cliente: this.usuarioLogueado?.id || this.usuarioLogueado?.id,
-      placa_taxi: taxi.placa,
-      origen: {
-        lat: this.miUbicacion?.lat,
-        lng: this.miUbicacion?.lng,
-        direccion: this.origen
-      },
-      destino: {
-        direccion: this.destino
-      }
-    };
-
-    console.log('Enviando solicitud:', dataNotificacion);
-    
-    this.socket.emit('solicitar_taxi', dataNotificacion);
-    
-    this.viajeSolicitado = true;
-    this.mostrarTaxis = false;
-    
-    this.mostrarNotificacion(
-      'Solicitud enviada', 
-      `Esperando respuesta de ${taxi.nombre}...`
-    );
+  logout() {
+    this.socket.disconnect();
+    localStorage.clear();
+    this.router.navigate(['/home']);
   }
 
   cancelarSolicitud() {
     this.viajeSolicitado = false;
-    this.mostrarTaxis = true;
+    this.socket.emit('cancelar_viaje', { id_cliente: this.usuarioLogueado?.id });
   }
-
-  logout() {
-    if (this.socket) {
-      this.socket.disconnect();
-    }
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    this.router.navigate(['/home']);
-  }
-
+  // Función para sugerir una ruta rápida al centro
   sugerirRuta() {
-    this.destino = "Palacio de Bellas Artes, Ciudad de México"; 
-    this.buscarDestino();
+    this.destino = "Centro Histórico, Aguascalientes"; // O el destino que prefieras
+    this.buscarDestino(); // Llama automáticamente a la búsqueda
   }
 
-  // Función para obtener iniciales del nombre
-  getIniciales(nombre: string, apellido: string): string {
-    return (nombre?.charAt(0) || '') + (apellido?.charAt(0) || '');
-  }
-  
+  ionViewDidEnter() { this.obtenerUbicacionActual(); }
+  ngOnDestroy() { if (this.socket) this.socket.disconnect(); }
+  irANotificaciones() { this.router.navigate(['/cambiarrutaanotiusuario']); }
 }

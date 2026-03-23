@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar [color]="tipo === 'success' ? 'success' : tipo === 'error' ? 'danger' : tipo === 'warning' ? 'warning' : 'primary'">
+    <ion-title>{{ titulo }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <div class="modal-content">
+    <div class="icon-container" [class]="tipo">
+      <ion-icon [name]="icono" size="large"></ion-icon>
+    </div>
+    <div class="mensaje" [innerHTML]="mensajeFormateado"></div>
+    <ion-button expand="block" (click)="cerrar()" class="ion-margin-top" [color]="tipo === 'success' ? 'success' : tipo === 'error' ? 'danger' : tipo === 'warning' ? 'warning' : 'primary'">
+      Entendido
+    </ion-button>
+  </div>
+</ion-content>

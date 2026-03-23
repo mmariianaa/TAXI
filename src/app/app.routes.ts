@@ -73,4 +73,5 @@ export const routes: Routes = [
     loadComponent: () => import('./administrador/administrador/administrador.page').then( m => m.AdministradorPage)
   },
 
+
 ];

@@ -1,3 +1,6 @@
+// 1. IMPORTANTE: El @use SIEMPRE debe ir en la primera línea
+@use 'sass:color';
+
 // Variables de marca SmartTaxi
 $taxi-black: #1F1F1F;
 $taxi-dark-gray: #4B4847;
@@ -5,9 +8,6 @@ $taxi-light-gray: #F5F3F0;
 $taxi-yellow: #FFC31F;
 $taxi-orange: #EB8107;
 $taxi-success: #2dd36f;
-
-// Importar módulo de color de Sass
-@use 'sass:color';
 
 /* Estilos de la página */
 ion-content {
@@ -175,6 +175,7 @@ ion-toolbar {
 
         &:active {
             transform: scale(0.97);
+            // CORRECCIÓN: Uso moderno de color.adjust
             background: color.adjust($taxi-light-gray, $lightness: -5%);
         }
 
@@ -201,7 +202,7 @@ ion-toolbar {
             }
 
             &:active {
-                // CORREGIDO: lighten() reemplazado por color.adjust()
+                // CORRECCIÓN: Uso moderno de color.adjust para evitar el warning de lighten()
                 background: color.adjust($taxi-black, $lightness: 10%);
             }
         }
