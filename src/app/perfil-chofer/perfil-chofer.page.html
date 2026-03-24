@@ -6,10 +6,10 @@
   <div class="perfil-container">
     <div class="header-perfil">
       <ion-button fill="clear" class="back-btn" (click)="regresar()">
-        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
         Atrás
       </ion-button>
 
+      <!-- 👉 Botón EDITAR -->
       @if (!modoEdicion) {
       <ion-button fill="clear" class="edit-btn" (click)="activarEdicion()">
         <ion-icon name="pencil" slot="start"></ion-icon>
@@ -17,6 +17,7 @@
       </ion-button>
       }
 
+      <!-- 👉 Botones GUARDAR/CANCELAR -->
       @if (modoEdicion) {
       <div class="acciones-edicion">
         <ion-button fill="clear" class="guardar-btn" (click)="guardarCambios()">
@@ -29,10 +30,12 @@
         </ion-button>
       </div>
       }
-
     </div>
 
     @if (choferInfo) {
+    <!-- =========================================== -->
+    <!-- FOTO DE PERFIL -->
+    <!-- =========================================== -->
     <div class="foto-section">
       <div class="foto-wrapper">
         <ion-avatar class="foto-perfil">
@@ -60,15 +63,24 @@
     </div>
 
     <div class="perfil-card">
+      <!-- =========================================== -->
+      <!-- MIS DATOS -->
+      <!-- =========================================== -->
       <div class="seccion-perfil">
         <h2 class="seccion-titulo">📋 MIS DATOS</h2>
+
+        @if (mensaje) {
+        <div class="mensaje" [class.success]="tipoMensaje === 'success'" [class.error]="tipoMensaje === 'error'">
+          {{ mensaje }}
+        </div>
+        }
 
         <div class="campo-dato">
           <span class="campo-etiqueta">Nombre completo:</span>
           <span class="campo-valor">{{ choferInfo.nombre }} {{ choferInfo.apellido }}</span>
         </div>
 
-        <!-- 📧 CORREO CON VALIDACIÓN -->
+        <!-- CORREO EDITABLE -->
         <div class="campo-dato">
           <span class="campo-etiqueta">Correo:</span>
 
@@ -90,7 +102,7 @@
           }
         </div>
 
-        <!-- 📱 TELÉFONO CON VALIDACIÓN -->
+        <!-- TELÉFONO EDITABLE -->
         @if (choferInfo.telefono) {
         <div class="campo-dato">
           <span class="campo-etiqueta">Teléfono:</span>
@@ -102,7 +114,7 @@
           @if (modoEdicion) {
           <div style="flex: 1;">
             <ion-input class="campo-input" [(ngModel)]="editData.telefono" type="tel" maxlength="10"
-              placeholder="10 dígitos">
+              placeholder="10 dígitos" (keypress)="soloNumeros($event)"> <!-- 👈 ESTA LÍNEA NUEVA -->
             </ion-input>
             @if (editData.telefono && editData.telefono.length !== 10) {
             <div class="campo-error">❌ El teléfono debe tener 10 dígitos</div>
@@ -120,6 +132,9 @@
         }
       </div>
 
+      <!-- =========================================== -->
+      <!-- MI VEHÍCULO -->
+      <!-- =========================================== -->
       @if (choferInfo.vehiculo) {
       <div class="seccion-perfil">
         <h2 class="seccion-titulo">🚖 MI VEHÍCULO</h2>
@@ -142,6 +157,9 @@
       </div>
       }
 
+      <!-- =========================================== -->
+      <!-- CAMBIAR CONTRASEÑA -->
+      <!-- =========================================== -->
       @if (modoEdicion) {
       <div class="seccion-perfil">
         <h2 class="seccion-titulo">🔒 CAMBIAR CONTRASEÑA</h2>
@@ -152,7 +170,7 @@
         </div>
         }
 
-        <!-- NUEVA CONTRASEÑA CON VALIDACIÓN -->
+        <!-- NUEVA CONTRASEÑA -->
         <div class="campo-dato">
           <span class="campo-etiqueta">Nueva contraseña:</span>
           <div style="flex: 1;">
@@ -189,13 +207,15 @@
     </div>
     }
 
+    <!-- =========================================== -->
+    <!-- BOTÓN CERRAR SESIÓN -->
+    <!-- =========================================== -->
     <div class="cerrar-sesion">
-      <ion-button expand="block" class="cerrar-sesion-btn" (click)="confirmarCerrarSesion()"> <!-- 👈 AHORA -->
+      <ion-button expand="block" class="cerrar-sesion-btn" (click)="confirmarCerrarSesion()">
         <ion-icon name="log-out-outline" slot="start"></ion-icon>
         CERRAR SESIÓN
       </ion-button>
     </div>
-
   </div>
   } @else {
   <div class="cargando-container">

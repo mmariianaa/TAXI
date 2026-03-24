@@ -46,16 +46,16 @@ io.on('connection', (socket) => {
     // ============================================
     socket.on('solicitar_taxi', (data) => {
         const { id_chofer_usuario, nombre_cliente, id_cliente, placa_taxi } = data;
-        
+
         console.log('Solicitud recibida para id_chofer:', id_chofer_usuario);
-        
+
         // Buscamos el id_usuario real vinculado a ese chofer
         const queryUsuario = `
             SELECT u.id_usuario 
             FROM Usuario u 
             WHERE u.id_chofer = ?
         `;
-        
+
         conexion.query(queryUsuario, [id_chofer_usuario], (err, results) => {
             if (err || results.length === 0) {
                 console.error('No se encontró un usuario vinculado al chofer:', id_chofer_usuario);
@@ -68,17 +68,17 @@ io.on('connection', (socket) => {
                 INSERT INTO Viajes (destino, fecha_viaje) 
                 VALUES (?, NOW())
             `;
-            
+
             conexion.query(viajeQuery, ['Solicitud de taxi'], (err, viajeResult) => {
                 if (err) {
                     console.error('Error al crear registro de viaje:', err);
                     return;
                 }
-                
+
                 const id_viaje = viajeResult.insertId;
-                
+
                 console.log(`Redirigiendo: Chofer ${id_chofer_usuario} -> Sala usuario_${idUsuarioReal}`);
-                
+
                 io.to(`usuario_${idUsuarioReal}`).emit('notificacion_chofer', {
                     id_viaje: id_viaje,
                     nombre_cliente: nombre_cliente,
@@ -96,47 +96,47 @@ io.on('connection', (socket) => {
     // EVENTOS DE RESPUESTA DEL CHOFER
     // ============================================
 
-socket.on('aceptar_viaje', (data) => {
-    const { id_viaje, id_chofer, id_cliente } = data;
-    
-    // Buscar información completa del chofer
-    const choferQuery = `
+    socket.on('aceptar_viaje', (data) => {
+        const { id_viaje, id_chofer, id_cliente } = data;
+
+        // Buscar información completa del chofer
+        const choferQuery = `
         SELECT u.nombre, u.apellido, t.marca, t.modelo, t.placa, t.color
         FROM Chofer c
         JOIN Usuario u ON c.id_chofer = u.id_chofer
         JOIN Taxi t ON c.id_taxi = t.id_taxi
         WHERE c.id_chofer = ?
     `;
-    
-    conexion.query(choferQuery, [id_chofer], (err, choferResults) => {
-        if (err || choferResults.length === 0) {
-            console.error('Error al obtener info del chofer:', err);
-            return;
-        }
-        
-        const chofer = choferResults[0];
-        
-        // Notificar al usuario
-        io.to(`usuario_${id_cliente}`).emit('viaje_aceptado', {
-            id_viaje: id_viaje,
-            mensaje: '¡Tu viaje ha sido aceptado! El chofer va en camino.',
-            chofer: {
-                nombre: `${chofer.nombre} ${chofer.apellido}`,
-                vehiculo: `${chofer.marca} ${chofer.modelo}`,
-                placa: chofer.placa,
-                color: chofer.color
+
+        conexion.query(choferQuery, [id_chofer], (err, choferResults) => {
+            if (err || choferResults.length === 0) {
+                console.error('Error al obtener info del chofer:', err);
+                return;
             }
+
+            const chofer = choferResults[0];
+
+            // Notificar al usuario
+            io.to(`usuario_${id_cliente}`).emit('viaje_aceptado', {
+                id_viaje: id_viaje,
+                mensaje: '¡Tu viaje ha sido aceptado! El chofer va en camino.',
+                chofer: {
+                    nombre: `${chofer.nombre} ${chofer.apellido}`,
+                    vehiculo: `${chofer.marca} ${chofer.modelo}`,
+                    placa: chofer.placa,
+                    color: chofer.color
+                }
+            });
+
+            console.log(`✅ Viaje ${id_viaje} ACEPTADO. Avisando a usuario_${id_cliente}`);
+
+            // Actualizar estado del viaje en BD
+            conexion.query('UPDATE Viajes SET estado = "aceptado" WHERE id_viaje = ?', [id_viaje]);
         });
-        
-        console.log(`✅ Viaje ${id_viaje} ACEPTADO. Avisando a usuario_${id_cliente}`);
-        
-        // Actualizar estado del viaje en BD
-        conexion.query('UPDATE Viajes SET estado = "aceptado" WHERE id_viaje = ?', [id_viaje]);
     });
-});
     socket.on('rechazar_viaje', (data) => {
         const { id_viaje, id_cliente } = data;
-        
+
         console.log(`Viaje ${id_viaje} RECHAZADO. Avisando a usuario_${id_cliente}`);
 
         io.to(`usuario_${id_cliente}`).emit('viaje_rechazado', {
@@ -147,7 +147,7 @@ socket.on('aceptar_viaje', (data) => {
 
     socket.on('disconnect', () => {
         console.log('Cliente desconectado:', socket.id);
-        
+
         for (let [key, value] of usuariosConectados.entries()) {
             if (value === socket.id) {
                 usuariosConectados.delete(key);
@@ -233,7 +233,7 @@ app.get('/api/taxis/disponibles', (req, res) => {
         LEFT JOIN Usuario u ON c.id_chofer = u.id_chofer
         WHERE c.estado IN ('activo', 'disponible')
     `;
-    
+
     conexion.query(query, (err, results) => {
         if (err) {
             console.error('Error al obtener taxis:', err);
@@ -244,94 +244,105 @@ app.get('/api/taxis/disponibles', (req, res) => {
 });
 
 app.post('/api/registrochofer', async (req, res) => {
-    try {
-        const {
-            nombre, apellido, edad, tipo_documento, numero_documento,
-            correo, telefono, contrasena,
-            marca_vehiculo, modelo_vehiculo, color_vehiculo, placa, capacidad,
-            licencia, experiencia
-        } = req.body;
+    // 1. Extraer datos con destructuring
+    const {
+        nombre, apellido, edad, tipo_documento, numero_documento,
+        correo, telefono, contrasena,
+        marca_vehiculo, modelo_vehiculo, color_vehiculo, placa, capacidad,
+        licencia, experiencia
+    } = req.body;
 
+    // Obtener una conexión para la transacción
+    const db = conexion.promise();
+
+    try {
+        // Iniciar Transacción: O se hace todo, o no se hace nada
+        await db.beginTransaction();
+
+        // 2. Encriptar contraseña
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10);
 
+        // 3. Insertar Taxi
         const queryTaxi = `INSERT INTO Taxi (marca, modelo, color, placa, capacidad) VALUES (?, ?, ?, ?, ?)`;
-        conexion.query(queryTaxi, [marca_vehiculo, modelo_vehiculo, color_vehiculo, placa, capacidad], (err, taxiRes) => {
-            if (err) return res.status(500).json({ error: 'Error al registrar vehículo' });
+        const [taxiRes] = await db.query(queryTaxi, [marca_vehiculo, modelo_vehiculo, color_vehiculo, placa, capacidad]);
+        const idTaxi = taxiRes.insertId;
 
-            const queryChofer = `INSERT INTO Chofer (licencia, experiencia, id_taxi) VALUES (?, ?, ?)`;
-            conexion.query(queryChofer, [licencia, experiencia, taxiRes.insertId], (err, choferRes) => {
-                if (err) return res.status(500).json({ error: 'Error al registrar chofer' });
+        // 4. Insertar Chofer (usando el ID del taxi recién creado)
+        const queryChofer = `INSERT INTO Chofer (licencia, experiencia, id_taxi, estado) VALUES (?, ?, ?, ?)`;
+        const [choferRes] = await db.query(queryChofer, [licencia, experiencia, idTaxi, 'activo']);
+        const idChofer = choferRes.insertId;
 
-                const queryUser = `INSERT INTO Usuario 
-                    (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena, id_chofer) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        // 5. Insertar Usuario (vinculado al chofer)
+        const queryUser = `INSERT INTO Usuario 
+            (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena, id_chofer) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-                conexion.query(queryUser, [
-                    nombre, apellido, edad, tipo_documento, numero_documento,
-                    correo, telefono, contrasenaEncriptada, choferRes.insertId
-                ], (err, result) => {
-                    if (err) return res.status(500).json({ error: 'Error al crear cuenta de usuario' });
-                    res.status(201).json({ message: 'Chofer registrado exitosamente' });
-                });
-            });
-        });
+        await db.query(queryUser, [
+            nombre, apellido, edad, tipo_documento, numero_documento,
+            correo, telefono, contrasenaEncriptada, idChofer
+        ]);
+
+        // 6. Confirmar cambios
+        await db.commit();
+
+        res.status(201).json({ message: 'Chofer, vehículo y usuario registrados exitosamente' });
+
     } catch (error) {
-        res.status(500).json({ error: 'Error interno' });
+        // Si algo falla, deshacemos todo lo anterior (Rollback)
+        await db.rollback();
+        console.error('Error en el registro:', error);
+        res.status(500).json({
+            error: 'Hubo un problema al registrar el chofer',
+            detalle: error.message
+        });
     }
 });
 
 app.post('/api/registrousuario', async (req, res) => {
     try {
-        const { 
-            nombre, 
-            apellido, 
-            edad, 
-            correo, 
-            telefono, 
-            contrasena,
-            tipo_documento,  
-            numero_documento    
+        const {
+            nombre, apellido, edad, correo, telefono,
+            contrasena, tipo_documento, numero_documento
         } = req.body;
 
+        // 1. Validación de campos (Early Return)
         if (!nombre || !apellido || !edad || !correo || !contrasena || !tipo_documento || !numero_documento) {
             return res.status(400).json({ error: 'Faltan campos requeridos' });
         }
 
+        // 2. Encriptar contraseña
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10);
 
+        // 3. Ejecutar query usando Promesas
         const query = `INSERT INTO Usuario 
             (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-        conexion.query(query, [
-            nombre, 
-            apellido, 
-            edad, 
-            tipo_documento,    
-            numero_documento,  
-            correo, 
-            telefono, 
-            contrasenaEncriptada
-        ], (err, result) => {
-            if (err) {
-                console.error('Error SQL:', err);
-                
-                if (err.code === 'ER_DUP_ENTRY') {
-                    return res.status(400).json({ error: 'El correo o documento ya está registrado' });
-                }
-                
-                return res.status(500).json({ error: 'Error al registrar usuario' });
-            }
-            
-            res.status(201).json({ 
-                success: true,
-                message: 'Usuario registrado con éxito',
-                userId: result.insertId 
-            });
+        // Usamos .promise() para evitar el callback
+        const [result] = await conexion.promise().query(query, [
+            nombre, apellido, edad, tipo_documento,
+            numero_documento, correo, telefono, contrasenaEncriptada
+        ]);
+
+        // 4. Respuesta exitosa
+        res.status(201).json({
+            success: true,
+            message: 'Usuario registrado con éxito',
+            userId: result.insertId
         });
+
     } catch (error) {
         console.error('Error en registro:', error);
-        res.status(500).json({ error: 'Error en el servidor' });
+
+        // 5. Manejo de errores específicos (Duplicados)
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({
+                error: 'El correo o número de documento ya se encuentra registrado'
+            });
+        }
+
+        // Error genérico del servidor
+        res.status(500).json({ error: 'Error interno del servidor al procesar el registro' });
     }
 });
 
@@ -406,14 +417,14 @@ server.listen(port, () => {
     console.log(`📡 REST API disponible en http://localhost:${port}`);
     console.log(`🔌 WebSocket Server disponible en ws://localhost:${port}`);
 
-// 1. OBTENER HISTORIAL (GET)
-app.get('/api/historialusuario/:id', (req, res) => {
-    const { id } = req.params;
-    const { tipo } = req.query; 
+    // 1. OBTENER HISTORIAL (GET)
+    app.get('/api/historialusuario/:id', (req, res) => {
+        const { id } = req.params;
+        const { tipo } = req.query;
 
-    const columnaFiltro = (tipo === 'chofer') ? 'v.id_chofer' : 'v.id_usuario';
+        const columnaFiltro = (tipo === 'chofer') ? 'v.id_chofer' : 'v.id_usuario';
 
-    const query = `
+        const query = `
         SELECT 
             v.id_viaje, 
             v.origen, 
@@ -435,31 +446,31 @@ app.get('/api/historialusuario/:id', (req, res) => {
         WHERE ${columnaFiltro} = ?
         ORDER BY v.fecha_inicio DESC`; // 2. CAMBIO: Ordenamos por la columna real 'fecha_inicio'
 
-    conexion.query(query, [id], (err, results) => {
-        if (err) {
-            console.error('ERROR SQL DETALLADO:', err.message);
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(results);
+        conexion.query(query, [id], (err, results) => {
+            if (err) {
+                console.error('ERROR SQL DETALLADO:', err.message);
+                return res.status(500).json({ error: err.message });
+            }
+            res.json(results);
+        });
     });
-});
 
-// 2. CREAR NUEVO VIAJE (POST)
-app.post('/api/historialusuario', (req, res) => {
-    // 3. CAMBIO: Asegúrate de que el body use 'fecha_inicio' si lo envías desde el front
-    const { id_usuario, id_chofer, origen, destino, precio, id_pago, estado } = req.body;
+    // 2. CREAR NUEVO VIAJE (POST)
+    app.post('/api/historialusuario', (req, res) => {
+        // 3. CAMBIO: Asegúrate de que el body use 'fecha_inicio' si lo envías desde el front
+        const { id_usuario, id_chofer, origen, destino, precio, id_pago, estado } = req.body;
 
-    const query = `INSERT INTO Viajes (id_usuario, id_chofer, origen, destino, precio, id_pago, estado, fecha_inicio) 
+        const query = `INSERT INTO Viajes (id_usuario, id_chofer, origen, destino, precio, id_pago, estado, fecha_inicio) 
                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`; // Usamos NOW() para la fecha actual de la DB
 
-    conexion.query(query, [id_usuario, id_chofer, origen, destino, precio, id_pago, estado], (err, result) => {
-        if (err) {
-            console.error('ERROR AL INSERTAR:', err.message);
-            return res.status(500).json({ error: err.message });
-        }
-        res.status(201).json({ success: true, id_viaje: result.insertId });
+        conexion.query(query, [id_usuario, id_chofer, origen, destino, precio, id_pago, estado], (err, result) => {
+            if (err) {
+                console.error('ERROR AL INSERTAR:', err.message);
+                return res.status(500).json({ error: err.message });
+            }
+            res.status(201).json({ success: true, id_viaje: result.insertId });
+        });
     });
-});
 });
 // Endpoint para ver solo USUARIOS NORMALES (no choferes)
 app.get('/api/ver-usuarios-normales', (req, res) => {
@@ -469,12 +480,89 @@ app.get('/api/ver-usuarios-normales', (req, res) => {
         WHERE id_chofer IS NULL
         ORDER BY id_usuario DESC
     `;
-    
+
     conexion.query(query, (err, results) => {
         if (err) {
             console.error('Error:', err);
             return res.status(500).json({ error: 'Error al obtener usuarios' });
         }
         res.json(results);
+    });
+    // ============================================
+    // CAMBIAR CONTRASEÑA
+    // ============================================
+    app.put('/api/usuarios/:id/password', async (req, res) => {
+        const { id } = req.params;
+        const { nueva } = req.body;  // 👈 SOLO recibe nueva contraseña
+
+        if (!nueva || nueva.length < 6) {
+            return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+        }
+
+        try {
+            // Encriptar nueva contraseña directamente
+            const nuevaEncriptada = await bcrypt.hash(nueva, 10);
+
+            // Actualizar sin verificar la actual
+            const queryUpdate = 'UPDATE Usuario SET contrasena = ? WHERE id_usuario = ?';
+
+            conexion.query(queryUpdate, [nuevaEncriptada, id], (err2) => {
+                if (err2) {
+                    return res.status(500).json({ error: 'Error al actualizar contraseña' });
+                }
+
+                res.json({ success: true, message: 'Contraseña actualizada' });
+            });
+
+        } catch (error) {
+            res.status(500).json({ error: 'Error en el servidor' });
+        }
+    });
+
+    // ============================================
+    // ACTUALIZAR TELÉFONO Y CORREO
+    // ============================================
+    app.put('/api/usuarios/:id', (req, res) => {
+        const { id } = req.params;
+        const { telefono, correo } = req.body;
+
+        if (!telefono && !correo) {
+            return res.status(400).json({ error: 'Debe proporcionar al menos un campo para actualizar' });
+        }
+
+        // Construir query dinámica
+        let campos = [];
+        let valores = [];
+
+        if (telefono) {
+            campos.push('telefono = ?');
+            valores.push(telefono);
+        }
+
+        if (correo) {
+            campos.push('correo = ?');
+            valores.push(correo);
+        }
+
+        valores.push(id);
+        const query = `UPDATE Usuario SET ${campos.join(', ')} WHERE id_usuario = ?`;
+
+        conexion.query(query, valores, (err, result) => {
+            if (err) {
+                console.error('Error al actualizar usuario:', err);
+                return res.status(500).json({ error: 'Error al actualizar usuario' });
+            }
+
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ error: 'Usuario no encontrado' });
+            }
+
+            res.json({
+                success: true,
+                message: 'Usuario actualizado correctamente',
+                telefono: telefono,
+                correo: correo
+            });
+        });
     });
 });

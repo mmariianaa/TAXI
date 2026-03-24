@@ -30,7 +30,7 @@ import { IonicModule, ModalController } from '@ionic/angular';
           <ion-icon name="map-outline" slot="start" color="primary"></ion-icon>
           <ion-label>
             <h3>Distancia</h3>
-            <p>{{ distancia?.toFixed(2) }} km</p>
+            <p>{{ distancia.toFixed(2) }} km</p>
           </ion-label>
         </ion-item>
 
