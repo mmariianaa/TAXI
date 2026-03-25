@@ -87,7 +87,7 @@ import {
   setIonicClasses,
   setOverlayId,
   toastController
-} from "./chunk-GAISGWA4.js";
+} from "./chunk-GQHSWG2U.js";
 import {
   iosTransitionAnimation
 } from "./chunk-5GPJNYMU.js";
@@ -155,12 +155,12 @@ import {
   win
 } from "./chunk-QEE7QVES.js";
 import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-N56GCOTY.js";
-import {
   ActivatedRoute,
   Router
 } from "./chunk-XT4WEHOZ.js";
+import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-N56GCOTY.js";
 import "./chunk-7XPNVI5H.js";
 import "./chunk-PCG7JBQ6.js";
 import {
@@ -223,10 +223,10 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-E4XS2YSY.js";
+import "./chunk-UQGLAMHP.js";
 import {
   fromEvent
 } from "./chunk-576P5TAG.js";
-import "./chunk-UQGLAMHP.js";
 import {
   __decorate
 } from "./chunk-2K3BB2X3.js";

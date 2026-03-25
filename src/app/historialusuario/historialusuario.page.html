@@ -4,83 +4,90 @@
       <ion-back-button defaultHref="/perfilusuario" icon="arrow-back-outline" text="Atrás"></ion-back-button>
     </ion-buttons>
     <ion-title>
-      Cuenta <span>Smart</span>Taxi
+      <span>Historial de viajes</span>
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content color="light">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingText="Desliza para actualizar" refreshingSpinner="crescent">
+    </ion-refresher-content>
+  </ion-refresher>
+
   @if (cargando) {
-    <div class="loading-container">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Cargando historial...</p>
+    <div class="ion-text-center ion-padding" style="margin-top: 40px;">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Consultando tus viajes...</p>
     </div>
   } @else {
 
     @if (errorMsg) {
-      <div class="empty-container">
-        <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
+      <div class="ion-text-center ion-padding">
+        <ion-icon name="alert-circle-outline" color="danger" style="font-size: 64px;"></ion-icon>
         <p>{{ errorMsg }}</p>
-        <ion-button fill="clear" color="primary" (click)="obtenerHistorial()">
-          Intentar de nuevo
-        </ion-button>
+        <ion-button fill="outline" (click)="cargarDatos()">Reintentar</ion-button>
       </div>
     }
 
-    @for (viaje of viajes; track viaje.id_viaje) {
-      <ion-card mode="ios">
-        <ion-item lines="none">
-          <ion-icon name="navigate-circle-outline" slot="start" color="primary"></ion-icon>
-          <ion-label>
-            <h2>{{ viaje.destino }}</h2>
-            <p>
-              <ion-icon name="time-outline"></ion-icon>
-              {{ viaje.fecha_viaje | date:'short' }}
-            </p>
-          </ion-label>
-          <ion-badge slot="end" [color]="viaje.estado === 'completado' ? 'success' : 'warning'">
-            {{ viaje.estado }}
-          </ion-badge>
-        </ion-item>
+    <ion-list lines="none" class="ion-no-padding">
+      @for (viaje of viajes; track viaje.id_viaje) {
+        <ion-card mode="ios" class="viaje-card">
+          <ion-item lines="none">
+            <ion-icon name="navigate-circle-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h2 class="ion-text-wrap">{{ viaje.destino }}</h2>
+              <p class="fecha-viaje">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ viaje.fecha_viaje | date:'dd/MM/yyyy HH:mm' }}
+              </p>
+            </ion-label>
+            <ion-badge slot="end" [color]="getBadgeColor(viaje.estado)" mode="ios">
+              {{ viaje.estado }}
+            </ion-badge>
+          </ion-item>
 
-        <ion-card-content>
-          <div class="info-row">
-            <ion-icon name="pin-outline"></ion-icon>
-            <div class="text-container">
-              <strong>Origen</strong>
-              <span>{{ viaje.origen }}</span>
+          <ion-card-content>
+            <div class="info-row">
+              <ion-icon name="person-outline"></ion-icon>
+              <div class="text-group">
+                <small>Conductor</small>
+                <span>{{ viaje.nombre_chofer || 'Sin asignar' }}</span>
+              </div>
             </div>
-          </div>
 
-          <div class="info-row">
-            <ion-icon name="car-outline"></ion-icon>
-            <div class="text-container">
-              <strong>Conductor y Vehículo</strong>
-              <span>{{ viaje.nombre_chofer }} • {{ viaje.modelo_taxi }} ({{ viaje.placa_taxi }})</span>
-            </div>
-          </div>
+            @if (viaje.placa_taxi && viaje.placa_taxi !== 'N/A') {
+              <div class="info-row">
+                <ion-icon name="car-sport-outline"></ion-icon>
+                <div class="text-group">
+                  <small>Vehículo</small>
+                  <span>{{ viaje.modelo_taxi }} ({{ viaje.placa_taxi }})</span>
+                </div>
+              </div>
+            }
 
-          <div class="divider"></div>
+            <div class="divider"></div>
 
-          <div class="price-section">
-            <div class="payment-method">
-              <ion-icon name="card-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
-              {{ viaje.tipo_pago || 'Efectivo' }}
+            <div class="footer-row">
+              <div class="payment-type">
+                <ion-icon name="card-outline"></ion-icon>
+                <span>{{ viaje.tipo_pago || 'Efectivo' }}</span>
+              </div>
+              <div class="price-tag">
+                $ {{ (viaje.precio || 0) | number:'1.2-2' }}
+              </div>
             </div>
-            <div class="total-amount">
-              {{ viaje.precio | number:'1.2-2' }}
-            </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
-    } @empty {
-      <div class="empty-container">
-        <ion-icon name="car-outline"></ion-icon>
-        <p>No tienes viajes registrados.</p>
-        <ion-button fill="outline" color="dark" (click)="irAPantallausuario($event)">
-          Pedir mi primer Taxi
-        </ion-button>
-      </div>
-    }
+          </ion-card-content>
+        </ion-card>
+      } @empty {
+        <div class="empty-state ion-text-center ion-padding">
+          <ion-icon name="car-outline" color="medium" style="font-size: 80px;"></ion-icon>
+          <h3>No tienes viajes</h3>
+          <ion-button fill="outline" color="dark" (click)="irAPantallausuario()">
+            Pedir mi primer Taxi
+          </ion-button>
+        </div>
+      }
+    </ion-list>
   }
 </ion-content>

@@ -43,6 +43,7 @@ export class ChoferPage implements OnInit {
   mostrarAlertaSolicitud: boolean = false;
 
   driverInfo: any = {
+    id_chofer:'',
     nombre: '',
     apellido: '',
     vehiculo: {
@@ -319,6 +320,11 @@ ngOnInit() {
 
   finalizarViaje() {
     this.mostrarModalCalificar = true;
+    let datos={
+      id_chofer:this.driverInfo.id_chofer
+      
+    }
+
   }
 
   setRating(estrellas: number) {

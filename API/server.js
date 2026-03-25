@@ -155,7 +155,7 @@ io.on('connection', (socket) => {
             }
         }
     });
-});
+}); 
 
 // ============================================
 // ENDPOINTS REST (COMPLETOS, SIN CAMBIOS)
@@ -417,61 +417,97 @@ server.listen(port, () => {
     console.log(`📡 REST API disponible en http://localhost:${port}`);
     console.log(`🔌 WebSocket Server disponible en ws://localhost:${port}`);
 
-    // 1. OBTENER HISTORIAL (GET)
-    app.get('/api/historialusuario/:id', (req, res) => {
-        const { id } = req.params;
-        const { tipo } = req.query;
+    // OBTENER HISTORIAL DE VIAJES
+app.get('/api/historialusuario/:id', (req, res) => {
+    const { id } = req.params;
+    const { tipo } = req.query; // 'chofer' o 'usuario'
 
-        const columnaFiltro = (tipo === 'chofer') ? 'v.id_chofer' : 'v.id_usuario';
+    // Definimos qué columna filtrar en la tabla Viajes (v)
+    const columnaFiltro = (tipo === 'chofer') ? 'v.id_chofer' : 'v.id_usuario';
 
-        const query = `
+    const query = `
         SELECT 
             v.id_viaje, 
-            v.origen, 
             v.destino, 
-            v.fecha_inicio AS fecha_viaje, -- 1. CAMBIO: Usamos AS para que Ionic lo lea como fecha_viaje
-            v.precio, 
+            v.fecha_viaje, 
             v.estado,
+            cst.monto AS precio,
             u_pasajero.nombre AS nombre_pasajero,
             u_chofer.nombre AS nombre_chofer,
             t.placa AS placa_taxi, 
             t.modelo AS modelo_taxi,
             tp.tipo_pago
         FROM Viajes v
+        LEFT JOIN Costos cst ON v.id_viaje = cst.id_viaje
+        -- Unimos para sacar el nombre del PASAJERO (quien pidió el viaje)
         LEFT JOIN Usuario u_pasajero ON v.id_usuario = u_pasajero.id_usuario
-        LEFT JOIN Chofer c ON v.id_chofer = c.id_chofer
-        LEFT JOIN Usuario u_chofer ON c.id_chofer = u_chofer.id_chofer
-        LEFT JOIN Taxi t ON c.id_taxi = t.id_taxi
+        -- Unimos para sacar el nombre del CHOFER (vía la tabla Chofer)
+        LEFT JOIN Chofer ch ON v.id_chofer = ch.id_chofer
+        LEFT JOIN Usuario u_chofer ON ch.id_chofer = u_chofer.id_chofer
+        -- Unimos el Taxi del Chofer
+        LEFT JOIN Taxi t ON ch.id_taxi = t.id_taxi
+        -- Unimos el Tipo de Pago
         LEFT JOIN TiposPago tp ON v.id_pago = tp.id_pago
         WHERE ${columnaFiltro} = ?
-        ORDER BY v.fecha_inicio DESC`; // 2. CAMBIO: Ordenamos por la columna real 'fecha_inicio'
+        ORDER BY v.fecha_viaje DESC`;
 
-        conexion.query(query, [id], (err, results) => {
-            if (err) {
-                console.error('ERROR SQL DETALLADO:', err.message);
-                return res.status(500).json({ error: err.message });
-            }
-            res.json(results);
-        });
-    });
-
-    // 2. CREAR NUEVO VIAJE (POST)
-    app.post('/api/historialusuario', (req, res) => {
-        // 3. CAMBIO: Asegúrate de que el body use 'fecha_inicio' si lo envías desde el front
-        const { id_usuario, id_chofer, origen, destino, precio, id_pago, estado } = req.body;
-
-        const query = `INSERT INTO Viajes (id_usuario, id_chofer, origen, destino, precio, id_pago, estado, fecha_inicio) 
-                   VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`; // Usamos NOW() para la fecha actual de la DB
-
-        conexion.query(query, [id_usuario, id_chofer, origen, destino, precio, id_pago, estado], (err, result) => {
-            if (err) {
-                console.error('ERROR AL INSERTAR:', err.message);
-                return res.status(500).json({ error: err.message });
-            }
-            res.status(201).json({ success: true, id_viaje: result.insertId });
-        });
+    conexion.query(query, [id], (err, results) => {
+        if (err) {
+            console.error('❌ ERROR SQL DETALLADO:', err.sqlMessage);
+            return res.status(500).json({ 
+                error: 'Error interno en la consulta SQL', 
+                detalle: err.sqlMessage 
+            });
+        }
+        res.json(results);
     });
 });
+    
+    //REGISTRAR VIAJE EN DB
+    app.post('/api/registrar-viaje', (req, res) => {
+    const { 
+        id_usuario, 
+        id_chofer, 
+        destino, 
+        precio, 
+        id_pago, 
+        id_ruta, 
+        estado 
+    } = req.body;
+    console.log(req.body)
+
+    // 1. Insertar en la tabla Viajes
+    const queryViaje = `
+        INSERT INTO Viajes (id_usuario, id_chofer, origen , destino, id_pago, id_ruta, estado, fecha_viaje) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`;
+
+    conexion.query(queryViaje, [id_usuario, id_chofer, destino, id_pago, id_ruta, estado], (err, result) => {
+        if (err) {
+            console.error('Error al insertar viaje:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+
+        const nuevoIdViaje = result.insertId;
+
+        // 2. Insertar el monto en la tabla Costos vinculándolo al id_viaje recién creado
+        const queryCosto = `INSERT INTO Costos (id_viaje, monto) VALUES (?, ?)`;
+        
+        conexion.query(queryCosto, [nuevoIdViaje, precio], (errCosto) => {
+            if (errCosto) {
+                console.error('Error al insertar costo:', errCosto.message);
+                return res.status(500).json({ error: 'Viaje creado, pero falló el registro del precio' });
+            }
+            
+            res.status(201).json({ 
+                success: true, 
+                message: 'Viaje registrado con éxito',
+                id_viaje: nuevoIdViaje 
+            });
+        }); 
+    }); 
+}); 
+});
+
 // Endpoint para ver solo USUARIOS NORMALES (no choferes)
 app.get('/api/ver-usuarios-normales', (req, res) => {
     const query = `
