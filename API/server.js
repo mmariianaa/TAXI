@@ -27,9 +27,8 @@ const io = socketIO(server, {
 
 const JWT_SECRET = 'tu_llave_secreta_super_segura_123';
 
-// ============================================
 // WEBSOCKETS
-// ============================================
+
 const usuariosConectados = new Map();
 
 io.on('connection', (socket) => {
@@ -41,9 +40,8 @@ io.on('connection', (socket) => {
         usuariosConectados.set(userId, socket.id);
     });
 
-    // ============================================
-    // SOLICITUD DE TAXI (ÚNICA PARTE MODIFICADA)
-    // ============================================
+    // SOLICITUD DE TAXI
+   
     socket.on('solicitar_taxi', (data) => {
         const { id_chofer_usuario, nombre_cliente, id_cliente, placa_taxi } = data;
 
@@ -92,9 +90,8 @@ io.on('connection', (socket) => {
         });
     });
 
-    // ============================================
     // EVENTOS DE RESPUESTA DEL CHOFER
-    // ============================================
+  
 
     socket.on('aceptar_viaje', (data) => {
         const { id_viaje, id_chofer, id_cliente } = data;
@@ -128,9 +125,8 @@ io.on('connection', (socket) => {
                 }
             });
 
-            console.log(`✅ Viaje ${id_viaje} ACEPTADO. Avisando a usuario_${id_cliente}`);
+            console.log(` Viaje ${id_viaje} ACEPTADO. Avisando a usuario_${id_cliente}`);
 
-            // Actualizar estado del viaje en BD
             conexion.query('UPDATE Viajes SET estado = "aceptado" WHERE id_viaje = ?', [id_viaje]);
         });
     });
@@ -157,9 +153,9 @@ io.on('connection', (socket) => {
     });
 });
 
-// ============================================
-// ENDPOINTS REST (COMPLETOS, SIN CAMBIOS)
-// ============================================
+
+// ENDPOINTS REST
+
 
 app.get('/ojo', (req, res) => {
     res.send('API de TaxiDB funcionando correctamente');
@@ -244,7 +240,6 @@ app.get('/api/taxis/disponibles', (req, res) => {
 });
 
 app.post('/api/registrochofer', async (req, res) => {
-    // 1. Extraer datos con destructuring
     const {
         nombre, apellido, edad, tipo_documento, numero_documento,
         correo, telefono, contrasena,
@@ -252,27 +247,18 @@ app.post('/api/registrochofer', async (req, res) => {
         licencia, experiencia
     } = req.body;
 
-    // Obtener una conexión para la transacción
     const db = conexion.promise();
 
     try {
-        // Iniciar Transacción: O se hace todo, o no se hace nada
         await db.beginTransaction();
-
-        // 2. Encriptar contraseña
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10);
-
-        // 3. Insertar Taxi
         const queryTaxi = `INSERT INTO Taxi (marca, modelo, color, placa, capacidad) VALUES (?, ?, ?, ?, ?)`;
         const [taxiRes] = await db.query(queryTaxi, [marca_vehiculo, modelo_vehiculo, color_vehiculo, placa, capacidad]);
         const idTaxi = taxiRes.insertId;
-
-        // 4. Insertar Chofer (usando el ID del taxi recién creado)
         const queryChofer = `INSERT INTO Chofer (licencia, experiencia, id_taxi, estado) VALUES (?, ?, ?, ?)`;
         const [choferRes] = await db.query(queryChofer, [licencia, experiencia, idTaxi, 'activo']);
         const idChofer = choferRes.insertId;
 
-        // 5. Insertar Usuario (vinculado al chofer)
         const queryUser = `INSERT INTO Usuario 
             (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena, id_chofer) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -282,7 +268,6 @@ app.post('/api/registrochofer', async (req, res) => {
             correo, telefono, contrasenaEncriptada, idChofer
         ]);
 
-        // 6. Confirmar cambios
         await db.commit();
 
         res.status(201).json({ message: 'Chofer, vehículo y usuario registrados exitosamente' });
@@ -305,15 +290,15 @@ app.post('/api/registrousuario', async (req, res) => {
             contrasena, tipo_documento, numero_documento
         } = req.body;
 
-        // 1. Validación de campos (Early Return)
+        //Validación de campos
         if (!nombre || !apellido || !edad || !correo || !contrasena || !tipo_documento || !numero_documento) {
             return res.status(400).json({ error: 'Faltan campos requeridos' });
         }
 
-        // 2. Encriptar contraseña
+        //Encriptar contraseña
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10);
 
-        // 3. Ejecutar query usando Promesas
+        //Ejecutar query usando Promesas
         const query = `INSERT INTO Usuario 
             (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -324,7 +309,7 @@ app.post('/api/registrousuario', async (req, res) => {
             numero_documento, correo, telefono, contrasenaEncriptada
         ]);
 
-        // 4. Respuesta exitosa
+        // Respuesta exitosa
         res.status(201).json({
             success: true,
             message: 'Usuario registrado con éxito',
@@ -334,7 +319,7 @@ app.post('/api/registrousuario', async (req, res) => {
     } catch (error) {
         console.error('Error en registro:', error);
 
-        // 5. Manejo de errores específicos (Duplicados)
+        //Manejo de errores específicos (Duplicados)
         if (error.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({
                 error: 'El correo o número de documento ya se encuentra registrado'
@@ -413,11 +398,11 @@ app.put('/api/usuarios/:id', (req, res) => {
 });
 
 server.listen(port, () => {
-    console.log(`🚀 Servidor unificado corriendo en http://localhost:${port}`);
-    console.log(`📡 REST API disponible en http://localhost:${port}`);
-    console.log(`🔌 WebSocket Server disponible en ws://localhost:${port}`);
+    console.log(` Servidor unificado corriendo en http://localhost:${port}`);
+    console.log(` REST API disponible en http://localhost:${port}`);
+    console.log(` WebSocket Server disponible en ws://localhost:${port}`);
 
-    // 1. OBTENER HISTORIAL (GET)
+    // OBTENER HISTORIAL
     app.get('/api/historialusuario/:id', (req, res) => {
         const { id } = req.params;
         const { tipo } = req.query;
@@ -444,7 +429,7 @@ server.listen(port, () => {
         LEFT JOIN Taxi t ON c.id_taxi = t.id_taxi
         LEFT JOIN TiposPago tp ON v.id_pago = tp.id_pago
         WHERE ${columnaFiltro} = ?
-        ORDER BY v.fecha_inicio DESC`; // 2. CAMBIO: Ordenamos por la columna real 'fecha_inicio'
+        ORDER BY v.fecha_inicio DESC`;
 
         conexion.query(query, [id], (err, results) => {
             if (err) {
@@ -455,9 +440,9 @@ server.listen(port, () => {
         });
     });
 
-    // 2. CREAR NUEVO VIAJE (POST)
+    //CREAR NUEVO VIAJE (POST)
     app.post('/api/historialusuario', (req, res) => {
-        // 3. CAMBIO: Asegúrate de que el body use 'fecha_inicio' si lo envías desde el front
+        // CAMBIO: Asegúrate de que el body use 'fecha_inicio' si lo envías desde el front
         const { id_usuario, id_chofer, origen, destino, precio, id_pago, estado } = req.body;
 
         const query = `INSERT INTO Viajes (id_usuario, id_chofer, origen, destino, precio, id_pago, estado, fecha_inicio) 
@@ -488,12 +473,12 @@ app.get('/api/ver-usuarios-normales', (req, res) => {
         }
         res.json(results);
     });
-    // ============================================
+ 
     // CAMBIAR CONTRASEÑA
-    // ============================================
+ 
     app.put('/api/usuarios/:id/password', async (req, res) => {
         const { id } = req.params;
-        const { nueva } = req.body;  // 👈 SOLO recibe nueva contraseña
+        const { nueva } = req.body;  // SOLO recibe nueva contraseña
 
         if (!nueva || nueva.length < 6) {
             return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
@@ -519,9 +504,8 @@ app.get('/api/ver-usuarios-normales', (req, res) => {
         }
     });
 
-    // ============================================
     // ACTUALIZAR TELÉFONO Y CORREO
-    // ============================================
+
     app.put('/api/usuarios/:id', (req, res) => {
         const { id } = req.params;
         const { telefono, correo } = req.body;

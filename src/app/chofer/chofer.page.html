@@ -1,28 +1,27 @@
 <ion-menu contentId="main-content" type="overlay">
   <ion-header class="ion-no-border">
-    <ion-toolbar style="--background: #1F1F1F; --color: #FFC31F;">
+    <ion-toolbar>
       <ion-title>Menú Taxi</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <ion-content style="--background: #1F1F1F;">
-    <ion-list lines="none" style="background: #1F1F1F;">
-      <ion-item button (click)="irAPerfil()" style="--background: transparent; color: #E6E1DB;">
-        <ion-icon slot="start" name="person-outline" style="color: #FFC31F;"></ion-icon>
+  <ion-content>
+    <ion-list lines="none">
+      <ion-item button (click)="irAPerfil()">
+        <ion-icon slot="start" name="person-outline"></ion-icon>
         <ion-label>Mi Perfil</ion-label>
       </ion-item>
-      <ion-item button (click)="setTab('viajes')" style="--background: transparent; color: #E6E1DB;">
-        <ion-icon slot="start" name="car-outline" style="color: #FFC31F;"></ion-icon>
+      <ion-item button (click)="setTab('viajes')">
+        <ion-icon slot="start" name="car-outline"></ion-icon>
         <ion-label>Viajes</ion-label>
       </ion-item>
-      <ion-item button (click)="setTab('historial')" style="--background: transparent; color: #E6E1DB;">
-        <ion-icon slot="start" name="time-outline" style="color: #FFC31F;"></ion-icon>
+      <ion-item button (click)="setTab('historial')">
+        <ion-icon slot="start" name="time-outline"></ion-icon>
         <ion-label>Rechazados</ion-label>
       </ion-item>
-      <ion-item button (click)="logout()"
-        style="--background: rgba(235, 129, 7, 0.1); color: #EB8107; margin-top: 30px; border-radius: 10px; margin-inline: 10px;">
-        <ion-icon slot="start" name="log-out-outline"></ion-icon>
-        <ion-label>Cerrar Sesión</ion-label>
+      <ion-item button (click)="setTab('historial')">
+        <ion-icon slot="start" name="time-outline"></ion-icon>
+        <ion-label>Historial</ion-label> <!-- 👈 Antes decía "Rechazados" -->
       </ion-item>
     </ion-list>
   </ion-content>
@@ -31,17 +30,18 @@
 <!-- CONTENIDO PRINCIPAL -->
 <div class="ion-page" id="main-content">
   <ion-header class="ion-no-border">
-    <ion-toolbar style="--background: #FFC31F;">
+    <ion-toolbar>
       <ion-buttons slot="start">
         <ion-menu-button color="dark"></ion-menu-button>
       </ion-buttons>
-      <ion-title style="color: #1F1F1F; font-weight: bold;">Panel Chofer</ion-title>
+      <ion-title>Panel Chofer</ion-title>
     </ion-toolbar>
 
     <div class="custom-tabs">
       <div class="tab-btn" [class.active]="activeTab === 'perfil'" (click)="setTab('perfil')">Perfil</div>
       <div class="tab-btn" [class.active]="activeTab === 'viajes'" (click)="setTab('viajes')">Viajes</div>
-      <div class="tab-btn" [class.active]="activeTab === 'historial'" (click)="setTab('historial')">Rechazados</div>
+      <div class="tab-btn" [class.active]="activeTab === 'historial'" (click)="setTab('historial')">Historial</div>
+      <!-- 👆 Antes decía "Rechazados" -->
     </div>
   </ion-header>
 
@@ -49,11 +49,13 @@
     <div class="main-container">
 
       <!-- ALERTA DE NUEVA SOLICITUD -->
-      <div *ngIf="mostrarAlertaSolicitud" class="alerta-solicitud" (click)="verSolicitudes()">
+      @if (mostrarAlertaSolicitud) {
+      <div class="alerta-solicitud" (click)="verSolicitudes()">
         <ion-icon name="car-outline"></ion-icon>
         <span>Tienes una nueva solicitud de viaje</span>
         <button class="btn-cerrar-alerta" (click)="cerrarAlerta(); $event.stopPropagation()">✕</button>
       </div>
+      }
 
       <!-- SECCIÓN PERFIL -->
       <section class="perfil-section">
@@ -72,7 +74,7 @@
 
         <div class="driver-card-dark">
           <div class="card-header">
-            <ion-icon name="person-circle-outline" style="font-size: 48px; color: #FFC31F;"></ion-icon>
+            <ion-icon name="person-circle-outline"></ion-icon>
             <div class="header-text">
               <h3>{{ driverInfo.nombre }} {{ driverInfo.apellido }}</h3>
               <p>Conductor Calvillo</p>
@@ -95,19 +97,20 @@
       <section class="viajes-section">
 
         <!-- SOLICITUDES PENDIENTES -->
-        <div *ngFor="let solicitud of solicitudesPendientes" class="trip-request-card">
+        @for (solicitud of solicitudesPendientes; track solicitud) {
+        <div class="trip-request-card">
           <div class="req-header">NUEVA SOLICITUD</div>
           <div class="req-body">
             <h2>$120.00</h2>
             <p class="pass-name">Pasajero: {{ solicitud.nombre_cliente }}</p>
             <div class="route-box">
               <div class="route-item">
-                <ion-icon name="radio-button-on" style="color: #FFC31F;"></ion-icon>
+                <ion-icon name="radio-button-on"></ion-icon>
                 {{ solicitud.origen?.direccion || 'Origen no especificado' }}
               </div>
               <div class="line"></div>
               <div class="route-item">
-                <ion-icon name="location" style="color: #EB8107;"></ion-icon>
+                <ion-icon name="location"></ion-icon>
                 {{ solicitud.destino?.direccion || 'Destino no especificado' }}
               </div>
             </div>
@@ -117,40 +120,49 @@
             <button class="btn-confirm" (click)="aceptarViajeSocket(solicitud)">ACEPTAR</button>
           </div>
         </div>
+        }
 
         <!-- Viaje activo con mapa -->
-<div class="trip-active" *ngIf="viajeAceptado">
-  <div id="map" class="map-container"></div>
-  <div class="leyenda-rutas">
-    <span class="ruta-chofer">🟡 Ruta del chofer</span>
-    <span class="ruta-usuario">🔵 Ruta del usuario</span>
-  </div>
-  <button class="btn-finish-trip" (click)="finalizarViaje()">FINALIZAR SERVICIO</button>
-</div>
+        @if (viajeAceptado) {
+        <div class="trip-active">
+          <div id="map" class="map-container"></div>
+          <div class="leyenda-rutas">
+            <span class="ruta-chofer">🟡 Ruta del chofer</span>
+            <span class="ruta-usuario">🔵 Ruta del usuario</span>
+          </div>
+          <button class="btn-finish-trip" (click)="finalizarViaje()">FINALIZAR SERVICIO</button>
+        </div>
+        }
 
-        <!-- Buscando pasajeros (solo si no hay viaje activo ni solicitudes) -->
-        <div class="searching-box" *ngIf="isActive && !viajePendiente && !viajeAceptado && solicitudesPendientes.length === 0">
+        <!-- Buscando pasajeros -->
+        @if (isActive && !viajePendiente && !viajeAceptado && solicitudesPendientes.length === 0) {
+        <div class="searching-box">
           <div class="radar-pulse"></div>
           <p>Buscando pasajeros cerca...</p>
         </div>
+        }
       </section>
 
       <!-- SECCIÓN HISTORIAL (RECHAZADOS) -->
       <section class="historial-section">
-        <h3 style="font-weight: bold; margin-bottom: 15px;">Viajes Rechazados</h3>
+        <h3>Viajes Rechazados</h3>
 
-        <div *ngIf="viajesRechazados.length === 0" class="empty-state">
+        @if (viajesRechazados.length === 0) {
+        <div class="empty-state">
           <ion-icon name="time-outline"></ion-icon>
           <p>No tienes viajes rechazados</p>
         </div>
+        }
 
-        <div class="rejected-card" *ngFor="let v of viajesRechazados">
+        @for (v of viajesRechazados; track v) {
+        <div class="rejected-card">
           <div>
             <h4>{{ v.ganancia }}</h4>
-            <p style="font-size: 12px;">{{ v.destino }}</p>
+            <p>{{ v.destino }}</p>
           </div>
-          <p style="color: #888; font-size: 11px;">{{ v.hora }}</p>
+          <p class="rejected-time">{{ v.hora }}</p>
         </div>
+        }
       </section>
     </div>
   </ion-content>
@@ -164,14 +176,14 @@
       </div>
 
       <div class="stars-container">
-        <ion-icon *ngFor="let starNum of [1,2,3,4,5]" [name]="ratingActual >= starNum ? 'star' : 'star-outline'"
-          (click)="setRating(starNum)">
+        @for (starNum of [1,2,3,4,5]; track starNum) {
+        <ion-icon [name]="ratingActual >= starNum ? 'star' : 'star-outline'" (click)="setRating(starNum)">
         </ion-icon>
+        }
       </div>
 
       <div class="comment-section">
-        <ion-textarea placeholder="Escribe un comentario opcional..." [(ngModel)]="comentarioUsuario" rows="3"
-          class="custom-textarea">
+        <ion-textarea placeholder="Escribe un comentario opcional..." [(ngModel)]="comentarioUsuario" rows="3">
         </ion-textarea>
       </div>
 

@@ -1,6 +1,15 @@
-import { Component, Input } from '@angular/core'; // Añadimos Input para recibir datos
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { 
+  ModalController, 
+  IonHeader, 
+  IonToolbar, 
+  IonTitle, 
+  IonButtons, 
+  IonButton, 
+  IonIcon, 
+  IonContent 
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
   closeOutline, 
@@ -57,23 +66,30 @@ import {
     .mensaje { font-size: 16px; color: var(--ion-color-medium); }
   `],
   standalone: true,
-  imports: [IonicModule, CommonModule]
+  imports: [
+    CommonModule,
+    IonHeader, 
+    IonToolbar, 
+    IonTitle, 
+    IonButtons, 
+    IonButton, 
+    IonIcon, 
+    IonContent
+  ]
 })
 export class NotificacionModalComponent {
-  // Usamos @Input para que Angular reconozca las propiedades que pasamos desde componentProps
   @Input() titulo: string = 'Aviso';
   @Input() mensaje: string = '';
   @Input() tipo: 'success' | 'error' | 'warning' | 'info' = 'info';
   @Input() icono: string = 'information-circle';
 
   constructor(private modalController: ModalController) {
-    // Es vital registrar los iconos que usa el modal internamente
     addIcons({ 
-      closeOutline, 
-      checkmarkCircle, 
-      closeCircle, 
-      warningOutline, 
-      informationCircle 
+      'close-outline': closeOutline, 
+      'checkmark-circle': checkmarkCircle, 
+      'close-circle': closeCircle, 
+      'warning-outline': warningOutline, 
+      'information-circle': informationCircle 
     });
   }
 

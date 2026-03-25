@@ -1,19 +1,18 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+import { provideIonicAngular } from '@ionic/angular/standalone'; // Cambio clave aquí
+import { ConfirmarViajeComponent } from './confirmar-viaje-modal.component'; // Nombre real de la clase
 
-import { ConfirmarViajeModalComponent } from './confirmar-viaje-modal.component';
-
-describe('ConfirmarViajeModalComponent', () => {
-  let component: ConfirmarViajeModalComponent;
-  let fixture: ComponentFixture<ConfirmarViajeModalComponent>;
+describe('ConfirmarViajeComponent', () => {
+  let component: ConfirmarViajeComponent;
+  let fixture: ComponentFixture<ConfirmarViajeComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConfirmarViajeModalComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [ConfirmarViajeComponent], 
+      providers: [provideIonicAngular()] // Proveedor necesario para Ionic
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ConfirmarViajeModalComponent);
+    fixture = TestBed.createComponent(ConfirmarViajeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

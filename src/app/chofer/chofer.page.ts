@@ -6,7 +6,7 @@ import { io } from 'socket.io-client';
 import {
   IonContent, IonIcon, IonButtons, IonHeader, IonTitle,
   IonToolbar, IonMenuButton, IonList, IonItem, IonLabel,
-  IonMenu, IonMenuToggle, IonTextarea
+  IonMenu, IonTextarea
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -62,10 +62,8 @@ export class ChoferPage implements OnInit {
   map!: L.Map;
   viajesRechazados: any[] = [];
 
-  // ===== NUEVO: variables para controlar las rutas =====
   routingControlChofer!: any;
   routingControlUsuario!: any;
-  // ===== FIN NUEVO =====
 
   constructor() {
     addIcons({
@@ -88,35 +86,30 @@ export class ChoferPage implements OnInit {
     });
   }
 
-ngOnInit() {
-  const data = this.authService.getUserData();
+  ngOnInit() {
+    const data = this.authService.getUserData();
 
-  if (data) {
-    this.driverInfo = data;
-    console.log('Panel cargado para:', this.driverInfo.nombre);
+    if (data) {
+      this.driverInfo = data;
+      console.log('Panel cargado para:', this.driverInfo.nombre);
 
-    this.socket = io('http://localhost:3000');
-    
-    // ✅ CORRECTO: Usar el ID del USUARIO (this.driverInfo.id)
-    const idParaSala = this.driverInfo?.id;
-    console.log('🔌 Conectando a sala con ID (usuario):', idParaSala);
-    this.socket.emit('unirse_sala', idParaSala);
+      this.socket = io('http://localhost:3000');
+      
+      const idParaSala = this.driverInfo?.id;
+      console.log('🔌 Conectando a sala con ID (usuario):', idParaSala);
+      this.socket.emit('unirse_sala', idParaSala);
 
-    this.socket.on('notificacion_chofer', (data: any) => {
-      console.log('🔥 ¡VIAJE RECIBIDO!', data);
-      this.solicitudesPendientes.push(data);
-      this.mostrarAlertaSolicitud = true;
-    });
+      this.socket.on('notificacion_chofer', (data: any) => {
+        console.log('🔥 ¡VIAJE RECIBIDO!', data);
+        this.solicitudesPendientes.push(data);
+        this.mostrarAlertaSolicitud = true;
+      });
 
-  } else {
-    this.router.navigate(['/home']);
+    } else {
+      this.router.navigate(['/home']);
+    }
   }
 
-    
-    // ❌ ELIMINADO: this.simularLlegadaDeViaje();
-  }
-
-  // Funciones para notificaciones
   verSolicitudes() {
     this.mostrarAlertaSolicitud = false;
     this.activeTab = 'viajes';
@@ -135,21 +128,17 @@ ngOnInit() {
       id_cliente: solicitud.id_cliente
     });
 
-    // ===== NUEVO: guardar coordenadas reales =====
     this.viajePendiente = {
       id: solicitud.id_viaje,
       pasajero: solicitud.nombre_cliente,
       ganancia: '$120.00',
       origen: solicitud.origen?.direccion || 'Punto de encuentro',
       destino: solicitud.destino?.direccion || 'Destino',
-      // Coordenadas del punto de recogida (usuario)
       origenLat: solicitud.origen?.lat || 21.8468,
       origenLng: solicitud.origen?.lng || -102.7188,
-      // Coordenadas del destino final
       destinoLat: solicitud.destino?.lat || 21.8468,
       destinoLng: solicitud.destino?.lng || -102.7188
     };
-    // ===== FIN NUEVO =====
 
     this.solicitudesPendientes = this.solicitudesPendientes.filter(s => s.id_viaje !== solicitud.id_viaje);
     this.viajeAceptado = true;
@@ -190,10 +179,7 @@ ngOnInit() {
       this.viajePendiente = null;
       this.viajeAceptado = false;
     }
-    // ❌ ELIMINADO: this.simularLlegadaDeViaje();
   }
-
-  // ❌ ELIMINADA: simularLlegadaDeViaje()
 
   aceptarViaje() {
     this.viajeAceptado = true;
@@ -204,15 +190,12 @@ ngOnInit() {
     alert(`Estado de ${this.driverInfo.nombre} guardado en el servidor.`);
   }
 
-  // ===== NUEVO: función para dibujar ambas rutas =====
   dibujarAmbasRutas(origenChofer: L.LatLng, origenUsuario: L.LatLng, destinoUsuario: L.LatLng) {
     if (!this.map) return;
     
-    // Limpiar rutas anteriores
     if (this.routingControlChofer) this.map.removeControl(this.routingControlChofer);
     if (this.routingControlUsuario) this.map.removeControl(this.routingControlUsuario);
 
-    // 1. Ruta del chofer al punto de recogida (color naranja)
     this.routingControlChofer = (L as any).Routing.control({
       waypoints: [origenChofer, origenUsuario],
       show: false,
@@ -226,7 +209,6 @@ ngOnInit() {
       createMarker: function() { return null; }
     }).addTo(this.map);
 
-    // 2. Ruta del usuario a su destino (color azul)
     this.routingControlUsuario = (L as any).Routing.control({
       waypoints: [origenUsuario, destinoUsuario],
       show: false,
@@ -240,7 +222,6 @@ ngOnInit() {
       createMarker: function() { return null; }
     }).addTo(this.map);
 
-    // Agregar marcadores personalizados
     L.marker(origenChofer, {
       icon: L.divIcon({
         className: 'marker-chofer',
@@ -265,12 +246,10 @@ ngOnInit() {
       })
     }).addTo(this.map).bindPopup('Destino final');
   }
-  // ===== FIN NUEVO =====
 
   initMap() {
     if (!this.viajePendiente) return;
     
-    // ===== NUEVO: usar coordenadas reales para el mapa =====
     const lat = this.viajePendiente.origenLat || 21.8468;
     const lng = this.viajePendiente.origenLng || -102.7188;
 
@@ -284,24 +263,19 @@ ngOnInit() {
       attribution: '© OpenStreetMap'
     }).addTo(this.map);
 
-    // ===== NUEVO: dibujar ambas rutas =====
-    // Ubicación del chofer (puedes usar geolocalización real)
-    const ubicacionChofer = L.latLng(21.8468, -102.7188); // TODO: usar ubicación real
+    const ubicacionChofer = L.latLng(21.8468, -102.7188);
     
-    // Punto de recogida (ubicación del usuario)
     const ubicacionUsuario = L.latLng(
       this.viajePendiente.origenLat,
       this.viajePendiente.origenLng
     );
     
-    // Destino final
     const destinoUsuario = L.latLng(
       this.viajePendiente.destinoLat,
       this.viajePendiente.destinoLng
     );
     
     this.dibujarAmbasRutas(ubicacionChofer, ubicacionUsuario, destinoUsuario);
-    // ===== FIN NUEVO =====
 
     setTimeout(() => { this.map.invalidateSize(); }, 200);
   }
@@ -314,7 +288,6 @@ ngOnInit() {
       });
       this.viajePendiente = null;
     }
-    // ❌ ELIMINADO: this.simularLlegadaDeViaje();
   }
 
   finalizarViaje() {
