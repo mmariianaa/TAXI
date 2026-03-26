@@ -428,6 +428,9 @@ app.get('/api/historialusuario/:id', (req, res) => {
     const query = `
         SELECT 
             v.id_viaje, 
+            v.id_usuario,
+            v.id_chofer,
+            v.origen,
             v.destino, 
             v.fecha_viaje, 
             v.estado,
@@ -463,25 +466,28 @@ app.get('/api/historialusuario/:id', (req, res) => {
     });
 });
     
-    //REGISTRAR VIAJE EN DB
-    app.post('/api/registrar-viaje', (req, res) => {
+    // REGISTRAR VIAJE EN DB
+app.post('/api/registrar-viaje', (req, res) => {
     const { 
         id_usuario, 
         id_chofer, 
+        origen,      // <- Agregado aquí
         destino, 
         precio, 
         id_pago, 
         id_ruta, 
         estado 
     } = req.body;
-    console.log(req.body)
+    
+    console.log("Datos recibidos:", req.body);
 
     // 1. Insertar en la tabla Viajes
     const queryViaje = `
-        INSERT INTO Viajes (id_usuario, id_chofer, origen , destino, id_pago, id_ruta, estado, fecha_viaje) 
+        INSERT INTO Viajes (id_usuario, id_chofer, origen, destino, id_pago, id_ruta, estado, fecha_viaje) 
         VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`;
 
-    conexion.query(queryViaje, [id_usuario, id_chofer, destino, id_pago, id_ruta, estado], (err, result) => {
+    // Pasamos el arreglo completo incluyendo 'origen'
+    conexion.query(queryViaje, [id_usuario, id_chofer, origen, destino, id_pago, id_ruta, estado], (err, result) => {
         if (err) {
             console.error('Error al insertar viaje:', err.message);
             return res.status(500).json({ error: err.message });
@@ -505,7 +511,7 @@ app.get('/api/historialusuario/:id', (req, res) => {
             });
         }); 
     }); 
-}); 
+});
 });
 
 // Endpoint para ver solo USUARIOS NORMALES (no choferes)

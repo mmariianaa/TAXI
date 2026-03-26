@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { io } from 'socket.io-client';
+import { HttpClient } from '@angular/common/http';
 import {
   IonContent, IonIcon, IonButtons, IonHeader, IonTitle,
   IonToolbar, IonMenuButton, IonList, IonItem, IonLabel,
@@ -34,6 +35,7 @@ import * as L from 'leaflet';
 export class ChoferPage implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private http = inject(HttpClient);
 
   activeTab: string = 'perfil';
   isActive: boolean = true;
@@ -136,17 +138,17 @@ ngOnInit() {
       id_cliente: solicitud.id_cliente
     });
 
+    
     // ===== NUEVO: guardar coordenadas reales =====
     this.viajePendiente = {
       id: solicitud.id_viaje,
+      id_usuario: solicitud.id_cliente, // <- NUEVO: Guardamos el ID del cliente
       pasajero: solicitud.nombre_cliente,
-      ganancia: '$120.00',
+      ganancia: 120, // <- SUGERENCIA: Manejarlo como número (120) en lugar de '$120.00' para que MySQL lo acepte en el campo Costos
       origen: solicitud.origen?.direccion || 'Punto de encuentro',
       destino: solicitud.destino?.direccion || 'Destino',
-      // Coordenadas del punto de recogida (usuario)
       origenLat: solicitud.origen?.lat || 21.8468,
       origenLng: solicitud.origen?.lng || -102.7188,
-      // Coordenadas del destino final
       destinoLat: solicitud.destino?.lat || 21.8468,
       destinoLng: solicitud.destino?.lng || -102.7188
     };
@@ -319,12 +321,35 @@ ngOnInit() {
   }
 
   finalizarViaje() {
-    this.mostrarModalCalificar = true;
-    let datos={
-      id_chofer:this.driverInfo.id_chofer
-      
-    }
+    this.mostrarModalCalificar = true; // Mostramos el modal al usuario
+    
+    if (!this.viajePendiente) return; // Validación de seguridad
 
+    // 1. Armamos el objeto tal como lo espera el POST '/api/registrar-viaje'
+    const datosViaje = {
+      id_usuario: this.viajePendiente.id_usuario, 
+      id_chofer: this.driverInfo.id_chofer || this.driverInfo.id,
+      origen: this.viajePendiente.origen,
+      destino: this.viajePendiente.destino,
+      precio: this.viajePendiente.ganancia, // Sacamos el precio numérico
+      id_pago: 1, // Reemplazar con el ID real si lo recibes del socket (ej: solicitud.id_pago)
+      id_ruta: null, // Puedes enviar null si la base de datos lo permite o el ID de la ruta
+      estado: 'completado'
+    };
+
+    console.log('Enviando datos a BD:', datosViaje);
+
+    // 2. Hacemos la petición POST al backend
+    // Asegúrate de cambiar el puerto (3000) por el que use tu backend si es diferente
+    this.http.post('http://localhost:3000/api/registrar-viaje', datosViaje)
+      .subscribe({
+        next: (respuesta: any) => {
+          console.log('✅ Viaje guardado en base de datos con éxito:', respuesta);
+        },
+        error: (error) => {
+          console.error('❌ Error al guardar el viaje en la BD:', error);
+        }
+      });
   }
 
   setRating(estrellas: number) {
