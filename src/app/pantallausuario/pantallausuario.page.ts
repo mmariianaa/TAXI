@@ -308,14 +308,15 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
     }
   }
 
-  async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tipo: string) {
-    const modal = await this.modalCtrl.create({
-      component: NotificacionModalComponent,
-      componentProps: { titulo, mensaje, icono, tipo }
-    });
-    await modal.present();
-  }
-
+ // 1. Haz que el método retorne la promesa del modal
+async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tipo: string) {
+  const modal = await this.modalCtrl.create({
+    component: NotificacionModalComponent,
+    componentProps: { titulo, mensaje, icono, tipo }
+  });
+  await modal.present();
+  return modal.onDidDismiss(); // Devuelve esto para saber cuándo se cerró
+}
   logout() {
     if (this.socket) this.socket.disconnect();
     localStorage.clear();

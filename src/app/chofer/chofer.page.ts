@@ -160,7 +160,7 @@ if (data) {
     });
 
     this.viajesRechazados.unshift({
-      ...solicitud,
+        solicitud,
       ganancia: '$120.00',
       destino: solicitud.destino?.direccion || 'Destino',
       hora: new Date().toLocaleTimeString()
