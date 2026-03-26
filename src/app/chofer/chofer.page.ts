@@ -128,11 +128,9 @@ if (data) {
       id_cliente: solicitud.id_cliente
     });
 
-<<<<<<< HEAD
-=======
     
     // ===== NUEVO: guardar coordenadas reales =====
->>>>>>> Monybbranch
+
     this.viajePendiente = {
       id: solicitud.id_viaje,
       id_usuario: solicitud.id_cliente, // <- NUEVO: Guardamos el ID del cliente
@@ -297,9 +295,9 @@ if (data) {
   }
 
   finalizarViaje() {
-<<<<<<< HEAD
+
     this.mostrarModalCalificar = true;
-=======
+
     this.mostrarModalCalificar = true; // Mostramos el modal al usuario
     
     if (!this.viajePendiente) return; // Validación de seguridad
@@ -329,7 +327,7 @@ if (data) {
           console.error('❌ Error al guardar el viaje en la BD:', error);
         }
       });
->>>>>>> Monybbranch
+
   }
 
   setRating(estrellas: number) {

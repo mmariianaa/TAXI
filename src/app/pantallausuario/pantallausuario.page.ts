@@ -172,6 +172,7 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
         'checkmark-circle',
         'success'
       );
+      
       this.router.navigate(['/viajenotificacion'], { 
         state: { viaje: data, precio: this.precioEstimado, estado: 'aceptado' } 
       });

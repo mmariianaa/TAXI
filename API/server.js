@@ -413,50 +413,44 @@ server.listen(port, () => {
     console.log(` REST API disponible en http://localhost:${port}`);
     console.log(` WebSocket Server disponible en ws://localhost:${port}`);
 
-    // OBTENER HISTORIAL
-    app.get('/api/historialusuario/:id', (req, res) => {
-        const { id } = req.params;
-        const { tipo } = req.query;
+   // OBTENER HISTORIAL
+app.get('/api/historialusuario/:id', (req, res) => {
+    const { id } = req.params;
+    const { tipo } = req.query;
 
-        const columnaFiltro = (tipo === 'chofer') ? 'v.id_chofer' : 'v.id_usuario';
+    const columnaFiltro = (tipo === 'chofer') ? 'v.id_chofer' : 'v.id_usuario';
 
-        const query = `
-        SELECT 
-            v.id_viaje, 
-<<<<<<< HEAD
-            v.origen, 
-=======
-            v.id_usuario,
-            v.id_chofer,
-            v.origen,
->>>>>>> Monybbranch
-            v.destino, 
-            v.fecha_inicio AS fecha_viaje, -- 1. CAMBIO: Usamos AS para que Ionic lo lea como fecha_viaje
-            v.precio, 
-            v.estado,
-            u_pasajero.nombre AS nombre_pasajero,
-            u_chofer.nombre AS nombre_chofer,
-            t.placa AS placa_taxi, 
-            t.modelo AS modelo_taxi,
-            tp.tipo_pago
-        FROM Viajes v
-        LEFT JOIN Usuario u_pasajero ON v.id_usuario = u_pasajero.id_usuario
-        LEFT JOIN Chofer c ON v.id_chofer = c.id_chofer
-        LEFT JOIN Usuario u_chofer ON c.id_chofer = u_chofer.id_chofer
-        LEFT JOIN Taxi t ON c.id_taxi = t.id_taxi
-        LEFT JOIN TiposPago tp ON v.id_pago = tp.id_pago
-        WHERE ${columnaFiltro} = ?
-        ORDER BY v.fecha_inicio DESC`;
+    const query = `
+    SELECT 
+        v.id_viaje,
+        v.id_usuario,
+        v.id_chofer,
+        v.origen, 
+        v.destino, 
+        v.fecha_viaje, 
+        v.estado,
+        u_pasajero.nombre AS nombre_pasajero,
+        u_chofer.nombre AS nombre_chofer,
+        t.placa AS placa_taxi, 
+        t.modelo AS modelo_taxi,
+        tp.tipo_pago
+    FROM Viajes v
+    LEFT JOIN Usuario u_pasajero ON v.id_usuario = u_pasajero.id_usuario
+    LEFT JOIN Chofer c ON v.id_chofer = c.id_chofer
+    LEFT JOIN Usuario u_chofer ON c.id_chofer = u_chofer.id_chofer
+    LEFT JOIN Taxi t ON c.id_taxi = t.id_taxi
+    LEFT JOIN TiposPago tp ON v.id_pago = tp.id_pago
+    WHERE ${columnaFiltro} = ?
+    ORDER BY v.fecha_viaje DESC`; 
 
-        conexion.query(query, [id], (err, results) => {
-            if (err) {
-                console.error('ERROR SQL DETALLADO:', err.message);
-                return res.status(500).json({ error: err.message });
-            }
-            res.json(results);
-        });
+    conexion.query(query, [id], (err, results) => {
+        if (err) {
+            console.error('ERROR SQL DETALLADO:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(results);
     });
-
+});
     //CREAR NUEVO VIAJE (POST)
     app.post('/api/historialusuario', (req, res) => {
         // CAMBIO: Asegúrate de que el body use 'fecha_inicio' si lo envías desde el front
@@ -474,8 +468,7 @@ server.listen(port, () => {
         });
     });
 });
-<<<<<<< HEAD
-=======
+
     
     // REGISTRAR VIAJE EN DB
 app.post('/api/registrar-viaje', (req, res) => {
@@ -523,9 +516,7 @@ app.post('/api/registrar-viaje', (req, res) => {
         }); 
     }); 
 });
-});
 
->>>>>>> Monybbranch
 // Endpoint para ver solo USUARIOS NORMALES (no choferes)
 app.get('/api/ver-usuarios-normales', (req, res) => {
     const query = `
@@ -542,9 +533,9 @@ app.get('/api/ver-usuarios-normales', (req, res) => {
         }
         res.json(results);
     });
- 
+
     // CAMBIAR CONTRASEÑA
- 
+
     app.put('/api/usuarios/:id/password', async (req, res) => {
         const { id } = req.params;
         const { nueva } = req.body;  // SOLO recibe nueva contraseña
@@ -618,13 +609,13 @@ app.get('/api/ver-usuarios-normales', (req, res) => {
             });
         });
     });
-<<<<<<< HEAD
+
     
 });
 /// RUTA PARA ACTUALIZAR PERFIL DEl chofer
-=======
-});
->>>>>>> Monybbranch
+
+
+
 app.put('/api/admin/actualizar-chofer/:id', (req, res) => {
     const id_chofer = req.params.id; 
     const { marca, modelo, color, placa, capacidad, licencia } = req.body;
