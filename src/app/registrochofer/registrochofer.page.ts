@@ -124,12 +124,18 @@ export class RegistrochoferPage {
       alert('La contraseña debe tener al menos 6 caracteres');
       return false;
     }
+    if (this.chofer.telefono) {
+      const phoneRegex = /^[0-9]{7,15}$/;
+      if (!phoneRegex.test(this.chofer.telefono)) {
+        alert('El teléfono debe contener solo números (7-15 dígitos)');
+        return false;
+      }
+    }
 
     if (this.chofer.contrasena !== this.confirmarContrasena) {
       alert('Las contraseñas no coinciden');
       return false;
     }
-
     if (!this.terminosAceptados) {
       alert('Debes aceptar los términos y condiciones');
       return false;

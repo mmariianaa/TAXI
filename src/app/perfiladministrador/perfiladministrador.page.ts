@@ -16,8 +16,8 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 })
 export class PerfiladministradorPage implements OnInit {
   perfilForm: FormGroup;
-  // Imagen por defecto
   avatarUrl: string = 'assets/avatar.png'; 
+  adminId: string='';
 
   constructor(
     private fb: FormBuilder,
@@ -30,14 +30,30 @@ export class PerfiladministradorPage implements OnInit {
     this.perfilForm = this.fb.group({
       nombre: ['', [Validators.required]],
       apellido: ['', [Validators.required]],
-      correo: ['', [Validators.required, Validators.email]],
       telefono: ['', [Validators.required]], 
       departamento: ['', [Validators.required]],
       titulo: ['']
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    const adminData = JSON.parse(localStorage.getItem('user_data') || '{}');
+    this.adminId = adminData.id;
+
+    if (this.adminId) {
+      // Rellenamos el formulario con lo que ya tenemos
+      this.perfilForm.patchValue({
+        nombre: adminData.nombre,
+        apellido: adminData.apellido,
+        correo: adminData.correo,
+        telefono: adminData.telefono,
+        departamento: adminData.departamento
+      });
+      if (adminData.foto) {
+        this.avatarUrl = adminData.foto;
+      }
+    }
+  }
 
   // --- LÓGICA DE LA FOTO ---
 
@@ -83,25 +99,31 @@ export class PerfiladministradorPage implements OnInit {
 
     // Enviamos los datos del form + la imagen en base64
     const datosFinales = {
-      ...this.perfilForm.value,
+      ...this.perfilForm.getRawValue(),
       foto: this.avatarUrl 
     };
 
-    const url = 'http://localhost:3000/api/perfil/actualizar';
+    const url = `http://localhost:3000/api/perfil/actualizar-completo/${this.adminId}`;
     
     this.http.put(url, datosFinales).subscribe({
       next: async (res) => {
         await loading.dismiss();
+
+       // IMPORTANTE: Actualizar el localStorage para que los cambios se vean en toda la app
+        const currentData = JSON.parse(localStorage.getItem('user_data') || '{}');
+        const newData = { ...currentData, ...datosFinales };
+        localStorage.setItem('user_data', JSON.stringify(newData));
+
         const alert = await this.alertCtrl.create({
-          header: '¡Éxito!',
-          message: 'Tu perfil ha sido actualizado correctamente.',
-          buttons: ['OK']
+          header: '¡Actualizado!',
+          message: 'Los cambios se guardaron en la base de datos.',
+          buttons: ['Entendido']
         });
         await alert.present();
       },
       error: async (err) => {
         await loading.dismiss();
-        console.error(err);
+        console.error('Error al conectar con el servidor:', err);
       }
     });
   }

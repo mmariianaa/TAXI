@@ -88,22 +88,20 @@ export class ChoferPage implements OnInit {
 
   ngOnInit() {
     const data = this.authService.getUserData();
+if (data) {
+  this.driverInfo = data;
+  this.socket = io('http://localhost:3000');
+  
+  // USAR EL ID DE USUARIO (id_usuario) para la sala
+  const idParaSala = this.driverInfo.id; 
+  console.log('🔌 Chofer uniéndose a su sala de notificaciones:', idParaSala);
+  this.socket.emit('unirse_sala', idParaSala);
 
-    if (data) {
-      this.driverInfo = data;
-      console.log('Panel cargado para:', this.driverInfo.nombre);
-
-      this.socket = io('http://localhost:3000');
-      
-      const idParaSala = this.driverInfo?.id;
-      console.log('🔌 Conectando a sala con ID (usuario):', idParaSala);
-      this.socket.emit('unirse_sala', idParaSala);
-
-      this.socket.on('notificacion_chofer', (data: any) => {
-        console.log('🔥 ¡VIAJE RECIBIDO!', data);
-        this.solicitudesPendientes.push(data);
-        this.mostrarAlertaSolicitud = true;
-      });
+  this.socket.on('notificacion_chofer', (data: any) => {
+    console.log('🔥 ¡VIAJE RECIBIDO!', data);
+    this.solicitudesPendientes.push(data);
+    this.mostrarAlertaSolicitud = true;
+  });
 
     } else {
       this.router.navigate(['/home']);

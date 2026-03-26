@@ -183,8 +183,19 @@ app.post('/api/login', (req, res) => {
         if (results.length === 0) return res.status(401).json({ error: 'El correo no está registrado' });
 
         const user = results[0];
+        
+        // Verificación de contraseña encriptada
         const match = await bcrypt.compare(contrasena, user.contrasena);
         if (!match) return res.status(401).json({ error: 'Contraseña incorrecta' });
+
+        // --- LÓGICA DE ROLES ACTUALIZADA ---
+        let rolAsignado = 'usuario';
+        
+        if (user.id_chofer) {
+            rolAsignado = 'chofer';
+        } else if (user.correo === 'admin@taxi.com') { // <-- Identificamos al Admin
+            rolAsignado = 'admin';
+        }
 
         const token = jwt.sign({ id: user.id_usuario }, JWT_SECRET, { expiresIn: '24h' });
 
@@ -195,7 +206,7 @@ app.post('/api/login', (req, res) => {
                 nombre: user.nombre,
                 apellido: user.apellido,
                 correo: user.correo,
-                rol: user.id_chofer ? 'chofer' : 'usuario',
+                rol: rolAsignado, // Enviamos el rol detectado
                 telefono: user.telefono,
                 documento: user.numero_documento,
                 id_chofer: user.id_chofer,
@@ -549,4 +560,38 @@ app.get('/api/ver-usuarios-normales', (req, res) => {
             });
         });
     });
+    
 });
+
+app.put('/api/admin/actualizar-chofer/:id', (req, res) => {
+    const id_chofer = req.params.id; 
+    const { marca, modelo, color, placa, capacidad, licencia } = req.body;
+
+    // 1. Cambié "db.query" por "conexion.query" porque así se llama en tu archivo
+    // 2. Asegúrate que tu tabla sea "Chofer" (con C mayúscula si así está en tu DB)
+    // 3. Si los datos del vehículo están en la tabla "Taxi", hay que hacer un UPDATE a Taxi.
+    // Asumiendo que están en la tabla 'Taxi' vinculada al chofer:
+
+    const query = `
+        UPDATE Taxi t
+        INNER JOIN Chofer c ON t.id_taxi = c.id_taxi
+        SET t.marca = ?, t.modelo = ?, t.color = ?, t.placa = ?, t.capacidad = ?, c.licencia = ?
+        WHERE c.id_chofer = ?
+    `;
+
+    conexion.query(query, [marca, modelo, color, placa, capacidad, licencia, id_chofer], (err, result) => {
+        if (err) {
+            console.error('Error al actualizar chofer en DB:', err);
+            return res.status(500).json({ error: 'Error interno del servidor', detalle: err.message });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'No se encontró el chofer con ID: ' + id_chofer });
+        }
+
+        console.log('✅ Chofer y Vehículo actualizados con éxito. ID:', id_chofer);
+        res.json({ success: true, message: 'Actualización exitosa' });
+    });
+});
+
+

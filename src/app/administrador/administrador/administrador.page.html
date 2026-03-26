@@ -29,9 +29,6 @@
     <ion-segment-button value="dia">
       <ion-label>Hoy</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="semana">
-      <ion-label>Esta Semana</ion-label>
-    </ion-segment-button>
   </ion-segment>
 
   <div class="stats-grid">
@@ -122,6 +119,10 @@
           <ion-item class="input-item">
             <ion-label position="stacked">Nº Licencia</ion-label>
             <ion-input formControlName="licencia"></ion-input>
+          </ion-item>
+          <ion-item class="input-item">
+            <ion-label position="stacked">Capacidad (Pasajeros)</ion-label>
+            <ion-input type="number" formControlName="capacidad"></ion-input>
           </ion-item>
 
           <ion-button expand="block" fill="solid" class="btn-savee"  (click)="confirmarCambios()">
