@@ -423,7 +423,13 @@ server.listen(port, () => {
         const query = `
         SELECT 
             v.id_viaje, 
+<<<<<<< HEAD
             v.origen, 
+=======
+            v.id_usuario,
+            v.id_chofer,
+            v.origen,
+>>>>>>> Monybbranch
             v.destino, 
             v.fecha_inicio AS fecha_viaje, -- 1. CAMBIO: Usamos AS para que Ionic lo lea como fecha_viaje
             v.precio, 
@@ -468,6 +474,58 @@ server.listen(port, () => {
         });
     });
 });
+<<<<<<< HEAD
+=======
+    
+    // REGISTRAR VIAJE EN DB
+app.post('/api/registrar-viaje', (req, res) => {
+    const { 
+        id_usuario, 
+        id_chofer, 
+        origen,      // <- Agregado aquí
+        destino, 
+        precio, 
+        id_pago, 
+        id_ruta, 
+        estado 
+    } = req.body;
+    
+    console.log("Datos recibidos:", req.body);
+
+    // 1. Insertar en la tabla Viajes
+    const queryViaje = `
+        INSERT INTO Viajes (id_usuario, id_chofer, origen, destino, id_pago, id_ruta, estado, fecha_viaje) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`;
+
+    // Pasamos el arreglo completo incluyendo 'origen'
+    conexion.query(queryViaje, [id_usuario, id_chofer, origen, destino, id_pago, id_ruta, estado], (err, result) => {
+        if (err) {
+            console.error('Error al insertar viaje:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+
+        const nuevoIdViaje = result.insertId;
+
+        // 2. Insertar el monto en la tabla Costos vinculándolo al id_viaje recién creado
+        const queryCosto = `INSERT INTO Costos (id_viaje, monto) VALUES (?, ?)`;
+        
+        conexion.query(queryCosto, [nuevoIdViaje, precio], (errCosto) => {
+            if (errCosto) {
+                console.error('Error al insertar costo:', errCosto.message);
+                return res.status(500).json({ error: 'Viaje creado, pero falló el registro del precio' });
+            }
+            
+            res.status(201).json({ 
+                success: true, 
+                message: 'Viaje registrado con éxito',
+                id_viaje: nuevoIdViaje 
+            });
+        }); 
+    }); 
+});
+});
+
+>>>>>>> Monybbranch
 // Endpoint para ver solo USUARIOS NORMALES (no choferes)
 app.get('/api/ver-usuarios-normales', (req, res) => {
     const query = `
@@ -560,9 +618,13 @@ app.get('/api/ver-usuarios-normales', (req, res) => {
             });
         });
     });
+<<<<<<< HEAD
     
 });
 /// RUTA PARA ACTUALIZAR PERFIL DEl chofer
+=======
+});
+>>>>>>> Monybbranch
 app.put('/api/admin/actualizar-chofer/:id', (req, res) => {
     const id_chofer = req.params.id; 
     const { marca, modelo, color, placa, capacidad, licencia } = req.body;
