@@ -1,10 +1,15 @@
+// Paleta de colores
 $negro-fondo: #1F1F1F;
 $gris-item: #4B4847;
 $amarillo-taxi: #FFC31F;
 $blanco-suave: #E6E1DB;
 
-.main-container { padding-bottom: 50px; }
+// Contenedor principal
+.main-container {
+  padding-bottom: 50px;
+}
 
+// Sección de avatar
 .avatar-section {
   display: flex;
   flex-direction: column;
@@ -15,21 +20,21 @@ $blanco-suave: #E6E1DB;
     width: 130px;
     height: 130px;
     margin-bottom: 15px;
-    
+
     img {
       width: 100%;
       height: 100%;
       border-radius: 50%;
       object-fit: cover;
       border: 4px solid $amarillo-taxi;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
     }
   }
 
   .avatar-buttons {
     display: flex;
-    gap: 10px; 
-    
+    gap: 10px;
+
     ion-button {
       --border-radius: 8px;
       font-weight: bold;
@@ -39,6 +44,7 @@ $blanco-suave: #E6E1DB;
   }
 }
 
+// Tarjeta de información
 .info-card {
   background: $gris-item;
   border-radius: 15px;
@@ -59,9 +65,18 @@ $blanco-suave: #E6E1DB;
   }
 }
 
-.input-error { border-left: 4px solid #eb445a; transition: all 0.3s; }
-.input-success { border-left: 4px solid #2dd36f; transition: all 0.3s; }
+// Estados de validación
+.input-error {
+  border-left: 4px solid #eb445a;
+  transition: all 0.3s;
+}
 
+.input-success {
+  border-left: 4px solid #2dd36f;
+  transition: all 0.3s;
+}
+
+// Botón guardar
 .btn-guardar {
   --background: #{$amarillo-taxi};
   --color: #{$negro-fondo};
