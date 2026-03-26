@@ -562,16 +562,10 @@ app.get('/api/ver-usuarios-normales', (req, res) => {
     });
     
 });
-
+/// RUTA PARA ACTUALIZAR PERFIL DEl chofer
 app.put('/api/admin/actualizar-chofer/:id', (req, res) => {
     const id_chofer = req.params.id; 
     const { marca, modelo, color, placa, capacidad, licencia } = req.body;
-
-    // 1. Cambié "db.query" por "conexion.query" porque así se llama en tu archivo
-    // 2. Asegúrate que tu tabla sea "Chofer" (con C mayúscula si así está en tu DB)
-    // 3. Si los datos del vehículo están en la tabla "Taxi", hay que hacer un UPDATE a Taxi.
-    // Asumiendo que están en la tabla 'Taxi' vinculada al chofer:
-
     const query = `
         UPDATE Taxi t
         INNER JOIN Chofer c ON t.id_taxi = c.id_taxi
@@ -593,5 +587,35 @@ app.put('/api/admin/actualizar-chofer/:id', (req, res) => {
         res.json({ success: true, message: 'Actualización exitosa' });
     });
 });
+//SOLO AGREGUE ESTOS DOS PARA LAS VALIDACIONES 
+// RUTA PARA ACTUALIZAR PERFIL DE ADMINISTRADOR
+app.put('/api/perfil/actualizar-completo/:id', (req, res) => {
+    const id_usuario = req.params.id;
+    
+    // Extraemos SOLO lo que tu HTML y tu TS están enviando realmente
+    const { nombre, apellido, telefono, foto } = req.body;
 
+    // Solo actualizamos estos 4 campos para que no dé error por falta de datos
+    const query = `
+        UPDATE Usuario 
+        SET nombre = ?, 
+            apellido = ?, 
+            telefono = ?, 
+            foto = ? 
+        WHERE id_usuario = ?
+    `;
 
+    conexion.query(query, [nombre, apellido, telefono, foto, id_usuario], (err, result) => {
+        if (err) {
+            console.error('❌ Error detallado en MySQL:', err); 
+            return res.status(500).json({ error: err.message });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'No se encontró el usuario' });
+        }
+
+        console.log('✅ Perfil actualizado con éxito para el ID:', id_usuario);
+        res.json({ message: 'Perfil actualizado con éxito' });
+    });
+});

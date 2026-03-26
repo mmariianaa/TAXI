@@ -4,7 +4,12 @@ import { HttpClient } from '@angular/common/http';
 import { AlertController, LoadingController, IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { personOutline, carOutline, documentTextOutline, mapOutline, cashOutline, peopleOutline, checkmarkCircleOutline, star } from 'ionicons/icons';
+// Se agregó logOutOutline a las importaciones
+import { 
+  personOutline, carOutline, documentTextOutline, mapOutline, 
+  cashOutline, peopleOutline, checkmarkCircleOutline, star, 
+  logOutOutline 
+} from 'ionicons/icons';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 
@@ -16,7 +21,6 @@ import { AuthService } from '../../services/auth';
   imports: [IonicModule, ReactiveFormsModule, CommonModule]
 })
 export class AdministradorPage implements OnInit {
-  // Variables para el Dashboard
   stats = { viajes: 0, ingresos: 0, choferes: 0, disponibles: 0 };
   listaChoferes: any[] = [];
   isModalOpen = false;
@@ -31,11 +35,14 @@ export class AdministradorPage implements OnInit {
     private loadingCtrl: LoadingController,
     private router: Router,
     private authService: AuthService
-
   ) {
-    addIcons({ personOutline, carOutline, documentTextOutline, mapOutline, cashOutline, peopleOutline, checkmarkCircleOutline, star });
+    // Se agregó logOutOutline al registro de iconos
+    addIcons({ 
+      personOutline, carOutline, documentTextOutline, mapOutline, 
+      cashOutline, peopleOutline, checkmarkCircleOutline, star, 
+      logOutOutline 
+    });
 
-    // Formulario solo con campos editables (Vehículo y Profesionales)
     this.editForm = this.fb.group({
       marca: ['', [Validators.required]],
       modelo: ['', [Validators.required]],
@@ -43,7 +50,6 @@ export class AdministradorPage implements OnInit {
       placa: ['', [Validators.required]],
       capacidad: [4, [Validators.required]],
       licencia: ['', [Validators.required]],
-
     });
   }
 
@@ -59,21 +65,18 @@ export class AdministradorPage implements OnInit {
   }
 
   cargarResumen(periodo: string) {
-    // Aquí llamarías a tu API: /api/admin/resumen?periodo=dia
     this.stats = { viajes: 45, ingresos: 1250, choferes: 12, disponibles: 8 };
   }
 
   cargarChoferes() {
     this.http.get<any[]>('http://localhost:3000/getTodosChoferes').subscribe(res => {
       this.listaChoferes = res;
-      this.stats.choferes = res.length;//choferes reales
+      this.stats.choferes = res.length;
       this.stats.disponibles = res.filter(c => c.estado === 'activo' || c.estado === 'disponible').length;
-    });//actividad real de los choferes
+    });
   }
 
-
   abrirDetalle(chofer: any) {
-    console.log('Datos del chofer seleccionado:', chofer);
     this.choferSel = chofer;
     this.editForm.patchValue({
       marca: chofer.marca,
@@ -102,56 +105,51 @@ export class AdministradorPage implements OnInit {
   }
 
   async guardarCambiosChofer() {
-  // --- NUEVA VALIDACIÓN ---
-  // Si el formulario es inválido (algún campo requerido está vacío)
-  if (this.editForm.invalid) {
-    const alert = await this.alertCtrl.create({
-      header: 'Campos Incompletos',
-      message: 'Por favor, rellena todos los campos obligatorios antes de guardar (incluyendo la capacidad).',
-      buttons: ['Entendido']
-    });
-    await alert.present();
-    return; // Detenemos la ejecución aquí
-  }
-
-  // Si pasa la validación, procedemos con el ID
-  if (!this.choferSel || !this.choferSel.id_chofer) {
-    console.error("No hay un ID de chofer seleccionado");
-    return;
-  }
-
-  const loading = await this.loadingCtrl.create({
-    message: 'Actualizando vehículo...',
-    spinner: 'crescent'
-  });
-  await loading.present();
-
-  const id = this.choferSel.id_chofer;
-  const url = `http://localhost:3000/api/admin/actualizar-chofer/${id}`;
-
-  this.http.put(url, this.editForm.value).subscribe({
-    next: async () => {
-      await loading.dismiss();
-      this.isModalOpen = false;
-      this.cargarChoferes();
+    if (this.editForm.invalid) {
       const alert = await this.alertCtrl.create({
-        header: 'Éxito',
-        message: 'Los datos han sido actualizados correctamente.',
-        buttons: ['OK']
+        header: 'Campos Incompletos',
+        message: 'Por favor, rellena todos los campos obligatorios.',
+        buttons: ['Entendido']
       });
       await alert.present();
-    },
-    error: async (err) => {
-      await loading.dismiss();
-      const alert = await this.alertCtrl.create({
-        header: 'Error',
-        message: 'No se pudo actualizar en la base de datos.',
-        buttons: ['Cerrar']
-      });
-      await alert.present();
+      return;
     }
-  });
-}
+
+    if (!this.choferSel || !this.choferSel.id_chofer) return;
+
+    const loading = await this.loadingCtrl.create({
+      message: 'Actualizando...',
+      spinner: 'crescent'
+    });
+    await loading.present();
+
+    const id = this.choferSel.id_chofer;
+    const url = `http://localhost:3000/api/admin/actualizar-chofer/${id}`;
+
+    this.http.put(url, this.editForm.value).subscribe({
+      next: async () => {
+        await loading.dismiss();
+        this.isModalOpen = false;
+        this.cargarChoferes();
+        const alert = await this.alertCtrl.create({
+          header: 'Éxito',
+          message: 'Actualizado correctamente.',
+          buttons: ['OK']
+        });
+        await alert.present();
+      },
+      error: async (err) => {
+        await loading.dismiss();
+        const alert = await this.alertCtrl.create({
+          header: 'Error',
+          message: 'Error al actualizar.',
+          buttons: ['Cerrar']
+        });
+        await alert.present();
+      }
+    });
+  }
+
   irPerfil() {
     this.router.navigate(['/perfiladministrador']);
   }
@@ -160,10 +158,12 @@ export class AdministradorPage implements OnInit {
     this.cargarResumen(event.detail.value);
   }
 
+  // --- LOGOUT REFORZADO (ANTI-CACHÉ) ---
   async salir() {
     const alert = await this.alertCtrl.create({
       header: 'Cerrar Sesión',
       message: '¿Estás seguro de que quieres salir del sistema?',
+      mode: 'ios', // Estilo iOS para que se vea más limpio
       buttons: [
         {
           text: 'Cancelar',
@@ -171,8 +171,9 @@ export class AdministradorPage implements OnInit {
         },
         {
           text: 'Cerrar Sesión',
+          cssClass: 'danger',
           handler: () => {
-            this.authService.logout(); // Esto limpia la memoria y te manda al Home
+            this.ejecutarLogout();
           }
         }
       ]
@@ -181,4 +182,20 @@ export class AdministradorPage implements OnInit {
     await alert.present();
   }
 
+  private ejecutarLogout() {
+    // 1. Limpiamos TODA la memoria local
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // 2. Si tu authService tiene logout, lo llamamos (opcional si ya limpiaste arriba)
+    if (this.authService.logout) {
+      this.authService.logout();
+    }
+
+    // 3. Redirección forzada al home (login)
+    // replaceUrl: true evita que el usuario pueda darle "atrás" y volver al panel
+    this.router.navigate(['/home'], { replaceUrl: true });
+
+    console.log('Sesión destruida y caché limpiada.');
+  }
 }

@@ -3,8 +3,9 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
+    
     <ion-title>Panel de Control</ion-title>
-  </ion-toolbar>
+    </ion-toolbar>
   
   <ion-toolbar color="taxi-header" class="nav-toolbar">
     <div class="nav-container">
@@ -73,6 +74,16 @@
     }
   </ion-list>
 
+  <div class="logout-container" style="padding: 20px; margin-top: 10px;">
+    <ion-button expand="block" fill="solid" color="danger" (click)="salir()" mode="ios" style="--border-radius: 12px; height: 50px; font-weight: bold;">
+      <ion-icon slot="start" name="log-out-outline"></ion-icon>
+      CERRAR SESIÓN
+    </ion-button>
+    <p style="text-align: center; color: #666; font-size: 0.9em; margin-top: 15px;">
+      Conectado como Administrador: <strong>{{ nombreAdmin }}</strong>
+    </p>
+  </div>
+
   <ion-modal [isOpen]="isModalOpen" (didDismiss)="isModalOpen = false" mode="ios">
     <ng-template>
       <ion-header>
@@ -125,7 +136,7 @@
             <ion-input type="number" formControlName="capacidad"></ion-input>
           </ion-item>
 
-          <ion-button expand="block" fill="solid" class="btn-savee"  (click)="confirmarCambios()">
+          <ion-button expand="block" fill="solid" class="btn-savee" (click)="confirmarCambios()">
             Guardar Cambios
           </ion-button>
         </form>
