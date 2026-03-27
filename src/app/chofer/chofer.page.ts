@@ -135,7 +135,7 @@ if (data) {
       id: solicitud.id_viaje,
       id_usuario: solicitud.id_cliente, // <- NUEVO: Guardamos el ID del cliente
       pasajero: solicitud.nombre_cliente,
-      ganancia: 120, // <- SUGERENCIA: Manejarlo como número (120) en lugar de '$120.00' para que MySQL lo acepte en el campo Costos
+      ganancia: solicitud.precio , // <- SUGERENCIA: Manejarlo como número (120) en lugar de '$120.00' para que MySQL lo acepte en el campo Costos
       origen: solicitud.origen?.direccion || 'Punto de encuentro',
       destino: solicitud.destino?.direccion || 'Destino',
       origenLat: solicitud.origen?.lat || 21.8468,
@@ -161,7 +161,7 @@ if (data) {
 
     this.viajesRechazados.unshift({
         solicitud,
-      ganancia: '$120.00',
+      ganancia: solicitud.precio ,
       destino: solicitud.destino?.direccion || 'Destino',
       hora: new Date().toLocaleTimeString()
     });

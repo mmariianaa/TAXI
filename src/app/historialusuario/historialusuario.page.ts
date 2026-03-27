@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { 
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonIcon, IonBackButton, IonSpinner, IonButton, IonCard, IonItem, IonLabel, IonBadge, IonCardContent } from '@ionic/angular/standalone';
+  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonIcon, IonBackButton, IonSpinner, IonButton, IonCard, IonItem, IonLabel, IonBadge, IonCardContent, IonRefresher, IonRefresherContent } from '@ionic/angular/standalone';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth'; // <-- Ajusta la ruta si es necesario
@@ -28,13 +28,12 @@ import {
     IonToolbar, 
     IonTitle, 
     IonContent, 
-    IonButtons,
     IonBackButton, 
     IonIcon, // ← AGREGADO: Faltaba importar IonIcon
     IonButton, IonButtons, IonBackButton, 
-    CommonModule, FormsModule, IonContent, IonHeader, IonTitle, 
+    FormsModule, IonContent, IonTitle, 
     IonToolbar,IonItem, IonLabel, IonBadge, 
-    IonCard, IonCardContent, IonIcon, IonSpinner
+    IonCard, IonCardContent, IonIcon, IonSpinner, IonRefresher, IonRefresherContent
   ]
 })
 export class HistorialusuarioPage implements OnInit {
@@ -84,7 +83,7 @@ export class HistorialusuarioPage implements OnInit {
         idFinal = authData.id_usuario || authData.id;
       } else {
         // Fallback al localStorage si el servicio está vacío
-        const localData = localStorage.getItem('user_session');
+        const localData = localStorage.getItem('user_data');
         if (localData) {
           const parsed = JSON.parse(localData);
           idFinal = parsed.id_usuario || parsed.id;

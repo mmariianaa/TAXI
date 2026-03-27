@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
     });
 
     // SOLICITUD DE TAXI
-   
+
     socket.on('solicitar_taxi', (data) => {
         const { id_chofer_usuario, nombre_cliente, id_cliente, placa_taxi } = data;
 
@@ -84,6 +84,7 @@ io.on('connection', (socket) => {
                     placa_taxi: placa_taxi,
                     origen: data.origen,
                     destino: data.destino,
+                    precio: data.precio,
                     timestamp: new Date()
                 });
             });
@@ -429,6 +430,7 @@ app.get('/api/historialusuario/:id', (req, res) => {
         v.destino, 
         v.fecha_viaje, 
         v.estado,
+        co.monto AS precio,
         u_pasajero.nombre AS nombre_pasajero,
         u_chofer.nombre AS nombre_chofer,
         t.placa AS placa_taxi, 
@@ -440,6 +442,7 @@ app.get('/api/historialusuario/:id', (req, res) => {
     LEFT JOIN Usuario u_chofer ON c.id_chofer = u_chofer.id_chofer
     LEFT JOIN Taxi t ON c.id_taxi = t.id_taxi
     LEFT JOIN TiposPago tp ON v.id_pago = tp.id_pago
+    LEFT JOIN Costos co ON v.id_viaje = co.id_viaje 
     WHERE ${columnaFiltro} = ?
     ORDER BY v.fecha_viaje DESC`; 
 
