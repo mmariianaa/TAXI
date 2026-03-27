@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Injectable, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injectable, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
@@ -13,9 +13,10 @@ import {
   flagOutline, searchOutline, notificationsOutline, mapOutline, 
   carSport, timeOutline, cashOutline, closeOutline, 
   checkmarkCircle, warningOutline, informationCircle, closeCircle,
-  bulbOutline, refreshOutline, closeCircleOutline, alarmOutline 
+  bulbOutline, refreshOutline, closeCircleOutline, alarmOutline, star, starOutline 
 } from 'ionicons/icons'; 
 import { io, Socket } from 'socket.io-client';
+import { AlertController } from '@ionic/angular/standalone';
 
 // ============================================
 // 1. INTERFACES
@@ -99,12 +100,19 @@ export class ConfirmarViajeModalComponent {
   imports: [IonicModule, CommonModule, FormsModule, RouterLink]
 })
 export class PantallausuarioPage implements OnInit, OnDestroy {
+  private alertCtrl = inject(AlertController);
+
   map!: L.Map;
   routingControl: any;
   miUbicacion: L.LatLng | null = null;
   origen: string = 'Mi ubicación';
   destino: string = '';
   
+  mostrarModalCalificarChofer: boolean = false;
+  ratingActual: number = 0;
+  comentarioChofer: string = '';
+
+  viajeActivo: any = null;
   viajeSolicitado = false;
   viajeEnCurso = false;
   mostrarTaxis = false;
@@ -133,7 +141,7 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
       searchOutline, notificationsOutline, mapOutline, carSport, timeOutline, 
       cashOutline, closeOutline, checkmarkCircle, warningOutline, 
       informationCircle, closeCircle, bulbOutline, refreshOutline, 
-      closeCircleOutline, alarmOutline 
+      closeCircleOutline, alarmOutline, star, starOutline
     });
 
     this.cargarUsuarioDesdeStorage();
@@ -194,6 +202,38 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
       this.viajeSolicitado = false;
       this.abrirModalNotificacion('Error', data.mensaje || 'No se pudo procesar tu solicitud', 'warning-outline', 'error');
     });
+
+    // 👇 --- NUEVOS EVENTOS DE PAGO --- 👇
+    
+    // 1. El chofer solicita el pago al finalizar el viaje
+    this.socket.on('solicitar_metodo_pago', async (data: any) => {
+      console.log('El chofer está solicitando el pago:', data);
+      this.viajeActivo = data;
+      await this.mostrarOpcionesDePago();
+    });
+
+    // 2. El chofer confirma que recibió el pago
+    this.socket.on('viaje_completado_exito', async (data: any) => {
+      console.log('¡Viaje completado y pagado!', data);
+      
+      const alert = await this.alertCtrl.create({
+        header: '¡Viaje Finalizado! 🎉',
+        message: 'Tu pago ha sido procesado correctamente. ¡Gracias por viajar con nosotros!',
+        buttons: ['OK']
+      });
+      await alert.present();
+
+      // Cuando el usuario cierra la alerta de éxito, activamos la calificación
+      await alert.onDidDismiss();
+      this.mostrarModalCalificarChofer = true; 
+      
+      // Limpiamos el mapa y las variables
+      this.viajeActivo = null;
+      this.viajeEnCurso = false;
+      this.destino = '';
+      if (this.routingControl) this.map.removeControl(this.routingControl);
+    });
+
   }
 
   // --- Lógica de Localización y Mapa ---
@@ -317,6 +357,58 @@ async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tip
   await modal.present();
   return modal.onDidDismiss(); // Devuelve esto para saber cuándo se cerró
 }
+
+// --- LÓGICA DE PAGOS ---
+
+  async mostrarOpcionesDePago() {
+    const alert = await this.alertCtrl.create({
+      header: 'Método de Pago 💳',
+      message: 'Tu viaje ha terminado. ¿Cómo deseas pagar?',
+      backdropDismiss: false, // Evita que cierre la alerta tocando fuera
+      buttons: [
+        {
+          text: 'Efectivo 💵',
+          handler: () => {
+            this.socket.emit('usuario_elige_efectivo', {
+              id_viaje: this.viajeActivo.id_viaje,
+              id_chofer: this.viajeActivo.id_chofer,
+              id_usuario: this.viajeActivo.id_usuario
+            });
+            this.mostrarMensajeEspera('Esperando a que el chofer confirme la recepción del efectivo...');
+          }
+        },
+        {
+          text: 'Tarjeta 💳',
+          handler: () => {
+            this.socket.emit('usuario_paga_tarjeta', {
+              id_viaje: this.viajeActivo.id_viaje,
+              id_chofer: this.viajeActivo.id_chofer,
+              id_usuario: this.viajeActivo.id_usuario
+            });
+            this.mostrarMensajeEspera('Procesando pago con tarjeta y avisando al chofer...');
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async mostrarMensajeEspera(mensaje: string) {
+    const alertEspera = await this.alertCtrl.create({
+      header: 'Procesando...',
+      message: mensaje,
+      backdropDismiss: false,
+      buttons: [] // Sin botones para obligar a esperar
+    });
+    await alertEspera.present();
+
+    // Cuando el chofer confirme y llegue el evento, cerramos esta alerta de espera
+    this.socket.once('viaje_completado_exito', () => {
+      alertEspera.dismiss();
+    });
+  }
+
   logout() {
     if (this.socket) this.socket.disconnect();
     localStorage.clear();
@@ -336,4 +428,30 @@ async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tip
   ionViewDidEnter() { this.obtenerUbicacionActual(); }
   ngOnDestroy() { if (this.socket) this.socket.disconnect(); }
   irANotificaciones() { this.router.navigate(['/cambiarrutaanotiusuario']); }
+
+  // FUNCIONES (Ponlas al final de tu archivo)
+  setRating(estrellas: number) {
+    this.ratingActual = estrellas;
+  }
+
+  enviarCalificacion() {
+    console.log('Calificación enviada:', this.ratingActual, this.comentarioChofer);
+
+    // Aquí mostramos el mensaje de agradecimiento
+    this.abrirModalNotificacion(
+      '¡Gracias por viajar con nosotros! 🚕',
+      'Tu calificación ha sido enviada.',
+      'checkmark-circle',
+      'success'
+    );
+
+    // Reseteamos todo para dejar la pantalla limpia
+    this.mostrarModalCalificarChofer = false;
+    this.ratingActual = 0;
+    this.comentarioChofer = '';
+    
+    this.viajeActivo = null; 
+    this.viajeEnCurso = false;
+    this.destino = '';
+  }
 }

@@ -142,6 +142,39 @@ io.on('connection', (socket) => {
         });
     });
 
+    socket.on('rechazar_viaje', (data) => {
+        const { id_viaje, id_cliente } = data;
+        console.log(`Viaje ${id_viaje} RECHAZADO. Avisando a usuario_${id_cliente}`);
+        io.to(`usuario_${id_cliente}`).emit('viaje_rechazado', {
+            id_viaje: id_viaje,
+            mensaje: 'El chofer no puede tomar tu viaje en este momento. Por favor, selecciona otro taxi.'
+        });
+    });
+
+    
+
+    socket.on('finalizar_viaje', (data) => {
+        const {  id_usuario } = data;
+        io.to(`usuario_${id_usuario}`).emit('solicitar_metodo_pago', data);
+    });
+
+    socket.on('usuario_elige_efectivo', (data) => {
+        const { id_chofer } = data;
+        io.to(`usuario_${id_chofer}`).emit('chofer_confirma_efectivo', data); 
+    });
+
+    socket.on('usuario_paga_tarjeta', (data) => {
+        const { id_chofer } = data;
+        io.to(`usuario_${id_chofer}`).emit('chofer_pago_recibido', data);
+    });
+
+    socket.on('chofer_confirma_pago', (data) => {
+        const { id_viaje, id_usuario } = data;
+        io.to(`usuario_${id_usuario}`).emit('viaje_completado_exito', data);
+        
+        conexion.query('UPDATE Viajes SET estado = "completado" WHERE id_viaje = ?', [id_viaje]);
+    });
+
     socket.on('disconnect', () => {
         console.log('Cliente desconectado:', socket.id);
 

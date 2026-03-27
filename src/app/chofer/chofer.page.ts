@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import {
   IonContent, IonIcon, IonButtons, IonHeader, IonTitle,
   IonToolbar, IonMenuButton, IonList, IonItem, IonLabel,
-  IonMenu, IonTextarea
+  IonMenu, IonTextarea, AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -36,6 +36,7 @@ export class ChoferPage implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private http = inject(HttpClient);
+  private alertCtrl = inject(AlertController);
 
   activeTab: string = 'perfil';
   isActive: boolean = true;
@@ -104,6 +105,44 @@ if (data) {
     this.solicitudesPendientes.push(data);
     this.mostrarAlertaSolicitud = true;
   });
+
+  // A. El usuario pagará en efectivo
+      this.socket.on('chofer_confirma_efectivo', async (dataPago: any) => {
+        const alert = await this.alertCtrl.create({
+          header: 'Pago en Efectivo 💵',
+          message: 'El usuario pagará en efectivo. ¿Ya recibiste el dinero?',
+          backdropDismiss: false,
+          buttons: [
+            { 
+              text: 'Sí, pago recibido', 
+              handler: () => {
+                this.socket.emit('chofer_confirma_pago', dataPago);
+                this.confirmarYGuardarViaje(); // Guardamos en BD
+              } 
+            }
+          ]
+        });
+        await alert.present();
+      });
+
+      // B. El usuario pagó con tarjeta
+      this.socket.on('chofer_pago_recibido', async (dataPago: any) => {
+        const alert = await this.alertCtrl.create({
+          header: '¡Pago Exitoso! 💳',
+          message: 'El usuario ha pagado con tarjeta. El dinero está asegurado.',
+          buttons: [
+            { 
+              text: 'Aceptar', 
+              handler: () => {
+                this.socket.emit('chofer_confirma_pago', dataPago);
+                this.confirmarYGuardarViaje(); // Guardamos en BD
+              } 
+            }
+          ]
+        });
+        await alert.present();
+      });
+      // 👆 --- FIN NUEVOS EVENTOS --- 👆
 
     } else {
       this.router.navigate(['/home']);
@@ -295,38 +334,50 @@ if (data) {
   }
 
   finalizarViaje() {
-
-    this.mostrarModalCalificar = true;
-
-    this.mostrarModalCalificar = true; // Mostramos el modal al usuario
+    if (!this.viajePendiente) return; 
     
-    if (!this.viajePendiente) return; // Validación de seguridad
+    // Le avisamos al chofer que estamos esperando al usuario
+    alert('Esperando a que el usuario seleccione su método de pago...');
 
-    // 1. Armamos el objeto tal como lo espera el POST '/api/registrar-viaje'
+    // Le mandamos la señal al usuario a través del servidor
     const datosViaje = {
+      id_viaje: this.viajePendiente.id,
+      id_usuario: this.viajePendiente.id_usuario, 
+      id_chofer: this.driverInfo.id // Usamos el ID de usuario del chofer para que el server lo encuentre
+    };
+    this.socket.emit('finalizar_viaje', datosViaje);
+  }
+
+  // Esta función SOLO se llama cuando el chofer le da en "Aceptar" a la alerta de pago
+  confirmarYGuardarViaje() {
+    this.mostrarModalCalificar = true; 
+    
+    const datosViajeBD = {
       id_usuario: this.viajePendiente.id_usuario, 
       id_chofer: this.driverInfo.id_chofer || this.driverInfo.id,
       origen: this.viajePendiente.origen,
       destino: this.viajePendiente.destino,
-      precio: this.viajePendiente.ganancia, // Sacamos el precio numérico
-      id_pago: 1, // Reemplazar con el ID real si lo recibes del socket (ej: solicitud.id_pago)
-      id_ruta: null, // Puedes enviar null si la base de datos lo permite o el ID de la ruta
+      precio: this.viajePendiente.ganancia, 
+      id_pago: 1, 
+      id_ruta: null, 
       estado: 'completado'
     };
 
-    console.log('Enviando datos a BD:', datosViaje);
+    console.log('Guardando en BD tras confirmación de pago:', datosViajeBD);
 
-    // 2. Hacemos la petición POST al backend
-    // Asegúrate de cambiar el puerto (3000) por el que use tu backend si es diferente
-    this.http.post('http://localhost:3000/api/registrar-viaje', datosViaje)
+    this.http.post('http://localhost:3000/api/registrar-viaje', datosViajeBD)
       .subscribe({
         next: (respuesta: any) => {
-          console.log('✅ Viaje guardado en base de datos con éxito:', respuesta);
+          console.log('✅ Viaje guardado con éxito:', respuesta);
+
+          this.mostrarModalCalificar = true;
+          
         },
         error: (error) => {
           console.error('❌ Error al guardar el viaje en la BD:', error);
         }
       });
+  
 
   }
 

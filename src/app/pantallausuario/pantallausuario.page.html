@@ -173,3 +173,27 @@
 
   </ion-content>
 </div>
+
+<!-- MODAL DE CALIFICACIÓN -->
+  <div class="modal-overlay" [style.display]="mostrarModalCalificarChofer ? 'flex' : 'none'">
+    <div class="rating-modal">
+      <div class="modal-header">
+        <h3>Calificar Pasajero</h3>
+        <p>¿Cómo fue tu experiencia con {{ viajeActivo?.nombre_chofer || "tu chofer" }}?</p>
+      </div>
+
+      <div class="stars-container">
+        @for (starNum of [1,2,3,4,5]; track starNum) {
+        <ion-icon [name]="ratingActual >= starNum ? 'star' : 'star-outline'" (click)="setRating(starNum)">
+        </ion-icon>
+        }
+      </div>
+
+      <div class="comment-section">
+        <ion-textarea placeholder="Escribe un comentario opcional..." [(ngModel)]="comentarioChofer" rows="3">
+        </ion-textarea>
+      </div>
+
+      <button class="btn-send-rating" (click)="enviarCalificacion()">ENVIAR CALIFICACIÓN</button>
+    </div>
+  </div>
