@@ -487,6 +487,45 @@ app.get('/api/historialusuario/:id', (req, res) => {
         res.json(results);
     });
 });
+app.get('/api/historialchofer/:id', (req, res) => {
+    // Sacamos el ID del chofer que viene en la URL
+    const { id } = req.params;
+
+    // Consulta SQL filtrando específicamente por v.id_chofer
+    const query = `
+    SELECT 
+        v.id_viaje,
+        v.id_usuario,
+        v.id_chofer,
+        v.origen, 
+        v.destino, 
+        v.fecha_viaje, 
+        v.estado,
+        co.monto AS precio,
+        u_pasajero.nombre AS nombre_pasajero,
+        u_chofer.nombre AS nombre_chofer,
+        t.placa AS placa_taxi, 
+        t.modelo AS modelo_taxi,
+        tp.tipo_pago
+    FROM Viajes v
+    LEFT JOIN Usuario u_pasajero ON v.id_usuario = u_pasajero.id_usuario
+    LEFT JOIN Chofer c ON v.id_chofer = c.id_chofer
+    LEFT JOIN Usuario u_chofer ON c.id_chofer = u_chofer.id_chofer
+    LEFT JOIN Taxi t ON c.id_taxi = t.id_taxi
+    LEFT JOIN TiposPago tp ON v.id_pago = tp.id_pago
+    LEFT JOIN Costos co ON v.id_viaje = co.id_viaje 
+    WHERE v.id_chofer = ? 
+    ORDER BY v.fecha_viaje DESC`; 
+
+    // Ejecutamos la consulta pasando el ID
+    conexion.query(query, [id], (err, results) => {
+        if (err) {
+            console.error('ERROR SQL DETALLADO:', err.message);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(results);
+    });
+});
     //CREAR NUEVO VIAJE (POST)
     app.post('/api/historialusuario', (req, res) => {
         // CAMBIO: Asegúrate de que el body use 'fecha_inicio' si lo envías desde el front

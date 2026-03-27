@@ -1,13 +1,90 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>historial-chofer</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar color="light" mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/perfilchofer" icon="arrow-back-outline" text="Atrás"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mis Viajes <span>Smart</span>Taxi</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">historial-chofer</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingText="Desliza para actualizar" refreshingSpinner="crescent"></ion-refresher-content>
+  </ion-refresher>
+
+  @if (cargando) {
+    <div class="loading-container" style="text-align: center; margin-top: 50px;">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p style="color: gray;">Cargando tu historial de viajes...</p>
+    </div>
+  } @else {
+
+    @if (errorMsg) {
+      <div class="empty-container" style="text-align: center; margin-top: 50px;">
+        <ion-icon name="alert-circle-outline" color="danger" size="large"></ion-icon>
+        <p>{{ errorMsg }}</p>
+        <ion-button fill="clear" color="primary" (click)="obtenerHistorial()">
+          Intentar de nuevo
+        </ion-button>
+      </div>
+    }
+
+    @for (viaje of viajes; track viaje.id_viaje) {
+      <ion-card mode="ios">
+        <ion-item lines="none">
+          <ion-icon name="navigate-circle-outline" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h2>{{ viaje.destino || 'Destino no especificado' }}</h2>
+            <p>
+              <ion-icon name="time-outline"></ion-icon>
+              {{ viaje.fecha_viaje | date:'dd/MM/yyyy, h:mm a' }}
+            </p>
+          </ion-label>
+          <ion-badge slot="end" [color]="viaje.estado === 'completado' ? 'success' : (viaje.estado === 'cancelado' ? 'danger' : 'warning')">
+            {{ viaje.estado | titlecase }}
+          </ion-badge>
+        </ion-item>
+
+        <ion-card-content>
+          <div class="info-row" style="margin-bottom: 8px;">
+            <ion-icon name="pin-outline" style="margin-right: 8px; vertical-align: middle;"></ion-icon>
+            <div class="text-container" style="display: inline-block; vertical-align: middle;">
+              <strong style="display: block; color: #333;">Origen</strong>
+              <span style="color: #666;">{{ viaje.origen || 'Punto de encuentro' }}</span>
+            </div>
+          </div>
+
+          <div class="info-row" style="margin-bottom: 15px;">
+            <ion-icon name="person-outline" style="margin-right: 8px; vertical-align: middle;"></ion-icon>
+            <div class="text-container" style="display: inline-block; vertical-align: middle;">
+              <strong style="display: block; color: #333;">Pasajero y Vehículo</strong>
+              <span style="color: #666;">{{ viaje.nombre_pasajero || 'Sin pasajero' }} • {{ viaje.modelo_taxi || 'Auto' }} ({{ viaje.placa_taxi || '---' }})</span>
+            </div>
+          </div>
+
+          <div class="divider" style="height: 1px; background-color: #f0f0f0; margin-bottom: 12px;"></div>
+
+          <div class="price-section" style="display: flex; justify-content: space-between; align-items: center; font-size: 1.1em;">
+            <div class="payment-method" style="color: #666;">
+              <ion-icon name="card-outline" style="vertical-align: middle; margin-right: 4px;"></ion-icon>
+              {{ viaje.tipo_pago || 'Efectivo' }}
+            </div>
+            
+            <div class="total-amount" style="font-weight: bold; color: #2dd36f; font-size: 1.2em;">
+              {{ viaje.precio ? (viaje.precio | currency:'MXN':'symbol-narrow') : 'Pendiente' }}
+            </div>
+            
+          </div>
+        </ion-card-content>
+      </ion-card>
+    } @empty {
+      <div class="empty-container" style="text-align: center; margin-top: 80px;">
+        <ion-icon name="car-outline" size="large" color="medium" style="font-size: 60px;"></ion-icon>
+        <p style="color: gray; font-size: 1.1em;">Aún no has realizado viajes.</p>
+        <ion-button fill="outline" color="dark" (click)="irAPantallachofer($event)" style="margin-top: 15px;">
+          Ir a buscar pasajeros
+        </ion-button>
+      </div>
+    }
+  }
 </ion-content>

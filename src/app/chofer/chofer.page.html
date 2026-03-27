@@ -1,4 +1,4 @@
-<ion-menu contentId="main-content" type="overlay">
+<ion-menu menuId="menu-chofer" contentId="chofer-content" type="overlay">
   <ion-header class="ion-no-border">
     <ion-toolbar>
       <ion-title>Menú Taxi</ion-title>
@@ -15,20 +15,23 @@
         <ion-icon slot="start" name="car-outline"></ion-icon>
         <ion-label>Viajes</ion-label>
       </ion-item>
-      <ion-item button (click)="setTab('historial')">
+      <ion-item button (click)="irAHistorial()">
         <ion-icon slot="start" name="time-outline"></ion-icon>
-        <ion-label>Historial</ion-label> <!-- 👈 Antes decía "Rechazados" -->
+        <ion-label>Historial</ion-label>
+      </ion-item>
+      <ion-item button (click)="logout()" style="margin-top: 30px;">
+        <ion-icon slot="start" name="log-out-outline" color="danger"></ion-icon>
+        <ion-label color="danger" style="font-weight: bold;">Cerrar Sesión</ion-label>
       </ion-item>
     </ion-list>
   </ion-content>
 </ion-menu>
 
-<!-- CONTENIDO PRINCIPAL -->
-<div class="ion-page" id="main-content">
+<div class="ion-page" id="chofer-content">
   <ion-header class="ion-no-border">
     <ion-toolbar>
       <ion-buttons slot="start">
-        <ion-menu-button color="dark"></ion-menu-button>
+        <ion-menu-button menu="menu-chofer" color="dark"></ion-menu-button>
       </ion-buttons>
       <ion-title>Panel Chofer</ion-title>
     </ion-toolbar>
@@ -36,8 +39,7 @@
     <div class="custom-tabs">
       <div class="tab-btn" [class.active]="activeTab === 'perfil'" (click)="setTab('perfil')">Perfil</div>
       <div class="tab-btn" [class.active]="activeTab === 'viajes'" (click)="setTab('viajes')">Viajes</div>
-      <div class="tab-btn" [class.active]="activeTab === 'historial'" (click)="setTab('historial')">Historial</div>
-      <!-- 👆 Antes decía "Rechazados" -->
+      
     </div>
   </ion-header>
 

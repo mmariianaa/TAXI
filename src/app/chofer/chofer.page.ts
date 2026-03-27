@@ -157,7 +157,9 @@ if (data) {
   cerrarAlerta() {
     this.mostrarAlertaSolicitud = false;
   }
-
+  irAHistorial() {
+  this.router.navigate(['/historial-chofer']);
+}
   aceptarViajeSocket(solicitud: any) {
     console.log('✅ Aceptando viaje:', solicitud);
 
