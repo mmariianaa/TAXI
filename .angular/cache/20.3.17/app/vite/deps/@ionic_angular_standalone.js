@@ -87,7 +87,7 @@ import {
   setIonicClasses,
   setOverlayId,
   toastController
-} from "./chunk-GAISGWA4.js";
+} from "./chunk-LMLX3YSH.js";
 import {
   iosTransitionAnimation
 } from "./chunk-5GPJNYMU.js";
@@ -119,6 +119,9 @@ import {
   writeTask
 } from "./chunk-XUXNI4T2.js";
 import {
+  shouldUseCloseWatcher
+} from "./chunk-VYRO5QLB.js";
+import {
   addEventListener,
   assert,
   clamp,
@@ -142,9 +145,6 @@ import {
   GESTURE_CONTROLLER,
   createGesture
 } from "./chunk-6U2AQA2C.js";
-import {
-  shouldUseCloseWatcher
-} from "./chunk-VYRO5QLB.js";
 import {
   config,
   printIonError,
@@ -223,10 +223,10 @@ import {
   ɵɵtemplate,
   ɵɵviewQuery
 } from "./chunk-E4XS2YSY.js";
+import "./chunk-UQGLAMHP.js";
 import {
   fromEvent
 } from "./chunk-576P5TAG.js";
-import "./chunk-UQGLAMHP.js";
 import {
   __decorate
 } from "./chunk-2K3BB2X3.js";

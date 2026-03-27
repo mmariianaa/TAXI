@@ -145,7 +145,7 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
 
   private cargarUsuarioDesdeStorage() {
     try {
-      const userData = localStorage.getItem('user');
+      const userData = localStorage.getItem('user_data');
       if (userData) {
         this.usuarioLogueado = JSON.parse(userData);
         console.log('Usuario cargado:', this.usuarioLogueado);
