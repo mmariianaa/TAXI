@@ -1,0 +1,85 @@
+// Paleta de colores SmartTaxi
+$taxi-yellow: #ffcc00; // Amarillo característico
+$taxi-dark: #222222;   // Negro/Gris oscuro elegante
+$bg-light: #f4f5f8;    // Fondo claro para la página
+$text-muted: #666666;
+
+// Cabecera (Header)
+ion-toolbar {
+  --background: #{$taxi-dark};
+  --color: #{$taxi-yellow}; // El texto y los íconos se verán amarillos
+}
+
+// Botón "Volver al Panel" personalizado
+.btn-volver {
+  --background: #{$taxi-yellow};
+  --color: #{$taxi-dark};
+  --border-radius: 8px;
+  --box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  margin-right: 10px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  
+  ion-icon {
+    margin-right: 5px;
+  }
+}
+
+// Título de la sección
+.section-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #{$taxi-dark};
+  margin: 20px 15px 10px;
+  padding-bottom: 5px;
+  border-bottom: 3px solid #{$taxi-yellow};
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+// Tarjetas de Comentarios
+.comment-card {
+  border-left: 5px solid #{$taxi-yellow};
+  border-radius: 12px;
+  margin-bottom: 15px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+
+  h2 {
+    font-weight: bold;
+    color: #{$taxi-dark};
+  }
+
+  p {
+    color: #{$text-muted};
+    font-size: 0.85rem;
+  }
+
+  .comment-text {
+    font-size: 1.05rem;
+    color: #333;
+    font-style: italic;
+    line-height: 1.4;
+    padding-top: 5px;
+  }
+
+  // El pequeño contenedor de las estrellas
+  .rating-badge {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 204, 0, 0.15);
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 204, 0, 0.3);
+    
+    ion-icon {
+      margin-right: 4px;
+      font-size: 1.1rem;
+    }
+    span {
+      font-weight: bold;
+      color: #{$taxi-dark};
+      font-size: 1.1rem;
+    }
+  }
+}

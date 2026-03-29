@@ -17,6 +17,45 @@ app.get('/ojo', (req, res) => {
     res.send('API de TaxiDB funcionando correctamente');
 });
 
+// 1. Endpoint para que el USUARIO envíe su calificación real
+app.post('/api/comentarios', (req, res) => {
+    const { id_viaje, id_usuario, id_chofer, calificacion, comentario } = req.body;
+    const query = `INSERT INTO Comentarios (id_viaje, id_usuario, id_chofer, calificacion, comentario) VALUES (?, ?, ?, ?, ?)`;
+    
+    conexion.query(query, [id_viaje, id_usuario, id_chofer, calificacion, comentario], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(201).json({ success: true, message: 'Comentario guardado' });
+    });
+});
+
+// 2. Endpoint para el ADMIN (con cruce de tablas para ver nombres reales)
+app.get('/api/admin/comentarios', (req, res) => {
+    const query = `
+        SELECT 
+            c.id_comentario, c.comentario, c.calificacion, c.fecha,
+            u.nombre AS nombre_usuario, u.apellido AS apellido_usuario,
+            uch.nombre AS nombre_chofer, t.placa
+        FROM Comentarios c
+        JOIN Usuario u ON c.id_usuario = u.id_usuario
+        JOIN Chofer ch ON c.id_chofer = ch.id_chofer
+        JOIN Usuario uch ON ch.id_chofer = uch.id_chofer
+        JOIN Taxi t ON ch.id_taxi = t.id_taxi
+        ORDER BY c.fecha DESC`;
+
+    conexion.query(query, (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(results);
+    });
+});
+
+// 3. Endpoint para ELIMINAR un comentario (ESTE TE FALTABA)
+app.delete('/api/admin/comentarios/:id', (req, res) => {
+    const { id } = req.params;
+    conexion.query('DELETE FROM Comentarios WHERE id_comentario = ?', [id], (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true });
+    });
+});
 
 // ENDPOINT DE LOGIN 
 app.post('/api/login', (req, res) => {
@@ -26,7 +65,6 @@ app.post('/api/login', (req, res) => {
         return res.status(400).json({ error: 'Faltan correo o contraseña' });
     }
 
-    // Consulta para traer datos de Usuario, Chofer y su Taxi (si tiene)
     const query = `
         SELECT 
             u.id_usuario, u.nombre, u.apellido, u.correo, u.contrasena, u.id_chofer,
@@ -43,14 +81,11 @@ app.post('/api/login', (req, res) => {
 
         const user = results[0];
 
-        // Comparar contraseña encriptada
         const match = await bcrypt.compare(contrasena, user.contrasena);
         if (!match) return res.status(401).json({ error: 'Contraseña incorrecta' });
 
-        // Crear Token
         const token = jwt.sign({ id: user.id_usuario }, JWT_SECRET, { expiresIn: '24h' });
 
-        // Responder con datos estructurados para tu Perfil Chofer
         res.json({
             token,
             user: {
@@ -73,7 +108,6 @@ app.post('/api/login', (req, res) => {
 });
 
 // REGISTRO DEL CHOFER
-
 app.post('/api/registrochofer', async (req, res) => {
     try {
         const {
@@ -85,17 +119,14 @@ app.post('/api/registrochofer', async (req, res) => {
 
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10);
 
-        // Insertar Taxi
         const queryTaxi = `INSERT INTO Taxi (marca, modelo, color, placa, capacidad) VALUES (?, ?, ?, ?, ?)`;
         conexion.query(queryTaxi, [marca_vehiculo, modelo_vehiculo, color_vehiculo, placa, capacidad], (err, taxiRes) => {
             if (err) return res.status(500).json({ error: 'Error al registrar vehículo' });
 
-            // Insertar Chofer
             const queryChofer = `INSERT INTO Chofer (licencia, experiencia, id_taxi) VALUES (?, ?, ?)`;
             conexion.query(queryChofer, [licencia, experiencia, taxiRes.insertId], (err, choferRes) => {
                 if (err) return res.status(500).json({ error: 'Error al registrar chofer' });
 
-                //Insertar Usuario
                 const queryUser = `INSERT INTO Usuario 
                     (nombre, apellido, edad, tipo_documento, numero_documento, correo, telefono, contrasena, id_chofer) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -118,17 +149,10 @@ app.post('/api/registrochofer', async (req, res) => {
 app.post('/api/registrousuario', async (req, res) => {
     try {
         const { 
-            nombre, 
-            apellido, 
-            edad, 
-            correo, 
-            telefono, 
-            contrasena,
-            tipo_documento,  
-            numero_documento    
+            nombre, apellido, edad, correo, telefono, contrasena,
+            tipo_documento, numero_documento    
         } = req.body;
 
-        // Validar campos requeridos
         if (!nombre || !apellido || !edad || !correo || !contrasena || !tipo_documento || !numero_documento) {
             return res.status(400).json({ error: 'Faltan campos requeridos' });
         }
@@ -140,23 +164,14 @@ app.post('/api/registrousuario', async (req, res) => {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
         conexion.query(query, [
-            nombre, 
-            apellido, 
-            edad, 
-            tipo_documento,    
-            numero_documento,  
-            correo, 
-            telefono, 
-            contrasenaEncriptada
+            nombre, apellido, edad, tipo_documento, numero_documento,
+            correo, telefono, contrasenaEncriptada
         ], (err, result) => {
             if (err) {
                 console.error('Error SQL:', err);
-                
-                // Verificar si es error de email duplicado
                 if (err.code === 'ER_DUP_ENTRY') {
                     return res.status(400).json({ error: 'El correo o documento ya está registrado' });
                 }
-                
                 return res.status(500).json({ error: 'Error al registrar usuario' });
             }
             
@@ -186,32 +201,23 @@ app.get('/getTodosChoferes', (req, res) => {
     });
 });
 
-app.listen(port, () => {
-    console.log(`API corriendo en http://localhost:${port}`);
-});
-
 // CAMBIAR CONTRASEÑA
-
 app.put('/api/usuarios/:id/password', async (req, res) => {
     const { id } = req.params;
-    const { nueva } = req.body;  //recibe una nuea contraseña, no la actual.
+    const { nueva } = req.body;
 
     if (!nueva || nueva.length < 6) {
         return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
     }
 
     try {
-        // Encriptar nueva contraseña directamente
         const nuevaEncriptada = await bcrypt.hash(nueva, 10);
-
-        // Actualizar sin verificar la actual
         const queryUpdate = 'UPDATE Usuario SET contrasena = ? WHERE id_usuario = ?';
 
         conexion.query(queryUpdate, [nuevaEncriptada, id], (err2) => {
             if (err2) {
                 return res.status(500).json({ error: 'Error al actualizar contraseña' });
             }
-
             res.json({ success: true, message: 'Contraseña actualizada' });
         });
 
@@ -221,7 +227,6 @@ app.put('/api/usuarios/:id/password', async (req, res) => {
 });
 
 // ACTUALIZAR TELÉFONO
-
 app.put('/api/usuarios/:id', (req, res) => {
     const { id } = req.params;
     const { telefono } = req.body;
@@ -237,7 +242,6 @@ app.put('/api/usuarios/:id', (req, res) => {
             console.error('Error al actualizar teléfono:', err);
             return res.status(500).json({ error: 'Error al actualizar teléfono' });
         }
-
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
@@ -248,4 +252,8 @@ app.put('/api/usuarios/:id', (req, res) => {
             telefono: telefono
         });
     });
+});
+
+app.listen(port, () => {
+    console.log(`API corriendo en http://localhost:${port}`);
 });

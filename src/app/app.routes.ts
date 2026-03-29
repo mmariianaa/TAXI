@@ -76,5 +76,15 @@ export const routes: Routes = [
     path: 'administrador',
     loadComponent: () => import('./administrador/administrador/administrador.page').then( m => m.AdministradorPage)
   },
+  {
+    path: 'admin-comentarios',
+    loadComponent: () => import('./admin-comentarios/admin-comentarios.page').then( m => m.AdminComentariosPage)
+  },
+  {
+  path: 'admin-comentarios',
+  loadComponent: () => import('./admin-comentarios/admin-comentarios.page').then( m => m.AdminComentariosPage),
+  canActivate: [authGuard]
+},
+
 
 ];
