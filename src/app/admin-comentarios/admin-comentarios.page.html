@@ -1,0 +1,62 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="taxi-header">
+    
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    
+    <ion-buttons slot="end">
+
+    </ion-buttons>
+    <ion-button (click)="volverPanel()" color="dark" style="font-weight: bold;">
+        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+        Volver al Panel
+      </ion-button>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="taxi-content">
+  <div class="section-title">Comentarios de Usuarios</div>
+
+  @if (listaComentarios.length === 0) {
+    <div class="ion-padding ion-text-center">
+      <ion-icon name="chatbubble-ellipses-outline" style="font-size: 64px; color: #ccc;"></ion-icon>
+      <p style="color: #666;">No hay comentarios registrados todavía.</p>
+    </div>
+  }
+
+  <ion-list mode="ios" class="comments-list">
+    @for (item of listaComentarios; track item.id_comentario) {
+      <ion-card mode="ios" class="comment-card">
+        <ion-item lines="none">
+          <ion-avatar slot="start">
+            <img [src]="item.foto_usuario || 'assets/avatar.png'">
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ item.nombre_usuario }} {{ item.apellido_usuario }}</h2>
+            <p>{{ item.fecha | date:'short' }}</p>
+          </ion-label>
+          <div slot="end" class="rating-badge">
+            <ion-icon name="star" color="warning"></ion-icon>
+            <span>{{ item.calificacion }}</span>
+          </div>
+        </ion-item>
+
+        <ion-card-content>
+          <p class="comment-text">"{{ item.comentario }}"</p>
+          <div class="driver-ref" style="margin-top: 10px; font-size: 0.9em; color: #555;">
+            <ion-note>Chofer asignado: {{ item.nombre_chofer }} (Placa: {{ item.placa }})</ion-note>
+          </div>
+        </ion-card-content>
+
+        <div class="ion-text-right ion-padding-horizontal ion-padding-bottom">
+          <ion-button fill="clear" color="danger" (click)="eliminarComentario(item.id_comentario)">
+            <ion-icon slot="start" name="trash-outline"></ion-icon>
+            Eliminar
+          </ion-button>
+        </div>
+      </ion-card>
+    }
+  </ion-list>
+</ion-content>

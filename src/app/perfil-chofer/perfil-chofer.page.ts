@@ -48,7 +48,7 @@ export class PerfilChoferPage implements OnInit {
   tipoMensaje: 'success' | 'error' = 'success';
   mostrarPasswordNueva: boolean = false;
   avatarUrl: string = 'assets/avatar.png';
-   selectedFile: File | null = null;
+  selectedFile: File | null = null;
 
   constructor() {
     addIcons({
@@ -59,44 +59,45 @@ export class PerfilChoferPage implements OnInit {
   }
 
   ngOnInit() {
+    this.cargarDatosUsuario();
+  }
+
+  cargarDatosUsuario() {
     const datosSesion = this.authService.getUserData();
     if (datosSesion) {
       this.choferInfo = datosSesion;
-       //Inicializar avatarUrl con la foto de la BD si existe
-    if (this.choferInfo.foto) {
-      this.avatarUrl = this.choferInfo.foto; // URL pública de Cloudinary
-    } else {
-      this.avatarUrl = 'assets/avatar.png'; // Imagen por defecto
-    }  
+      this.avatarUrl = this.choferInfo.foto || 'assets/avatar.png';
     } else {
       this.router.navigate(['/home']);
     }
   }
 
-async cambiarFoto() {
-  try {
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: true,
-      resultType: CameraResultType.Uri, 
-      source: CameraSource.Photos
-    });
+  async cambiarFoto() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Photos
+      });
 
-    if (image && image.webPath) {
-      const response = await fetch(image.webPath);
-      const blob = await response.blob();
-      
-      this.avatarUrl = image.webPath; 
-      // Guardamos el blob directamente
-      this.selectedFile = blob as any; 
+      if (image && image.webPath) {
+        // Convertir URI a Blob y luego a File para que Multer lo reciba bien
+        const response = await fetch(image.webPath);
+        const blob = await response.blob();
+        
+        this.avatarUrl = image.webPath;
+        // Creamos un archivo real a partir del blob
+        this.selectedFile = new File([blob], `perfil_${Date.now()}.jpg`, { type: 'image/jpeg' });
+      }
+    } catch (error) {
+      console.log('Usuario canceló selección de imagen');
     }
-  } catch (error) {
-    console.log('Usuario canceló');
   }
-}
+
   quitarFoto() {
     this.avatarUrl = 'assets/avatar.png';
-
+    this.selectedFile = null;
   }
 
   activarEdicion() {
@@ -112,126 +113,90 @@ async cambiarFoto() {
 
   cancelarEdicion() {
     this.modoEdicion = false;
-    this.editData = {
-      telefono: '',
-      correo: '',
-      passwordNueva: '',
-      confirmarPassword: ''
-    };
-    this.mensaje = '';
+    this.avatarUrl = this.choferInfo.foto || 'assets/avatar.png';
+    this.selectedFile = null;
   }
 
- guardarCambios() {
-  const userId = this.choferInfo?.id;
-  if (!userId) {
-    this.mostrarMensaje('Error de sesión', 'error');
-    return;
-  }
+  guardarCambios() {
+    // Intentamos obtener el ID de cualquiera de las dos formas comunes
+    const userId = this.choferInfo?.id || this.choferInfo?.id_usuario;
 
-  // Validaciones de teléfono
-  if (this.editData.telefono && this.editData.telefono.length !== 10) {
-    this.mostrarMensaje('El teléfono debe tener 10 dígitos', 'error');
-    return;
-  }
-
-  // Validaciones de correo
-  if (this.editData.correo) {
-    if (!this.editData.correo.includes('@')) {
-      this.mostrarMensaje('El correo debe contener @', 'error');
+    if (!userId) {
+      this.mostrarMensaje('Error de sesión: No se encontró el ID', 'error');
       return;
     }
-    if (!this.editData.correo.includes('.com')) {
-      this.mostrarMensaje('El correo debe terminar en .com', 'error');
+
+    // Validaciones básicas
+    if (this.editData.telefono && this.editData.telefono.length !== 10) {
+      this.mostrarMensaje('El teléfono debe tener 10 dígitos', 'error');
       return;
     }
-  }
 
-  // Validaciones de contraseña
-  if (this.editData.passwordNueva) {
-    if (this.editData.passwordNueva.length < 8) {
-      this.mostrarMensaje('La contraseña debe tener al menos 8 caracteres', 'error');
+    if (this.editData.correo && (!this.editData.correo.includes('@') || !this.editData.correo.includes('.com'))) {
+      this.mostrarMensaje('Correo inválido', 'error');
       return;
     }
-    if (this.editData.passwordNueva !== this.editData.confirmarPassword) {
-      this.mostrarMensaje('Las contraseñas no coinciden', 'error');
-      return;
-    }
-  }
 
-  const noHayCambios =
-    this.editData.telefono === this.choferInfo.telefono &&
-    this.editData.correo === this.choferInfo.correo &&
-    !this.editData.passwordNueva &&
-    !this.selectedFile &&
-    this.avatarUrl === this.choferInfo.foto;
-  // Si no hay cambios
-
-  if (noHayCambios) {
-    this.mostrarMensaje('No hay cambios para guardar', 'error');
-    return;
-  }
-
-  
-  const formData = new FormData();
-  formData.append('nombre', this.choferInfo.nombre);
-  formData.append('apellido', this.choferInfo.apellido);
-  formData.append('telefono', this.editData.telefono);
-  formData.append('correo', this.editData.correo);
-
-  if (this.selectedFile) {
-    formData.append('foto', this.selectedFile); 
-  } else if(this.avatarUrl === 'assets/avatar.png'){
-    formData.append('quitarFoto','true');
-  }
-
-  this.http.put(`http://localhost:3000/api/perfil/actualizar-completo/${userId}`, formData)
-    .subscribe({
-      next: async (res: any) => {
-        // Actualizar datos en memoria/localStorage
-        this.choferInfo.telefono = this.editData.telefono;
-        this.choferInfo.correo = this.editData.correo;
-
-        if (res.foto) {
-          this.avatarUrl = res.foto;
-          this.choferInfo.foto=res.foto; 
-        } else{
-          this.avatarUrl = 'assets/avatar.png';
-          this.choferInfo.foto =null;
-        }
-
-        const userData = this.authService.getUserData();
-        userData.telefono = this.editData.telefono;
-        userData.correo = this.editData.correo;
-        userData.foto= res.foto ||null;
-        localStorage.setItem('user_session',JSON.stringify(userData));
-
-        await this.mostrarAlertaExito('Datos actualizados correctamente');
-
-        if (this.editData.passwordNueva) {
-          this.cambiarPassword(userId);
-        } else {
-          setTimeout(() => this.modoEdicion = false, 1500);
-        }
-      },
-      error: () => {
-        this.mostrarMensaje('Error al actualizar', 'error');
+    if (this.editData.passwordNueva) {
+      if (this.editData.passwordNueva.length < 8) {
+        this.mostrarMensaje('Contraseña mínima 8 caracteres', 'error');
+        return;
       }
-    });
-}
+      if (this.editData.passwordNueva !== this.editData.confirmarPassword) {
+        this.mostrarMensaje('Las contraseñas no coinciden', 'error');
+        return;
+      }
+    }
 
+    // Preparar FormData para enviar al Backend
+    const formData = new FormData();
+    formData.append('nombre', this.choferInfo.nombre || '');
+    formData.append('apellido', this.choferInfo.apellido || '');
+    formData.append('telefono', this.editData.telefono);
+    formData.append('correo', this.editData.correo);
 
-  cambiarPassword(userId: string) {
+    if (this.selectedFile) {
+      formData.append('foto', this.selectedFile);
+    } else if (this.avatarUrl === 'assets/avatar.png' && this.choferInfo.foto) {
+      formData.append('quitarFoto', 'true');
+    }
+
+    this.http.put(`http://localhost:3000/api/perfil/actualizar-completo/${userId}`, formData)
+      .subscribe({
+        next: async (res: any) => {
+          // 1. Actualizar objeto local
+          this.choferInfo.telefono = this.editData.telefono;
+          this.choferInfo.correo = this.editData.correo;
+          this.choferInfo.foto = res.foto || (this.avatarUrl === 'assets/avatar.png' ? null : this.choferInfo.foto);
+          
+          // 2. Actualizar LocalStorage para persistencia
+          localStorage.setItem('user_session', JSON.stringify(this.choferInfo));
+
+          await this.mostrarAlertaExito('Perfil actualizado correctamente');
+
+          // 3. Si hay contraseña nueva, la actualizamos por separado
+          if (this.editData.passwordNueva) {
+            this.cambiarPassword(userId);
+          } else {
+            this.modoEdicion = false;
+          }
+        },
+        error: (err) => {
+          console.error('Error 500:', err);
+          this.mostrarMensaje('Error al actualizar el perfil', 'error');
+        }
+      });
+  }
+
+  cambiarPassword(userId: any) {
     this.http.put(`http://localhost:3000/api/usuarios/${userId}/password`, {
       nueva: this.editData.passwordNueva
     }).subscribe({
       next: () => {
-
-        this.mostrarAlertaExito('Tu contraseña ha sido actualizada correctamente');
-        setTimeout(() => this.modoEdicion = false, 1500);
+        this.mostrarAlertaExito('Tu contraseña ha sido actualizada');
+        this.modoEdicion = false;
       },
-      error: (err) => {
-        this.mostrarMensaje('Error al cambiar contraseña', 'error');
-      }
+      error: () => this.mostrarMensaje('Error al cambiar contraseña', 'error')
     });
   }
 
@@ -240,34 +205,26 @@ async cambiarFoto() {
     this.tipoMensaje = tipo;
     setTimeout(() => this.mensaje = '', 3000);
   }
+
   async mostrarAlertaExito(mensaje: string) {
     const alert = await this.alertCtrl.create({
-      header: ' Éxito',
+      header: 'Éxito',
       message: mensaje,
       cssClass: 'alerta-exito',
       buttons: ['OK']
     });
     await alert.present();
   }
-  // Agrega el método para mostrar la alerta de confirmación
-  async confirmarCerrarSesion() {
-    console.log('Mostrando alerta con clase: alerta-cerrar'); // ← Agrega esto
 
+  async confirmarCerrarSesion() {
     const alert = await this.alertCtrl.create({
       header: '¿Cerrar sesión?',
       message: '¿Estás seguro de que deseas salir?',
-      cssClass: 'alerta-cerrar',  // ← Verifica que está aquí
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'cancel-btn'
-        },
-        {
-          text: 'Sí, salir',
-          handler: () => {
-            this.cerrarSesion();
-          }
+        { text: 'Cancelar', role: 'cancel' },
+        { 
+          text: 'Sí, salir', 
+          handler: () => this.cerrarSesion() 
         }
       ]
     });
@@ -282,17 +239,10 @@ async cambiarFoto() {
   regresar() {
     this.router.navigate(['/chofer']);
   }
+
   soloNumeros(event: KeyboardEvent) {
-    // Teclas permitidas (borrar, flechas, tab)
     const teclasPermitidas = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
-
-    if (teclasPermitidas.includes(event.key)) {
-      return; // No bloquea estas teclas
-    }
-
-    // Bloquea si no es un número (0-9)
-    if (!/^[0-9]$/.test(event.key)) {
-      event.preventDefault();
-    }
+    if (teclasPermitidas.includes(event.key)) return;
+    if (!/^[0-9]$/.test(event.key)) event.preventDefault();
   }
 }

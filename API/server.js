@@ -12,11 +12,12 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
+require('dotenv').config();
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+cloudinary.config({ 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET 
 });
 
 console.log(" Cloudinary conectado con:", cloudinary.config().cloud_name);
@@ -744,12 +745,13 @@ app.put('/api/admin/actualizar-chofer/:id', (req, res) => {
 // RUTA PARA ACTUALIZAR PERFIL DE ADMINISTRADOR
 app.put('/api/perfil/actualizar-completo/:id', upload.single('foto'), async (req, res) => {
     const id_usuario = req.params.id;
-    const { nombre, apellido, telefono, correo, quitarFoto } = req.body;
+    // Extraemos los datos y ponemos strings vacíos por defecto para evitar errores de MySQL
+    const { nombre = '', apellido = '', telefono = '', correo = '', quitarFoto } = req.body;
 
     try {
-        let fotoUrl = undefined; // Usamos undefined para saber si no hay cambios en la foto
+        let fotoUrl = undefined;
 
-        // 1. Si viene un archivo nuevo
+        // 1. Si el usuario subió una nueva foto
         if (req.file) {
             const resultado = await new Promise((resolve, reject) => {
                 const stream = cloudinary.uploader.upload_stream(
@@ -763,51 +765,37 @@ app.put('/api/perfil/actualizar-completo/:id', upload.single('foto'), async (req
             });
             fotoUrl = resultado.secure_url;
         } 
-        // 2. Si el usuario explícitamente quiere quitar la foto
+        // 2. Si el usuario marcó que quiere eliminar la foto
         else if (quitarFoto === 'true') {
             fotoUrl = null;
         }
 
-        // 3. Construcción dinámica de la Query para no borrar la foto actual por error
-        let query = `
-            UPDATE Usuario 
-            SET nombre = ?, 
-                apellido = ?, 
-                telefono = ?, 
-                correo = ?
-        `;
-        const params = [nombre, apellido, telefono, correo];
+        // 3. Construimos la Query dinámicamente
+        let campos = ["nombre = ?", "apellido = ?", "telefono = ?", "correo = ?"];
+        let valores = [nombre, apellido, telefono, correo];
 
-        // Solo añadimos la foto al UPDATE si se subió una nueva o se quitó
         if (fotoUrl !== undefined) {
-            query += `, foto = ?`;
-            params.push(fotoUrl);
+            campos.push("foto = ?");
+            valores.push(fotoUrl);
         }
 
-        query += ` WHERE id_usuario = ?`;
-        params.push(id_usuario);
+        const sql = `UPDATE Usuario SET ${campos.join(', ')} WHERE id_usuario = ?`;
+        valores.push(id_usuario);
 
-        conexion.query(query, params, (err, result) => {
+        conexion.query(sql, valores, (err, result) => {
             if (err) {
-                console.error('❌ Error detallado en MySQL:', err); 
-                return res.status(500).json({ error: err.message });
+                console.error('❌ Error SQL:', err.sqlMessage);
+                return res.status(500).json({ error: 'Error en DB', detalle: err.sqlMessage });
             }
-
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ error: 'No se encontró el usuario' });
-            }
-
-            console.log('✅ Perfil actualizado con éxito para el ID:', id_usuario);
-            
-            // Enviamos la fotoUrl (si es undefined, enviamos la que ya tenía el objeto choferInfo)
             res.json({ 
-                message: 'Perfil actualizado con éxito', 
-                foto: fotoUrl === undefined ? req.body.fotoActual : fotoUrl 
+                success: true, 
+                message: 'Perfil actualizado', 
+                foto: fotoUrl !== undefined ? fotoUrl : req.body.fotoActual 
             });
         });
 
     } catch (error) {
-        console.error("❌ Error al procesar la petición:", error);
-        res.status(500).json({ error: "Error al procesar la imagen o los datos" });
+        console.error("❌ Error en el proceso:", error);
+        res.status(500).json({ error: "Error al procesar la imagen" });
     }
 });

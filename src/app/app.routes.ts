@@ -72,5 +72,9 @@ export const routes: Routes = [
     path: 'historial-chofer',
     loadComponent: () => import('./historial-chofer/historial-chofer.page').then( m => m.HistorialChoferPage),
     canActivate: [authGuard]
+  },  {
+    path: 'admin-comentarios',
+    loadComponent: () => import('./admin-comentarios/admin-comentarios.page').then( m => m.AdminComentariosPage)
   },
+
 ];
