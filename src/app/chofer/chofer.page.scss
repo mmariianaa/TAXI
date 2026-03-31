@@ -581,3 +581,19 @@ $crema: #E6E1DB;
   position: relative;
   z-index: 1;
 }
+#map {
+  width: 100%;
+  height: 100%; // O una altura fija como 400px si está dentro de un contenedor
+  min-height: 350px;
+  z-index: 1;
+}
+
+// Ocultar el cuadro de texto de Leaflet Routing Machine
+.leaflet-routing-container {
+  display: none !important;
+}
+
+.custom-marker {
+  background: transparent;
+  border: none;
+}

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { io } from 'socket.io-client';
 import { HttpClient } from '@angular/common/http';
@@ -19,6 +19,7 @@ import {
 } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
+import 'leaflet-routing-machine';
 
 @Component({
   selector: 'app-chofer',
@@ -48,11 +49,7 @@ export class ChoferPage implements OnInit {
   driverInfo: any = {
     nombre: '',
     apellido: '',
-    vehiculo: {
-      placa: '',
-      marca: '',
-      modelo: ''
-    }
+    vehiculo: { placa: '', marca: '', modelo: '' }
   };
 
   viajePendiente: any = null;
@@ -70,113 +67,79 @@ export class ChoferPage implements OnInit {
 
   constructor() {
     addIcons({
-      menuOutline,
-      notificationsOutline,
-      personCircle,
-      personCircleOutline,
-      saveOutline,
-      carOutline,
-      logOutOutline,
-      timeOutline,
-      checkmarkOutline,
-      personOutline,
-      homeOutline,
-      radioButtonOn,
-      location,
-      mapOutline,
-      star,
-      starOutline
+      menuOutline, notificationsOutline, personCircle,
+      personCircleOutline, saveOutline, carOutline,
+      logOutOutline, timeOutline, checkmarkOutline,
+      personOutline, homeOutline, radioButtonOn, location,
+      mapOutline, star, starOutline
     });
   }
 
   ngOnInit() {
     const data = this.authService.getUserData();
-if (data) {
-  this.driverInfo = data;
-  this.socket = io('http://localhost:3000');
-  
-  // USAR EL ID DE USUARIO (id_usuario) para la sala
-  const idParaSala = this.driverInfo.id; 
-  console.log('🔌 Chofer uniéndose a su sala de notificaciones:', idParaSala);
-  this.socket.emit('unirse_sala', idParaSala);
+    if (data) {
+      this.driverInfo = data;
+      this.socket = io('http://localhost:3000');
+      
+      const idParaSala = this.driverInfo.id; 
+      console.log('🔌 Chofer uniéndose a su sala:', idParaSala);
+      this.socket.emit('unirse_sala', idParaSala);
 
-  this.socket.on('notificacion_chofer', (data: any) => {
-    console.log('🔥 ¡VIAJE RECIBIDO!', data);
-    this.solicitudesPendientes.push(data);
-    this.mostrarAlertaSolicitud = true;
-  });
+      this.socket.on('notificacion_chofer', (data: any) => {
+        console.log('🔥 ¡VIAJE RECIBIDO!', data);
+        this.solicitudesPendientes.push(data);
+        this.mostrarAlertaSolicitud = true;
+      });
 
-  // A. El usuario pagará en efectivo
+      // Eventos de Pago
       this.socket.on('chofer_confirma_efectivo', async (dataPago: any) => {
         const alert = await this.alertCtrl.create({
           header: 'Pago en Efectivo 💵',
           message: 'El usuario pagará en efectivo. ¿Ya recibiste el dinero?',
           backdropDismiss: false,
-          buttons: [
-            { 
-              text: 'Sí, pago recibido', 
-              handler: () => {
-                this.socket.emit('chofer_confirma_pago', dataPago);
-                this.confirmarYGuardarViaje(); // Guardamos en BD
-              } 
-            }
-          ]
+          buttons: [{ 
+            text: 'Sí, pago recibido', 
+            handler: () => {
+              this.socket.emit('chofer_confirma_pago', dataPago);
+              this.confirmarYGuardarViaje();
+            } 
+          }]
         });
         await alert.present();
       });
 
-      // B. El usuario pagó con tarjeta
       this.socket.on('chofer_pago_recibido', async (dataPago: any) => {
         const alert = await this.alertCtrl.create({
           header: '¡Pago Exitoso! 💳',
-          message: 'El usuario ha pagado con tarjeta. El dinero está asegurado.',
-          buttons: [
-            { 
-              text: 'Aceptar', 
-              handler: () => {
-                this.socket.emit('chofer_confirma_pago', dataPago);
-                this.confirmarYGuardarViaje(); // Guardamos en BD
-              } 
-            }
-          ]
+          message: 'El usuario ha pagado con tarjeta.',
+          buttons: [{ 
+            text: 'Aceptar', 
+            handler: () => {
+              this.socket.emit('chofer_confirma_pago', dataPago);
+              this.confirmarYGuardarViaje();
+            } 
+          }]
         });
         await alert.present();
       });
-      // 👆 --- FIN NUEVOS EVENTOS --- 👆
 
     } else {
       this.router.navigate(['/home']);
     }
   }
 
-  verSolicitudes() {
-    this.mostrarAlertaSolicitud = false;
-    this.activeTab = 'viajes';
-  }
-
-  cerrarAlerta() {
-    this.mostrarAlertaSolicitud = false;
-  }
-  irAHistorial() {
-  this.router.navigate(['/historial-chofer']);
-}
   aceptarViajeSocket(solicitud: any) {
-    console.log('✅ Aceptando viaje:', solicitud);
-
     this.socket.emit('aceptar_viaje', {
       id_viaje: solicitud.id_viaje,
       id_chofer: this.driverInfo?.id_chofer || this.driverInfo?.id,
       id_cliente: solicitud.id_cliente
     });
 
-    
-    // ===== NUEVO: guardar coordenadas reales =====
-
     this.viajePendiente = {
       id: solicitud.id_viaje,
-      id_usuario: solicitud.id_cliente, // <- NUEVO: Guardamos el ID del cliente
+      id_usuario: solicitud.id_cliente,
       pasajero: solicitud.nombre_cliente,
-      ganancia: solicitud.precio , // <- SUGERENCIA: Manejarlo como número (120) en lugar de '$120.00' para que MySQL lo acepte en el campo Costos
+      ganancia: solicitud.precio,
       origen: solicitud.origen?.direccion || 'Punto de encuentro',
       destino: solicitud.destino?.direccion || 'Destino',
       origenLat: solicitud.origen?.lat || 21.8468,
@@ -187,63 +150,45 @@ if (data) {
 
     this.solicitudesPendientes = this.solicitudesPendientes.filter(s => s.id_viaje !== solicitud.id_viaje);
     this.viajeAceptado = true;
+    this.mostrarAlertaSolicitud = false;
 
-    alert('¡Viaje aceptado! Dirígete al punto de encuentro.');
+    // Inicializar el mapa después de un pequeño delay para asegurar que el DOM cargó
     setTimeout(() => { this.initMap(); }, 500);
   }
 
-  rechazarViajeSocket(solicitud: any) {
-    console.log('❌ Rechazando viaje:', solicitud);
-
-    this.socket.emit('rechazar_viaje', {
-      id_viaje: solicitud.id_viaje,
-      id_cliente: solicitud.id_cliente
-    });
-
-    this.viajesRechazados.unshift({
-        solicitud,
-      ganancia: solicitud.precio ,
-      destino: solicitud.destino?.direccion || 'Destino',
-      hora: new Date().toLocaleTimeString()
-    });
-
-    this.solicitudesPendientes = this.solicitudesPendientes.filter(s => s.id_viaje !== solicitud.id_viaje);
-
-    alert('Viaje rechazado');
-  }
-
-  setTab(tab: string) {
-    this.activeTab = tab;
-  }
-
-  toggleStatus() {
-    console.log('Disponibilidad:', this.isActive ? 'ACTIVO' : 'INACTIVO');
-    this.isActive = !this.isActive;
-
-    if (!this.isActive) {
-      this.viajePendiente = null;
-      this.viajeAceptado = false;
+  initMap() {
+    if (!this.viajePendiente) return;
+    
+    if (this.map) {
+      this.map.remove();
     }
-  }
 
-  aceptarViaje() {
-    this.viajeAceptado = true;
-    setTimeout(() => { this.initMap(); }, 500);
-  }
+    // Centrar en la ubicación del usuario (Punto de recogida)
+    this.map = L.map('map').setView([this.viajePendiente.origenLat, this.viajePendiente.origenLng], 14);
 
-  saveProfile() {
-    alert(`Estado de ${this.driverInfo.nombre} guardado en el servidor.`);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(this.map);
+
+    // Ubicaciones
+    const ubicacionChofer = L.latLng(21.8468, -102.7188); // Simulado, aquí iría GPS real
+    const ubicacionUsuario = L.latLng(this.viajePendiente.origenLat, this.viajePendiente.origenLng);
+    const destinoUsuario = L.latLng(this.viajePendiente.destinoLat, this.viajePendiente.destinoLng);
+    
+    this.dibujarAmbasRutas(ubicacionChofer, ubicacionUsuario, destinoUsuario);
+
+    setTimeout(() => { this.map.invalidateSize(); }, 300);
   }
 
   dibujarAmbasRutas(origenChofer: L.LatLng, origenUsuario: L.LatLng, destinoUsuario: L.LatLng) {
     if (!this.map) return;
     
-    if (this.routingControlChofer) this.map.removeControl(this.routingControlChofer);
-    if (this.routingControlUsuario) this.map.removeControl(this.routingControlUsuario);
-
+    // 1. Ruta Chofer -> Usuario (Amarilla)
     this.routingControlChofer = (L as any).Routing.control({
       waypoints: [origenChofer, origenUsuario],
       show: false,
+      addWaypoints: false,
+      draggableWaypoints: false,
       fitSelectedRoutes: true,
       lineOptions: {
         styles: [{ color: '#FFC31F', weight: 6, opacity: 0.8 }]
@@ -251,109 +196,54 @@ if (data) {
       router: new (L as any).Routing.OSRMv1({
         serviceUrl: 'https://router.project-osrm.org/route/v1'
       }),
-      createMarker: function() { return null; }
+      createMarker: () => null
     }).addTo(this.map);
 
+    // 2. Ruta Usuario -> Destino (Azul)
     this.routingControlUsuario = (L as any).Routing.control({
       waypoints: [origenUsuario, destinoUsuario],
       show: false,
-      fitSelectedRoutes: true,
+      addWaypoints: false,
+      draggableWaypoints: false,
+      fitSelectedRoutes: false,
       lineOptions: {
         styles: [{ color: '#4285F4', weight: 6, opacity: 0.8 }]
       },
       router: new (L as any).Routing.OSRMv1({
         serviceUrl: 'https://router.project-osrm.org/route/v1'
       }),
-      createMarker: function() { return null; }
+      createMarker: () => null
     }).addTo(this.map);
 
-    L.marker(origenChofer, {
-      icon: L.divIcon({
-        className: 'marker-chofer',
-        html: '<div style="background-color: #FFC31F; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 2px solid white;">🚕</div>',
-        iconSize: [34, 34]
-      })
-    }).addTo(this.map).bindPopup('Tu ubicación');
-
-    L.marker(origenUsuario, {
-      icon: L.divIcon({
-        className: 'marker-recogida',
-        html: '<div style="background-color: #34C759; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 2px solid white;">📍</div>',
-        iconSize: [34, 34]
-      })
-    }).addTo(this.map).bindPopup('Punto de recogida');
-
-    L.marker(destinoUsuario, {
-      icon: L.divIcon({
-        className: 'marker-destino',
-        html: '<div style="background-color: #FF3B30; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 2px solid white;">🏁</div>',
-        iconSize: [34, 34]
-      })
-    }).addTo(this.map).bindPopup('Destino final');
+    // Marcadores Personalizados
+    this.crearMarcador(origenChofer, '🚕', 'Tu ubicación', '#FFC31F');
+    this.crearMarcador(origenUsuario, '📍', 'Recoger a ' + this.viajePendiente.pasajero, '#34C759');
+    this.crearMarcador(destinoUsuario, '🏁', 'Destino final', '#FF3B30');
   }
 
-  initMap() {
-    if (!this.viajePendiente) return;
-    
-    const lat = this.viajePendiente.origenLat || 21.8468;
-    const lng = this.viajePendiente.origenLng || -102.7188;
-
-    if (this.map) {
-      this.map.remove();
-    }
-
-    this.map = L.map('map').setView([lat, lng], 14);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
-    }).addTo(this.map);
-
-    const ubicacionChofer = L.latLng(21.8468, -102.7188);
-    
-    const ubicacionUsuario = L.latLng(
-      this.viajePendiente.origenLat,
-      this.viajePendiente.origenLng
-    );
-    
-    const destinoUsuario = L.latLng(
-      this.viajePendiente.destinoLat,
-      this.viajePendiente.destinoLng
-    );
-    
-    this.dibujarAmbasRutas(ubicacionChofer, ubicacionUsuario, destinoUsuario);
-
-    setTimeout(() => { this.map.invalidateSize(); }, 200);
-  }
-
-  rechazarViaje() {
-    if (this.viajePendiente) {
-      this.viajesRechazados.unshift({
-        ...this.viajePendiente,
-        hora: new Date().toLocaleTimeString()
-      });
-      this.viajePendiente = null;
-    }
+  crearMarcador(latlng: L.LatLng, emoji: string, popup: string, color: string) {
+    L.marker(latlng, {
+      icon: L.divIcon({
+        className: 'custom-marker',
+        html: `<div style="background-color: ${color}; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">${emoji}</div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 32]
+      })
+    }).addTo(this.map).bindPopup(popup);
   }
 
   finalizarViaje() {
     if (!this.viajePendiente) return; 
-    
-    // Le avisamos al chofer que estamos esperando al usuario
-    alert('Esperando a que el usuario seleccione su método de pago...');
-
-    // Le mandamos la señal al usuario a través del servidor
+    alert('Esperando confirmación de pago del usuario...');
     const datosViaje = {
       id_viaje: this.viajePendiente.id,
       id_usuario: this.viajePendiente.id_usuario, 
-      id_chofer: this.driverInfo.id // Usamos el ID de usuario del chofer para que el server lo encuentre
+      id_chofer: this.driverInfo.id 
     };
     this.socket.emit('finalizar_viaje', datosViaje);
   }
 
-  // Esta función SOLO se llama cuando el chofer le da en "Aceptar" a la alerta de pago
   confirmarYGuardarViaje() {
-    this.mostrarModalCalificar = true; 
-    
     const datosViajeBD = {
       id_usuario: this.viajePendiente.id_usuario, 
       id_chofer: this.driverInfo.id_chofer || this.driverInfo.id,
@@ -361,56 +251,65 @@ if (data) {
       destino: this.viajePendiente.destino,
       precio: this.viajePendiente.ganancia, 
       id_pago: 1, 
-      id_ruta: null, 
       estado: 'completado'
     };
 
-    console.log('Guardando en BD tras confirmación de pago:', datosViajeBD);
-
     this.http.post('http://localhost:3000/api/registrar-viaje', datosViajeBD)
       .subscribe({
-        next: (respuesta: any) => {
-          console.log('✅ Viaje guardado con éxito:', respuesta);
-
+        next: () => {
           this.mostrarModalCalificar = true;
-          
         },
-        error: (error) => {
-          console.error('❌ Error al guardar el viaje en la BD:', error);
-        }
+        error: (err) => console.error('Error BD:', err)
       });
-  
-
   }
 
-  setRating(estrellas: number) {
-    this.ratingActual = estrellas;
+  // --- Helpers y Navegación ---
+  rechazarViajeSocket(solicitud: any) {
+    this.socket.emit('rechazar_viaje', { id_viaje: solicitud.id_viaje, id_cliente: solicitud.id_cliente });
+    this.viajesRechazados.unshift({ solicitud, ganancia: solicitud.precio, destino: solicitud.destino?.direccion, hora: new Date().toLocaleTimeString() });
+    this.solicitudesPendientes = this.solicitudesPendientes.filter(s => s.id_viaje !== solicitud.id_viaje);
   }
 
   enviarCalificacion() {
-    console.log('Calificación enviada:', this.ratingActual, this.comentarioUsuario);
-
     this.mostrarModalCalificar = false;
     this.viajeAceptado = false;
     this.viajePendiente = null;
-    this.ratingActual = 0;
-    this.comentarioUsuario = '';
-
-    if (this.map) {
-      this.map.remove();
-    }
+    if (this.map) this.map.remove();
   }
 
   logout() {
-    if (this.socket) {
-      this.socket.disconnect();
-    }
+    if (this.socket) this.socket.disconnect();
     this.authService.logout();
-    localStorage.removeItem('user_session');
     this.router.navigate(['/home']);
   }
 
-  irAPerfil() {
-    this.router.navigate(['/perfil-chofer']);
+  setTab(tab: string) { this.activeTab = tab; }
+  irAHistorial() { this.router.navigate(['/historial-chofer']); }
+  irAPerfil() { this.router.navigate(['/perfil-chofer']); }
+  setRating(e: number) { this.ratingActual = e; }
+  // --- Métodos para manejar la alerta de nueva solicitud ---
+  verSolicitudes() {
+    this.mostrarAlertaSolicitud = false;
+    this.activeTab = 'viajes';
+    // Si tienes un ion-segment o similar, esto cambiará la vista a la lista de viajes
+  }
+
+  cerrarAlerta() {
+    this.mostrarAlertaSolicitud = false;
+  }
+
+  // --- Método para el switch de Activo/Inactivo ---
+  toggleStatus() {
+    // Si isActive es true, pasará a false y viceversa
+    console.log('Disponibilidad cambiada a:', this.isActive ? 'ACTIVO' : 'INACTIVO');
+    
+    if (!this.isActive) {
+      // Si el chofer se pone inactivo, limpiamos el viaje actual por seguridad
+      this.viajePendiente = null;
+      this.viajeAceptado = false;
+      if (this.map) {
+        this.map.remove();
+      }
+    }
   }
 }

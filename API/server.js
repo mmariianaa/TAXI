@@ -799,3 +799,42 @@ app.put('/api/perfil/actualizar-completo/:id', upload.single('foto'), async (req
         res.status(500).json({ error: "Error al procesar la imagen" });
     }
 });
+// 1. Endpoint para que el USUARIO envíe su calificación real
+app.post('/api/comentarios', (req, res) => {
+    const { id_viaje, id_usuario, id_chofer, calificacion, comentario } = req.body;
+    const query = `INSERT INTO Comentarios (id_viaje, id_usuario, id_chofer, calificacion, comentario) VALUES (?, ?, ?, ?, ?)`;
+    
+    conexion.query(query, [id_viaje, id_usuario, id_chofer, calificacion, comentario], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(201).json({ success: true, message: 'Comentario guardado' });
+    });
+});
+
+// 2. Endpoint para el ADMIN (con cruce de tablas para ver nombres reales)
+app.get('/api/admin/comentarios', (req, res) => {
+    const query = `
+        SELECT 
+            c.id_comentario, c.comentario, c.calificacion, c.fecha,
+            u.nombre AS nombre_usuario, u.apellido AS apellido_usuario,
+            uch.nombre AS nombre_chofer, t.placa
+        FROM Comentarios c
+        JOIN Usuario u ON c.id_usuario = u.id_usuario
+        JOIN Chofer ch ON c.id_chofer = ch.id_chofer
+        JOIN Usuario uch ON ch.id_chofer = uch.id_chofer
+        JOIN Taxi t ON ch.id_taxi = t.id_taxi
+        ORDER BY c.fecha DESC`;
+
+    conexion.query(query, (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(results);
+    });
+});
+
+// 3. Endpoint para ELIMINAR un comentario (ESTE TE FALTABA)
+app.delete('/api/admin/comentarios/:id', (req, res) => {
+    const { id } = req.params;
+    conexion.query('DELETE FROM Comentarios WHERE id_comentario = ?', [id], (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true });
+    });
+});

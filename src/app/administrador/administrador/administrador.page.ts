@@ -200,6 +200,6 @@ export class AdministradorPage implements OnInit {
   // redirigimos a la ruta de tu pantalla de comentarios
   ircomentarios() {
     
-    this.router.navigate(['/comentarios']);
+    this.router.navigate(['/admin-comentarios']);
   }
 }
