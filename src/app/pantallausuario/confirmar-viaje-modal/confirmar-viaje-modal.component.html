@@ -1,64 +1,66 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Confirmar Viaje</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar class="custom-toolbar">
+    <ion-title>Detalles del Viaje</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="cancelar()">
+      <ion-button (click)="cancelar()" class="btn-close">
         <ion-icon name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content class="ion-padding">
-  <div class="taxi-info">
-    <div class="icono-taxi">
-      <ion-icon name="car-sport" size="large"></ion-icon>
+
+<ion-content class="ion-padding orange-theme">
+  <div class="driver-card">
+    <div class="avatar-container">
+      <div class="icon-circle">
+        <ion-icon name="person-outline"></ion-icon>
+      </div>
+      <div class="taxi-badge">
+        <ion-icon name="car-sport"></ion-icon>
+      </div>
     </div>
     <h2>{{ taxi.nombre || 'Chofer' }} {{ taxi.apellido || '' }}</h2>
-    <p class="placa">🚗 Placa: {{ taxi.placa }}</p>
+    <div class="plate-tag">
+      <span class="dot"></span>
+      Placa: {{ taxi.placa }}
+    </div>
   </div>
 
-  <ion-list>
-    <ion-item>
-      <ion-icon name="map-outline" slot="start" color="primary"></ion-icon>
-      <ion-label>
-        <h3>Distancia</h3>
-        <p>{{ distancia.toFixed(2) }} km</p>
-      </ion-label>
-    </ion-item>
+  <div class="stats-grid">
+    <div class="stat-box">
+      <ion-icon name="navigate-outline" class="icon-orange"></ion-icon>
+      <small>Distancia</small>
+      <strong>{{ distancia.toFixed(2) }} km</strong>
+    </div>
+    <div class="stat-box">
+      <ion-icon name="time-outline" class="icon-orange"></ion-icon>
+      <small>Viaje</small>
+      <strong>{{ tiempoEstimado }} min</strong>
+    </div>
+    <div class="stat-box arrival">
+      <ion-icon name="alarm-outline" class="icon-white"></ion-icon>
+      <small>Llegada</small>
+      <strong>{{ tiempoLlegadaTaxi }} min</strong>
+    </div>
+  </div>
 
-    <ion-item>
-      <ion-icon name="time-outline" slot="start" color="warning"></ion-icon>
-      <ion-label>
-        <h3>Tiempo de viaje</h3>
-        <p>{{ tiempoEstimado }} min</p>
-      </ion-label>
-    </ion-item>
+  <div class="price-card">
+    <div class="price-header">
+      <ion-icon name="wallet-outline"></ion-icon>
+      <span>Precio Estimado</span>
+    </div>
+    <div class="price-amount">
+      <span class="currency">$</span>{{ precio }}<span class="mxn">MXN</span>
+    </div>
+    <p class="price-note">Sujeto a cambios por tráfico o ruta.</p>
+  </div>
 
-    <ion-item>
-      <ion-icon name="alarm-outline" slot="start" color="warning"></ion-icon>
-      <ion-label>
-        <h3>El taxi llegará en</h3>
-        <p>{{ tiempoLlegadaTaxi }} min</p>
-      </ion-label>
-    </ion-item>
-
-    <ion-item>
-      <ion-icon name="cash-outline" slot="start" color="success"></ion-icon>
-      <ion-label>
-        <h3>Precio estimado</h3>
-        <p class="precio">${{ precio }} MXN</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
-
-  <div class="button-group">
-    <ion-button expand="block" color="success" (click)="confirmar()">
-      <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+  <div class="footer-actions">
+    <ion-button expand="block" class="btn-confirm" (click)="confirmar()">
       Confirmar Viaje
     </ion-button>
-    <ion-button expand="block" color="light" (click)="cancelar()">
-      <ion-icon name="close-circle" slot="start"></ion-icon>
-      Cancelar
+    <ion-button expand="block" fill="clear" color="medium" (click)="cancelar()">
+      Tal vez luego
     </ion-button>
   </div>
 </ion-content>

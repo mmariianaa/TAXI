@@ -18,18 +18,14 @@ import {
 import { io, Socket } from 'socket.io-client';
 import { AlertController } from '@ionic/angular/standalone';
 
-// ============================================
-// 1. INTERFACES
-// ============================================
+//interfaces
 interface Usuario { id: number; nombre: string; apellido: string; correo: string; }
 interface Taxi { 
   id_chofer: number; nombre: string; apellido?: string; placa: string; 
   marca?: string; precio?: number; tiempoEstimadoLlegada?: number; 
 }
 
-// ============================================
-// 2. SERVICIO DE TARIFAS
-// ============================================
+//servicios de tarifas 
 @Injectable({ providedIn: 'root' })
 export class TaxiFareService {
   private readonly TARIFA_BASE = 15;
@@ -41,9 +37,7 @@ export class TaxiFareService {
   }
 }
 
-// ============================================
-// 3. COMPONENTES MODALES
-// ============================================
+//modales 
 @Component({
   selector: 'app-notificacion-modal',
   template: `
@@ -89,9 +83,7 @@ export class ConfirmarViajeModalComponent {
   cancelar() { this.modalCtrl.dismiss({ confirmado: false }); }
 }
 
-// ============================================
-// 4. PÁGINA PRINCIPAL
-// ============================================
+//pagina principal
 @Component({
   selector: 'app-pantallausuario',
   templateUrl: './pantallausuario.page.html',
@@ -175,7 +167,7 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
       this.viajeSolicitado = false;
       this.viajeEnCurso = true;
       this.abrirModalNotificacion(
-        '¡Viaje Aceptado! 🚖', 
+        '¡Viaje Aceptado! ', 
         `Tu chofer ${data.chofer?.nombre || 'está'} en camino.\nVehículo: ${data.chofer?.vehiculo || 'Taxi'} - Placa: ${data.chofer?.placa || '---'}`,
         'checkmark-circle',
         'success'
@@ -191,7 +183,7 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
       this.viajeSolicitado = false;
       this.mostrarTaxis = true;
       this.abrirModalNotificacion(
-        'Lo sentimos ❌', 
+        'Lo sentimos 😔', 
         'El chofer no pudo tomar tu viaje. Por favor intenta con otro.',
         'close-circle',
         'error'
@@ -202,22 +194,20 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
       this.viajeSolicitado = false;
       this.abrirModalNotificacion('Error', data.mensaje || 'No se pudo procesar tu solicitud', 'warning-outline', 'error');
     });
-
-    // 👇 --- NUEVOS EVENTOS DE PAGO --- 👇
     
-    // 1. El chofer solicita el pago al finalizar el viaje
+    // El chofer solicita el pago al finalizar el viaje
     this.socket.on('solicitar_metodo_pago', async (data: any) => {
       console.log('El chofer está solicitando el pago:', data);
       this.viajeActivo = data;
       await this.mostrarOpcionesDePago();
     });
 
-    // 2. El chofer confirma que recibió el pago
+    // El chofer confirma que recibió el pago
     this.socket.on('viaje_completado_exito', async (data: any) => {
       console.log('¡Viaje completado y pagado!', data);
       
       const alert = await this.alertCtrl.create({
-        header: '¡Viaje Finalizado! 🎉',
+        header: '¡Viaje Finalizado! ',
         message: 'Tu pago ha sido procesado correctamente. ¡Gracias por viajar con nosotros!',
         buttons: ['OK']
       });
@@ -236,7 +226,7 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
 
   }
 
-  // --- Lógica de Localización y Mapa ---
+  //localizacion del mapa
   async obtenerUbicacionActual() {
     try {
       const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
@@ -348,7 +338,7 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
     }
   }
 
- // 1. Haz que el método retorne la promesa del modal
+ // método retorne la promesa del modal
 async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tipo: string) {
   const modal = await this.modalCtrl.create({
     component: NotificacionModalComponent,
@@ -358,16 +348,16 @@ async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tip
   return modal.onDidDismiss(); // Devuelve esto para saber cuándo se cerró
 }
 
-// --- LÓGICA DE PAGOS ---
+// Método para mostrar opciones de pago al finalizar el viaje
 
   async mostrarOpcionesDePago() {
     const alert = await this.alertCtrl.create({
-      header: 'Método de Pago 💳',
+      header: 'Método de Pago ',
       message: 'Tu viaje ha terminado. ¿Cómo deseas pagar?',
       backdropDismiss: false, // Evita que cierre la alerta tocando fuera
       buttons: [
         {
-          text: 'Efectivo 💵',
+          text: 'Efectivo ',
           handler: () => {
             this.socket.emit('usuario_elige_efectivo', {
               id_viaje: this.viajeActivo.id_viaje,
@@ -378,7 +368,7 @@ async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tip
           }
         },
         {
-          text: 'Tarjeta 💳',
+          text: 'Tarjeta ',
           handler: () => {
             this.socket.emit('usuario_paga_tarjeta', {
               id_viaje: this.viajeActivo.id_viaje,
@@ -429,7 +419,6 @@ async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tip
   ngOnDestroy() { if (this.socket) this.socket.disconnect(); }
   irANotificaciones() { this.router.navigate(['/cambiarrutaanotiusuario']); }
 
-  // FUNCIONES (Ponlas al final de tu archivo)
   setRating(estrellas: number) {
     this.ratingActual = estrellas;
   }
@@ -439,7 +428,7 @@ async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tip
 
     // Aquí mostramos el mensaje de agradecimiento
     this.abrirModalNotificacion(
-      '¡Gracias por viajar con nosotros! 🚕',
+      '¡Gracias por viajar con nosotros! ',
       'Tu calificación ha sido enviada.',
       'checkmark-circle',
       'success'

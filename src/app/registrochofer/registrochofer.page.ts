@@ -62,7 +62,7 @@ export class RegistrochoferPage {
       );
       
       console.log('Respuesta:', response);
-      alert('✅ Chofer registrado exitosamente');
+      alert(' Chofer registrado exitosamente');
       this.resetFormulario();
       
     } catch (error: any) {

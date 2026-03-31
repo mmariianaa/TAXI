@@ -63,6 +63,5 @@ export class CalificarusuarioPage {
       tags: this.tags.filter(t => t.selected).map(t => t.label)
     };
     console.log('Calificación enviada:', report);
-    // Aquí navegarías de regreso o a una pantalla de éxito
   }
 }

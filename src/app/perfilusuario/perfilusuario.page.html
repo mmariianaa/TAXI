@@ -15,19 +15,29 @@
 
 <ion-content>
 
-  @if (activeSection === 'inicio' || !activeSection) {
+   @if (activeSection === 'inicio' || !activeSection) {
     <div class="profile-header">
       <div class="avatar-wrapper">
-        <img [src]="user.foto" alt="Foto de perfil">
-        <div class="edit-icon" (click)="fileInput.click()">
+        <img [src]="avatarUrl" alt="Foto de perfil">
+        
+        <!-- Botón para cambiar foto -->
+        <div class="edit-icon" (click)="cambiarFoto()">
           <ion-icon name="pencil-sharp"></ion-icon>
         </div>
-        <input type="file" accept="image/*" #fileInput hidden (change)="changePhoto($event)">
+
+        <!-- Botón para quitar foto -->
+        <div class="remove-icon" (click)="quitarFoto()">
+          <ion-icon name="trash-outline"></ion-icon>
+        </div>
       </div>
+
       <h2>{{ user.name }} {{ user.apellido }}</h2> 
       <p>{{ user.edad }}</p>
       <p>{{ user.email }}</p>
       <p>Puntuación: {{ user.calificacion }}</p>
+
+      <!-- Botón para guardar cambios -->
+      <ion-button expand="block" class="btn-black" (click)="guardarCambios()">Guardar cambios</ion-button>
     </div>
 
     <div class="uber-grid">

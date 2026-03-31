@@ -1,321 +1,295 @@
+
+$naranja: #EB8107;
+$amarillo: #FFC31F;
+$negro: #1F1F1F;
+$crema: #E6E1DB;
+$blanco: #FFFFFF;
+
+$shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.06);
+$transition-bounce: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+$transition-smooth: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+
+:host {
+  --background: #{$crema};
+}
+
 .login-content {
-  --background: #FFFFFF;
+  --background: #{$crema};
+}
 
-  .city-background {
+// fondo con aura jjajaj
+.city-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+
+  &::before, &::after {
+    content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 40%;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border-radius: 0 0 50px 50px;
-    
-    .city-skyline {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      clip-path: polygon(0 60%, 20% 40%, 40% 60%, 60% 30%, 80% 50%, 100% 20%, 100% 100%, 0 100%);
-    }
+    filter: blur(80px);
+    border-radius: 50%;
+    animation: pulseAura 10s infinite alternate ease-in-out;
   }
 
-  .login-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
+  &::before {
+    top: -10%;
+    right: -5%;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, $amarillo 0%, rgba(255,255,255,0) 70%);
+    opacity: 0.4;
+  }
+
+  &::after {
+    bottom: -10%;
+    left: -5%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, $naranja 0%, rgba(255,255,255,0) 70%);
+    opacity: 0.2;
+    animation-delay: -5s;
+  }
+}
+
+// header del login
+.login-container {
+  position: relative;
+  z-index: 2;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  max-width: 500px; // Medida Premium
+  margin: 0 auto;
+  width: 100%;
+  animation: fadeIn 0.8s ease-out;
+}
+
+//seccion del logo 
+.logo-section {
+  text-align: center;
+  margin-bottom: 2.5rem;
+
+  .logo-wrapper {
+    display: inline-flex;
     align-items: center;
-    justify-content: flex-start;
-    min-height: 100%;
-    padding: 20px;
-    z-index: 1;
-  }
+    justify-content: center;
+    width: 88px;  // Medida Premium
+    height: 88px; // Medida Premium
+    background: $blanco;
+    border-radius: 30px;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+    transition: $transition-bounce;
 
-  .logo-section {
-    text-align: center;
-    margin: 40px 0 30px;
-
-    .logo-wrapper {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 15px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(10px);
-
-      .taxi-icon {
-        font-size: 40px;
-        color: #FFC31F;
-      }
+    &:hover { 
+      transform: scale(1.08) rotate(5deg);
     }
-
-    .app-title {
-      font-size: 28px;
-      font-weight: 700;
-      color: white;
-      margin: 0;
-      letter-spacing: 1px;
-      
-      .yellow-text {
-        color: #FFC31F;
-      }
-    }
-
-    .subtitle {
-      color: rgba(255, 255, 255, 0.9); // Más opaco para mejor lectura
-      margin: 5px 0 0;
-      font-size: 14px;
-      font-weight: 500;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // Sombra para mejor legibilidad
+    
+    .taxi-icon {
+      font-size: 52px; // Medida Premium
+      color: $negro;
     }
   }
 
-  // Selector de tipo de usuario
-  .user-type-selector {
-    width: 100%;
-    max-width: 400px;
-    margin: 20px 0;
-    background: white;
-    border-radius: 50px;
-    padding: 5px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  .app-title {
+    font-size: 2.5rem; // Medida Premium
+    font-weight: 800;
+    color: $negro;
+    margin: 0;
+    letter-spacing: -0.02em;
+    
+    .yellow-text { 
+      color: $amarillo; 
+    }
   }
+
+  .subtitle {
+    color: #718096;
+    font-size: 0.9rem;
+    margin-top: 5px;
+  }
+}
+
+//tabls
+.user-type-selector {
+  margin-bottom: 1.75rem;
+  background: rgba(0,0,0,0.06);
+  padding: 6px;
+  border-radius: 100px;
 
   .user-type-tabs {
     display: flex;
-    gap: 5px;
-  }
+    gap: 4px;
 
-  .user-type-tab {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s;
-    color: #666;
-    font-weight: 600; // Más negrita
-
-    ion-icon {
-      font-size: 20px;
-    }
-
-    &.active {
-      background: #FFC31F;
-      color: #1a1a2e;
-      box-shadow: 0 5px 15px rgba(255, 195, 31, 0.4);
-    }
-  }
-
-  // Tarjeta de login
-  .login-card {
-    width: 100%;
-    max-width: 400px;
-    background: white;
-    border-radius: 30px;
-    padding: 30px 25px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    animation: slideUp 0.5s ease;
-
-    h2 {
-      font-size: 24px;
+    .user-type-tab {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 100px;
       font-weight: 700;
-      color: #1a1a2e; // Texto oscuro sobre fondo blanco
-      margin-bottom: 10px;
-    }
-
-    .welcome-text {
-      color: #4a4a4a; // Gris oscuro para mejor contraste
-      font-size: 14px;
-      margin-bottom: 30px;
-      line-height: 1.5;
-    }
-
-    .input-group {
+      color: #718096;
+      transition: $transition-smooth;
       display: flex;
+      justify-content: center;
       align-items: center;
-      background: #F5F7FA;
-      border-radius: 15px;
-      padding: 5px 15px;
-      margin-bottom: 15px;
-      border: 1px solid transparent;
-      transition: all 0.3s ease;
+      gap: 10px;
+      cursor: pointer;
 
-      &:focus-within {
-        border-color: #FFC31F;
-        background: white;
-        box-shadow: 0 5px 20px rgba(255, 195, 31, 0.1);
+      &.active {
+        background: $blanco;
+        color: $negro;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       }
 
-      .input-icon {
-        font-size: 20px;
-        color: #FFC31F;
-        margin-right: 10px;
-      }
-
-      ion-input {
-        --padding-start: 0;
-        --padding-end: 0;
-        --background: transparent;
-        --color: #1a1a2e; // Texto oscuro
-        --placeholder-color: #999;
-        --placeholder-opacity: 1;
-      }
-
-      .password-toggle {
-        font-size: 20px;
-        color: #999;
-        cursor: pointer;
-      }
-    }
-
-    .options-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 20px 0;
-
-      .remember-me {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        
-        ion-checkbox {
-          --size: 18px;
-          --checkbox-background-checked: #FFC31F;
-          --border-color-checked: #FFC31F;
-          --checkmark-color: #1a1a2e;
-        }
-        
-        span {
-          color: #4a4a4a; // Texto oscuro
-          font-size: 14px;
-        }
-      }
-
-      .forgot-link {
-        color: #FFC31F;
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 600;
-      }
-    }
-
-    .login-button {
-      --background: #FFC31F;
-      --background-hover: #e6b01c;
-      --color: #1a1a2e; // Texto oscuro para contraste
-      --border-radius: 15px;
-      --padding-top: 15px;
-      --padding-bottom: 15px;
-      font-weight: 700;
-      font-size: 16px;
-      margin-bottom: 20px;
-      text-transform: none;
-      letter-spacing: 0.5px;
-      
-      &::part(native) {
-        box-shadow: 0 10px 20px rgba(255, 195, 31, 0.3);
-      }
-    }
-
-    .social-section {
-      text-align: center;
-      margin: 25px 0 15px;
-
-      .social-text {
-        color: #666;
-        font-size: 14px;
-        margin-bottom: 20px;
-        position: relative;
-        
-        &::before,
-        &::after {
-          content: "";
-          position: absolute;
-          top: 50%;
-          width: 30%;
-          height: 1px;
-          background: #ddd;
-        }
-        
-        &::before {
-          left: 0;
-        }
-        
-        &::after {
-          right: 0;
-        }
-      }
-
-      .social-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-
-        .social-btn {
-          width: 50px;
-          height: 50px;
-          --border-radius: 15px;
-          --background: #F5F7FA;
-          --color: #333;
-          --box-shadow: none;
-          
-          ion-icon {
-            font-size: 24px;
-          }
-          
-          &.google {
-            --color: #DB4437;
-          }
-          
-          &.facebook {
-            --color: #4267B2;
-          }
-          
-          &.apple {
-            --color: #000;
-          }
-          
-          &:hover {
-            --background: #E8ECF0;
-          }
-        }
-      }
-    }
-
-    .register-link {
-      text-align: center;
-      margin-top: 20px;
-      
-      p {
-        color: #666;
-        font-size: 14px;
-        
-        a {
-          color: #FFC31F;
-          text-decoration: none;
-          font-weight: 700;
-          margin-left: 5px;
-        }
-      }
+      ion-icon { font-size: 1.2rem; }
     }
   }
 }
 
+// tarjeta del login 
+.login-card {
+  background: linear-gradient(160deg, $blanco 0%, #f0f4f8 100%);
+  backdrop-filter: blur(20px);
+  border-radius: 48px; // Medida Premium
+  padding: 2.5rem;    // Medida Premium
+  box-shadow: $shadow-xl;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  position: relative;
+  overflow: hidden;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  h2 {
+    color: $negro; 
+    font-weight: 800;
+    font-size: 1.85rem;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .welcome-text {
+    color: #718096;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+}
+
+//pa los inputs 
+.input-group {
+  background: rgba(255, 255, 255, 0.9); 
+  border-radius: 24px; 
+  margin-bottom: 1.25rem;
+  padding: 0.5rem 1.2rem;
+  display: flex;
+  align-items: center;
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
+  transition: $transition-smooth;
+
+  &:focus-within {
+    border-color: $amarillo;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba($amarillo, 0.12);
+  }
+
+  .input-icon { 
+    color: #cbd5e0; 
+    font-size: 1.4rem; 
+    margin-right: 12px;
+  }
+  
+  ion-input {
+    --color: #{$negro};
+    --placeholder-color: #a0aec0;
+    font-weight: 500;
+    font-size: 1rem;
+    margin-top: 4px;
+  }
+
+  .password-toggle {
+    color: #a0aec0;
+    font-size: 1.3rem;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+}
+
+//opciones de los viajes
+.options-row {
+  margin: 1.25rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+
+  .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4a5568;
+
+    ion-checkbox {
+      --size: 18px;
+      --border-radius: 4px;
+      --checkbox-background-checked: #{$negro};
+      --border-color-checked: #{$negro};
+    }
+  }
+
+  .forgot-link {
+    color: $naranja;
+    text-decoration: none;
+    font-weight: 600;
+  }
+}
+
+//boton principal 
+.login-button {
+  --background: #{$negro};
+  --color: #{$blanco};
+  --border-radius: 24px;
+  height: 60px; // Medida Premium
+  margin-top: 1.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  --box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  transition: $transition-bounce;
+
+  &::part(native) {
+    background: linear-gradient(135deg, $negro 0%, #3d3d3d 100%);
+  }
+}
+
+//registro 
+.register-link {
+  text-align: center;
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  font-size: 0.9rem;
+  color: #718096;
+  
+  a {
+    color: $negro;
+    font-weight: 800;
+    text-decoration: none;
+    margin-left: 5px;
+    &:hover { color: $naranja; }
+  }
+}
+
+// animacones 
+@keyframes pulseAura {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.15) translate(20px, 20px); }
+}
+
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(40px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

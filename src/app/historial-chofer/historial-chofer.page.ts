@@ -15,13 +15,13 @@ import {
   carOutline, 
   cardOutline, 
   alertCircleOutline,
-  personOutline // Añadí este icono para el pasajero
+  personOutline //icono para el pasajero
 } from 'ionicons/icons';
 
 @Component({
-  selector: 'app-historialchofer', // Cambiado
-  templateUrl: './historial-chofer.page.html', // Cambiado
-  styleUrls: ['./historial-chofer.page.scss'], // Cambiado
+  selector: 'app-historialchofer',
+  templateUrl: './historial-chofer.page.html', 
+  styleUrls: ['./historial-chofer.page.scss'],
   standalone: true,
   imports: [IonCardContent, IonBadge, IonLabel, IonItem, IonCard, IonButton, IonSpinner, 
     CommonModule,
@@ -37,7 +37,7 @@ import {
     IonCard, IonCardContent, IonIcon, IonSpinner, IonRefresher, IonRefresherContent
   ]
 })
-export class HistorialChoferPage implements OnInit { // Cambiado el nombre de la clase
+export class HistorialChoferPage implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
   private authService = inject(AuthService);
@@ -45,8 +45,8 @@ export class HistorialChoferPage implements OnInit { // Cambiado el nombre de la
   viajes: any[] = [];
   cargando = true;
   errorMsg = '';
-  choferId: number | null = null; // Cambiado a choferId para mayor claridad
-
+  choferId: number | null = null;
+// Agregar iconos personalizados y alertas 
   constructor() {
     addIcons({ 
       'arrow-back-outline': arrowBackOutline,
@@ -59,7 +59,7 @@ export class HistorialChoferPage implements OnInit { // Cambiado el nombre de la
       'person-outline': personOutline
     });
   }
-
+// trae el historial del chofer logueado, si no tiene viajes muestra un mensaje y un boton para ir a la pantalla principal del chofer
   ngOnInit() {
     this.obtenerHistorial();
   }
@@ -76,7 +76,7 @@ export class HistorialChoferPage implements OnInit { // Cambiado el nombre de la
       const authData = this.authService.getUserData();
       let idFinal = null;
 
-      // Intentamos obtener el id_chofer en lugar del id_usuario
+      // obtenemos los datos del id chofer 
       if (authData) {
         idFinal = authData.id_chofer || authData.id;
       } else {
@@ -88,39 +88,39 @@ export class HistorialChoferPage implements OnInit { // Cambiado el nombre de la
       }
 
       if (!idFinal) {
-        console.warn('⚠️ No se encontró ID de chofer logueado');
+        console.warn(' No se encontró ID de chofer logueado');
         this.errorMsg = 'Debes iniciar sesión para ver tu historial de viajes.';
         this.cargando = false;
         return;
       }
 
       this.choferId = idFinal;
-      console.log('🔍 Cargando historial para el Chofer ID:', this.choferId);
+      console.log(' Cargando historial para el Chofer ID:', this.choferId);
 
-      // LLAMADA A LA NUEVA API QUE CREAMOS EXCLUSIVA PARA EL CHOFER
+      // realizamos la petición al backend para obtener el historial del chofer
       this.http.get<any[]>(`http://localhost:3000/api/historialchofer/${this.choferId}`)
         .subscribe({
           next: (data) => {
             this.viajes = data;
             this.cargando = false;
-            console.log('✅ Viajes recuperados:', this.viajes.length);
+            console.log('Viajes recuperados:', this.viajes.length);
           },
           error: (err) => {
-            console.error('❌ Error al conectar con el servidor', err);
+            console.error(' Error al conectar con el servidor', err);
             this.errorMsg = 'No pudimos conectar con el servidor.';
             this.cargando = false;
           }
         });
 
     } catch (error) {
-      console.error('❌ Error crítico en obtenerHistorial:', error);
+      console.error(' Error crítico en obtenerHistorial:', error);
       this.cargando = false;
     }
   }
 
   // Redirigir a la pantalla principal del chofer si no tiene viajes
   irAPantallachofer(event: Event) {
-    this.router.navigate(['/pantallachofer']); // Asegúrate de que esta ruta coincida con la de tu app
+    this.router.navigate(['/chofer']);
   }
 
   doRefresh(event: any) {

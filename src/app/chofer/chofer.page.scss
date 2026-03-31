@@ -476,7 +476,7 @@ $crema: #E6E1DB;
   align-items: center;
   margin-top: 50px;
 }
-/* ===== ALERTA DE NUEVA SOLICITUD ===== */
+/*alerta de nueva solicitud*/
 .alerta-solicitud {
   background: #FFC31F;
   color: #1F1F1F;
@@ -508,7 +508,7 @@ $crema: #E6E1DB;
     padding: 0 8px;
   }
 }
-/* ===== ALERTA DE NUEVA SOLICITUD ===== */
+/*alerta de nueva solicitud*/
 .alerta-solicitud {
   background: #FFC31F;
   color: #1F1F1F;
@@ -540,7 +540,7 @@ $crema: #E6E1DB;
     padding: 0 8px;
   }
 }
-/* ===== LEYENDA DE RUTAS ===== */
+/* leyenda de rutas opcional ando viendo*/
 .leyenda-rutas {
   position: absolute;
   bottom: 70px;
@@ -572,7 +572,7 @@ $crema: #E6E1DB;
   }
 }
 
-/* Asegurar que el mapa tenga posición relativa para la leyenda */
+/* leyenda de rutas opcional ando viendo*/
 .trip-active {
   position: relative;
 }

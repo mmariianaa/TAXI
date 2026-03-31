@@ -15,8 +15,7 @@ import {
 } from 'ionicons/icons';
 import {
   IonContent, IonIcon, IonButton, IonAvatar,
-  IonItem, IonLabel, IonList, IonListHeader,
-  IonText, IonSpinner, IonInput
+  IonSpinner, IonInput
 } from "@ionic/angular/standalone";
 
 @Component({
@@ -49,6 +48,7 @@ export class PerfilChoferPage implements OnInit {
   tipoMensaje: 'success' | 'error' = 'success';
   mostrarPasswordNueva: boolean = false;
   avatarUrl: string = 'assets/avatar.png';
+   selectedFile: File | null = null;
 
   constructor() {
     addIcons({
@@ -62,28 +62,38 @@ export class PerfilChoferPage implements OnInit {
     const datosSesion = this.authService.getUserData();
     if (datosSesion) {
       this.choferInfo = datosSesion;
+       //Inicializar avatarUrl con la foto de la BD si existe
+    if (this.choferInfo.foto) {
+      this.avatarUrl = this.choferInfo.foto; // URL pública de Cloudinary
+    } else {
+      this.avatarUrl = 'assets/avatar.png'; // Imagen por defecto
+    }  
     } else {
       this.router.navigate(['/home']);
     }
   }
 
-  async cambiarFoto() {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: true,
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Photos
-      });
-      if (image && image.dataUrl) {
-        this.avatarUrl = image.dataUrl;
+async cambiarFoto() {
+  try {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: CameraResultType.Uri, 
+      source: CameraSource.Photos
+    });
 
-      }
-    } catch (error) {
-      console.log('Usuario canceló');
+    if (image && image.webPath) {
+      const response = await fetch(image.webPath);
+      const blob = await response.blob();
+      
+      this.avatarUrl = image.webPath; 
+      // Guardamos el blob directamente
+      this.selectedFile = blob as any; 
     }
+  } catch (error) {
+    console.log('Usuario canceló');
   }
-
+}
   quitarFoto() {
     this.avatarUrl = 'assets/avatar.png';
 
@@ -111,87 +121,111 @@ export class PerfilChoferPage implements OnInit {
     this.mensaje = '';
   }
 
-  guardarCambios() {
-    const userId = this.choferInfo?.id;
-    if (!userId) {
-      this.mostrarMensaje('Error de sesión', 'error');
+ guardarCambios() {
+  const userId = this.choferInfo?.id;
+  if (!userId) {
+    this.mostrarMensaje('Error de sesión', 'error');
+    return;
+  }
+
+  // Validaciones de teléfono
+  if (this.editData.telefono && this.editData.telefono.length !== 10) {
+    this.mostrarMensaje('El teléfono debe tener 10 dígitos', 'error');
+    return;
+  }
+
+  // Validaciones de correo
+  if (this.editData.correo) {
+    if (!this.editData.correo.includes('@')) {
+      this.mostrarMensaje('El correo debe contener @', 'error');
       return;
     }
-
-    if (this.editData.telefono && this.editData.telefono.length !== 10) {
-      this.mostrarMensaje('El teléfono debe tener 10 dígitos', 'error');
+    if (!this.editData.correo.includes('.com')) {
+      this.mostrarMensaje('El correo debe terminar en .com', 'error');
       return;
-    }
-
-    if (this.editData.correo) {
-      if (!this.editData.correo.includes('@')) {
-        this.mostrarMensaje('El correo debe contener @', 'error');
-        return;
-      }
-      if (!this.editData.correo.includes('.com')) {
-        this.mostrarMensaje('El correo debe terminar en .com', 'error');
-        return;
-      }
-    }
-
-    if (this.editData.passwordNueva) {
-      if (this.editData.passwordNueva.length < 8) {
-        this.mostrarMensaje('La contraseña debe tener al menos 8 caracteres', 'error');
-        return;
-      }
-      if (this.editData.passwordNueva !== this.editData.confirmarPassword) {
-        this.mostrarMensaje('Las contraseñas no coinciden', 'error');
-        return;
-      }
-    }
-
-    if (this.editData.telefono === this.choferInfo.telefono &&
-      this.editData.correo === this.choferInfo.correo &&
-      !this.editData.passwordNueva) {
-      this.mostrarMensaje('No hay cambios para guardar', 'error');
-      return;
-    }
-
-    if (this.editData.telefono !== this.choferInfo.telefono ||
-      this.editData.correo !== this.choferInfo.correo) {
-
-      this.http.put(`http://localhost:3000/api/usuarios/${userId}`, {
-        telefono: this.editData.telefono,
-        correo: this.editData.correo
-      }).subscribe({
-        next: async (res: any) => {
-          this.choferInfo.telefono = this.editData.telefono;
-          this.choferInfo.correo = this.editData.correo;
-
-          const userData = this.authService.getUserData();
-          userData.telefono = this.editData.telefono;
-          userData.correo = this.editData.correo;
-          localStorage.setItem('userData', JSON.stringify(userData));
-
-          // this.mostrarMensaje('Datos actualizados', 'success');  // este es el mensaje anterior, lo comento para usar la alerta nueva
-          await this.mostrarAlertaExito('Datos actualizados correctamente');
-
-          if (this.editData.passwordNueva) {
-            this.cambiarPassword(userId);
-          } else {
-            setTimeout(() => this.modoEdicion = false, 1500);
-          }
-        },
-        error: (err) => {
-          this.mostrarMensaje('Error al actualizar', 'error');
-        }
-      });
-    } else if (this.editData.passwordNueva) {
-      this.cambiarPassword(userId);
     }
   }
+
+  // Validaciones de contraseña
+  if (this.editData.passwordNueva) {
+    if (this.editData.passwordNueva.length < 8) {
+      this.mostrarMensaje('La contraseña debe tener al menos 8 caracteres', 'error');
+      return;
+    }
+    if (this.editData.passwordNueva !== this.editData.confirmarPassword) {
+      this.mostrarMensaje('Las contraseñas no coinciden', 'error');
+      return;
+    }
+  }
+
+  const noHayCambios =
+    this.editData.telefono === this.choferInfo.telefono &&
+    this.editData.correo === this.choferInfo.correo &&
+    !this.editData.passwordNueva &&
+    !this.selectedFile &&
+    this.avatarUrl === this.choferInfo.foto;
+  // Si no hay cambios
+
+  if (noHayCambios) {
+    this.mostrarMensaje('No hay cambios para guardar', 'error');
+    return;
+  }
+
+  
+  const formData = new FormData();
+  formData.append('nombre', this.choferInfo.nombre);
+  formData.append('apellido', this.choferInfo.apellido);
+  formData.append('telefono', this.editData.telefono);
+  formData.append('correo', this.editData.correo);
+
+  if (this.selectedFile) {
+    formData.append('foto', this.selectedFile); 
+  } else if(this.avatarUrl === 'assets/avatar.png'){
+    formData.append('quitarFoto','true');
+  }
+
+  this.http.put(`http://localhost:3000/api/perfil/actualizar-completo/${userId}`, formData)
+    .subscribe({
+      next: async (res: any) => {
+        // Actualizar datos en memoria/localStorage
+        this.choferInfo.telefono = this.editData.telefono;
+        this.choferInfo.correo = this.editData.correo;
+
+        if (res.foto) {
+          this.avatarUrl = res.foto;
+          this.choferInfo.foto=res.foto; 
+        } else{
+          this.avatarUrl = 'assets/avatar.png';
+          this.choferInfo.foto =null;
+        }
+
+        const userData = this.authService.getUserData();
+        userData.telefono = this.editData.telefono;
+        userData.correo = this.editData.correo;
+        userData.foto= res.foto ||null;
+        localStorage.setItem('user_session',JSON.stringify(userData));
+
+        await this.mostrarAlertaExito('Datos actualizados correctamente');
+
+        if (this.editData.passwordNueva) {
+          this.cambiarPassword(userId);
+        } else {
+          setTimeout(() => this.modoEdicion = false, 1500);
+        }
+      },
+      error: () => {
+        this.mostrarMensaje('Error al actualizar', 'error');
+      }
+    });
+}
+
 
   cambiarPassword(userId: string) {
     this.http.put(`http://localhost:3000/api/usuarios/${userId}/password`, {
       nueva: this.editData.passwordNueva
     }).subscribe({
       next: () => {
-        // this.mostrarMensaje('Contraseña actualizada', 'success');este es el mensaje anterior, lo comento para usar la alerta nueva
+
         this.mostrarAlertaExito('Tu contraseña ha sido actualizada correctamente');
         setTimeout(() => this.modoEdicion = false, 1500);
       },
@@ -201,8 +235,6 @@ export class PerfilChoferPage implements OnInit {
     });
   }
 
-  // Alerta personalizada para mostrar mensajes de que se guardo correctamente los datos
-  //y es opcional por que casi no me gusto, solo se quita este codigo
   mostrarMensaje(texto: string, tipo: 'success' | 'error') {
     this.mensaje = texto;
     this.tipoMensaje = tipo;
@@ -210,7 +242,7 @@ export class PerfilChoferPage implements OnInit {
   }
   async mostrarAlertaExito(mensaje: string) {
     const alert = await this.alertCtrl.create({
-      header: '✅ Éxito',
+      header: ' Éxito',
       message: mensaje,
       cssClass: 'alerta-exito',
       buttons: ['OK']

@@ -1,452 +1,178 @@
-.perfil-chofer-content {
-  --background: #FFFFFF;
+$naranja: #EB8107;
+$amarillo: #FFC31F;
+$negro: #1F1F1F;
+$gris-texto: #4A5568; 
+$crema: #E6E1DB;
+$blanco: #FFFFFF;
+$error: #FF3B30;
+$exito: #34C759;
 
-  .city-background {
-    position: absolute;
-    top: 0;
-    left: 0;
+$shadow-premium: 0 20px 40px rgba(0, 0, 0, 0.08);
+$transition-smooth: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+$transition-bounce: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+
+:host { --background: #{$crema}; }
+.perfil-chofer-content { --background: #{$crema}; }
+
+
+.city-background {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden;
+  &::before, &::after {
+    content: ''; position: absolute; filter: blur(80px); border-radius: 50%;
+    animation: pulseAura 10s infinite alternate ease-in-out;
+  }
+  &::before { top: -10%; right: -5%; width: 450px; height: 450px; background: radial-gradient(circle, $amarillo 0%, rgba(255,255,255,0) 70%); opacity: 0.3; }
+  &::after { bottom: -10%; left: -5%; width: 400px; height: 400px; background: radial-gradient(circle, $naranja 0%, rgba(255,255,255,0) 70%); opacity: 0.15; }
+}
+
+.header-perfil {
+  display: flex; justify-content: space-between; align-items: center; padding: 1rem; position: relative; z-index: 10;
+  .back-btn, .edit-btn, .guardar-btn, .cancelar-btn { --color: #{$negro}; font-weight: 800; font-size: 0.85rem; }
+  .edit-btn { --color: #{$naranja}; }
+  .guardar-btn { --color: #{$exito}; }
+  .cancelar-btn { --color: #{$error}; }
+}
+
+
+.foto-section {
+  text-align: center; margin-bottom: 2.5rem; position: relative; z-index: 2;
+  .foto-wrapper {
+    position: relative; display: inline-block; transition: $transition-bounce;
+    .foto-perfil {
+      width: 130px; height: 130px; margin: 0 auto; border: 6px solid $blanco;
+      box-shadow: $shadow-premium; transition: $transition-bounce; position: relative;
+      img { object-fit: cover; width: 100%; height: 100%; border-radius: 50%; }
+    }
+    .foto-menu {
+      position: absolute; bottom: -10px; right: -10px; display: flex; flex-direction: column; gap: 8px; z-index: 3;
+      .foto-btn {
+        --background: #{$negro}; --color: #{$blanco}; --border-radius: 50%;
+        --box-shadow: 0 8px 20px rgba(0,0,0,0.3); width: 45px; height: 45px; margin: 0;
+        transition: $transition-bounce;
+        ion-icon { font-size: 1.6rem !important; }
+        &:hover { transform: scale(1.1); }
+      }
+    }
+  }
+  .nombre-chofer { font-weight: 900; font-size: 1.6rem; color: $negro; margin: 1.5rem 0 0.3rem; }
+  .estadisticas { color: #718096; font-weight: 700; font-size: 0.9rem; }
+}
+
+
+.perfil-card {
+  background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px);
+  border-radius: 40px 40px 0 0; padding: 2.5rem 1.5rem; min-height: 60vh;
+  position: relative; z-index: 2; border-top: 1px solid rgba(255,255,255,0.8);
+}
+
+.seccion-perfil {
+  margin-bottom: 2.5rem;
+  .seccion-titulo {
+    font-size: 1.1rem; font-weight: 900; color: $negro; margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 12px;
+    &::after { content: ''; flex: 1; height: 3px; background: linear-gradient(to right, $amarillo, transparent); border-radius: 4px; }
+  }
+}
+
+.campo-dato {
+  background: transparent; padding: 1rem 0; margin-bottom: 0.5rem;
+  display: flex; flex-direction: column; gap: 6px;
+  border-bottom: 1px solid rgba(0,0,0,0.05); transition: $transition-smooth;
+
+  &.editable-active {
+    background: rgba($blanco, 0.6); padding: 1rem; border-radius: 15px;
+    border-bottom: 2px dashed $amarillo; transform: translateY(-2px);
+  }
+
+  .campo-etiqueta { font-size: 0.75rem; font-weight: 700; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.5px; }
+  .campo-valor { font-size: 1.05rem; font-weight: 600; color: $gris-texto; }
+
+
+  .campo-input-wrapper {
+    display: flex;
+    align-items: center;
     width: 100%;
-    height: 40%;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border-radius: 0 0 50px 50px;
-    z-index: 0;
-    
-    .city-skyline {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      clip-path: polygon(0 60%, 20% 40%, 40% 60%, 60% 30%, 80% 50%, 100% 20%, 100% 100%, 0 100%);
-    }
-  }
 
-  .perfil-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-    padding: 20px;
-    z-index: 1;
-  }
-
-  // ===========================================
-  // HEADER
-  // ===========================================
-  .header-perfil {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 10px 0 20px;
-
-    .back-btn {
-      --color: white;
+    .campo-input {
+      flex: 1;
       --padding-start: 0;
-      --padding-end: 0;
-      font-weight: 500;
-      
-      ion-icon {
-        font-size: 20px;
-        margin-right: 4px;
-      }
-    }
-
-    .acciones-edicion {
-      display: flex;
-      gap: 10px;
-      
-      .guardar-btn {
-        --color: #4CAF50;
-        --padding-start: 8px;
-        --padding-end: 8px;
-        font-weight: 600;
-        font-size: 14px;
-      }
-      
-      .cancelar-btn {
-        --color: #ff4444;
-        --padding-start: 8px;
-        --padding-end: 8px;
-        font-weight: 600;
-        font-size: 14px;
-      }
-    }
-
-    .edit-btn {
-      --color: white;
-      --border-color: rgba(255, 255, 255, 0.3);
-      --border-width: 1px;
-      --border-style: solid;
-      --border-radius: 20px;
-      --padding-start: 15px;
-      --padding-end: 15px;
-      font-size: 14px;
-      font-weight: 500;
-      
-      ion-icon {
-        color: #FFC31F;
-        font-size: 18px;
-        margin-right: 5px;
-      }
-    }
-
-    .notif-icon {
-      color: white;
-      font-size: 24px;
-    }
-  }
-
-  // ===========================================
-  // SECCIÓN FOTO
-  // ===========================================
-  .foto-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 25px;
-
-    .foto-wrapper {
-      position: relative;
-      margin-bottom: 8px;
-
-      .foto-perfil {
-        width: 120px;
-        height: 120px;
-        margin: 0 auto;
-        border: 3px solid #FFC31F;
-        box-shadow: 0 4px 15px rgba(255, 195, 31, 0.3);
-        
-        img {
-          object-fit: cover;
-          width: 100%;
-          height: 100%;
-        }
-      }
-
-      .foto-menu {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        display: flex;
-        gap: 5px;
-        background: rgba(0, 0, 0, 0.7);
-        border-radius: 25px;
-        padding: 5px;
-        
-        .foto-btn {
-          --color: #FFC31F;
-          --padding-start: 8px;
-          --padding-end: 8px;
-          margin: 0;
-          
-          ion-icon {
-            font-size: 18px;
-          }
-        }
-      }
-    }
-
-    .toque-cambiar {
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 12px;
-      margin: 0 0 10px;
-    }
-
-    .nombre-chofer {
-      color: white;
-      font-size: 24px;
+      --color: #{$gris-texto};
       font-weight: 700;
-      margin: 0 0 5px;
-      text-align: center;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      font-size: 1.05rem;
+      margin-top: -5px;
     }
 
-    .estadisticas {
-      color: #FFC31F;
-      font-size: 14px;
+    .password-toggle {
+      --color: #{$naranja};
+      height: 30px;
       margin: 0;
-    }
-  }
-
-  // ===========================================
-  // TARJETA PRINCIPAL
-  // ===========================================
-  .perfil-card {
-    background: white;
-    border-radius: 30px;
-    padding: 25px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    animation: slideUp 0.5s ease;
-  }
-
-  // ===========================================
-  // SECCIONES DE DATOS
-  // ===========================================
-  .seccion-perfil {
-    margin-bottom: 30px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    .seccion-titulo {
-      font-size: 18px;
-      font-weight: 700;
-      color: #1a1a2e;
-      margin: 0 0 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #FFC31F;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .campo-dato {
-      margin-bottom: 15px;
-      
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      .campo-etiqueta {
-        display: block;
-        color: #666;
-        font-size: 13px;
-        margin-bottom: 5px;
-        font-weight: 500;
-      }
-
-      .campo-valor {
-        display: block;
-        color: #1a1a2e;
-        font-size: 16px;
-        font-weight: 500;
-        padding: 8px 0;
-      }
-
-      .campo-input {
-        --background: #F5F7FA;
-        --color: #1a1a2e;
-        --padding-start: 15px;
-        --padding-end: 15px;
-        --padding-top: 12px;
-        --padding-bottom: 12px;
-        border-radius: 12px;
-        border: 1px solid transparent;
-        transition: all 0.3s ease;
-        width: 100%;
-
-        &:focus-within {
-          border-color: #FFC31F;
-          --background: white;
-        }
-      }
-
-      .campo-input-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-        width: 100%;
-
-        .password-toggle {
-          position: absolute;
-          right: 8px;
-          --padding-start: 8px;
-          --padding-end: 8px;
-          --color: #999;
-          z-index: 2;
-          
-          &:hover {
-            --color: #FFC31F;
-          }
-        }
-      }
-
-      .campo-error {
-        color: #ff4444;
-        font-size: 12px;
-        margin-top: 5px;
-      }
-    }
-  }
-
-  // ===========================================
-  // MENSAJES
-  // ===========================================
-  .mensaje {
-    padding: 12px 16px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    font-size: 14px;
-    font-weight: 500;
-
-    &.success {
-      background: #E8F5E9;
-      color: #2E7D32;
-      border: 1px solid #A5D6A7;
-    }
-
-    &.error {
-      background: #FFEBEE;
-      color: #C62828;
-      border: 1px solid #EF9A9A;
-    }
-  }
-
-  // ===========================================
-  // BOTÓN CERRAR SESIÓN
-  // ===========================================
-  .cerrar-sesion {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #E0E0E0;
-
-    .cerrar-sesion-btn {
-      --background: transparent;
-      --border-color: #ff4444;
-      --border-width: 1px;
-      --border-style: solid;
-      --color: #ff4444;
-      --border-radius: 15px;
-      --padding-top: 15px;
-      --padding-bottom: 15px;
-      font-weight: 600;
-      
-      ion-icon {
-        color: #ff4444;
-      }
-      
-      &:hover {
-        --background: rgba(255, 68, 68, 0.05);
-      }
-    }
-  }
-
-  // ===========================================
-  // CARGANDO
-  // ===========================================
-  .cargando-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 300px;
-    
-    ion-spinner {
-      width: 40px;
-      height: 40px;
-      color: #FFC31F;
-      margin-bottom: 15px;
-    }
-    
-    p {
-      color: white;
-      font-size: 16px;
-    }
-  }
-
-  // ===========================================
-  // AJUSTES IOS
-  // ===========================================
-  .ios & {
-    .header-perfil {
-      padding-top: 20px;
+      font-size: 1.2rem;
     }
   }
 }
 
-// ===========================================
-// ANIMACIONES
-// ===========================================
+
+.cerrar-sesion {
+  margin-top: 2rem; padding-bottom: 3rem;
+  .cerrar-sesion-btn {
+    --background: transparent; --color: #{$error}; --border-radius: 15px;
+    --border-color: #{$error}; --border-style: solid; --border-width: 2px;
+    height: 55px; font-weight: 800;
+  }
+}
+
+@keyframes pulseAura {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.1) translate(15px, 15px); }
+}
+
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-// ===========================================
-// ALERTA DE CERRAR SESIÓN
-// ===========================================
-// ===========================================
-// ALERTA DE CERRAR SESIÓN
-// ===========================================
-.alerta-cerrar .alert-wrapper {
-  border-radius: 20px !important;
-  background: white !important;
-  
-  .alert-head {
-    text-align: center;
-    padding: 20px 20px 10px;
-    
-    .alert-title {
-      color: #1a1a2e;
-      font-size: 18px;
-      font-weight: 700;
-    }
+.perfil-container { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+
+.mensaje {
+  padding: 14px 20px;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  font-weight: 800; // Texto bien marcado
+  margin: 1rem 0 1.5rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: $transition-smooth;
+
+  &.success {
+    background: rgba($exito, 0.08);
+    color: $exito;
+    border: 1px solid rgba($exito, 0.3);
   }
-  
-  .alert-message {
-    color: #666;
-    font-size: 14px;
-    padding: 10px 20px;
-    text-align: center;
-  }
-  
-  .alert-button-group {
-    padding: 15px;
-    gap: 10px;
+
+
+  &.error {
+    background: rgba($error, 0.06); // Fondo muy ligero para que no sature
+    color: $error;                  // Rojo brillante (#FF3B30)
+    border: 2px solid $error;       // Borde grueso y sólido
+    box-shadow: 0 4px 15px rgba($error, 0.15);
     
-    .cancel-btn {
-      color: #999;
-      font-weight: 500;
-    }
+    // Animación para llamar la atención del usuario
+    animation: shakeError 0.4s cubic-bezier(.36,.07,.19,.97) both;
     
-    .alert-button:last-child {
-      background: #ff4444;
-      color: white;
-      border-radius: 10px;
-      font-weight: 600;
-      
-      &:hover {
-        background: #ff6666;
-      }
+    ion-icon {
+      font-size: 1.4rem;
+      color: $error;
     }
   }
 }
 
-// ===========================================
-// ESTILOS GLOBALES
-// ===========================================
-input[type="text"],
-input[type="tel"],
-input[type="password"],
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
-  width: 100%;
-  padding: 12px 15px;
-  background: #F5F7FA;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  color: #1a1a2e;
-  font-size: 15px;
-  transition: all 0.3s ease;
-  -webkit-box-shadow: 0 0 0px 1000px #F5F7FA inset;
-  box-shadow: 0 0 0px 1000px #F5F7FA inset;
 
-  &:focus {
-    outline: none;
-    border-color: #FFC31F;
-    background: white;
-  }
-
-  &::placeholder {
-    color: #999;
-  }
+@keyframes shakeError {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
 }
-

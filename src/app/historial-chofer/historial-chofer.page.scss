@@ -1,0 +1,193 @@
+//variables para todo 
+$naranja: #EB8107;
+$amarillo: #FFC31F;
+$negro: #1F1F1F;
+$gris-texto: #718096;
+$crema: #E6E1DB;
+$blanco: #FFFFFF;
+
+$shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.06);
+$transition-bounce: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+$transition-smooth: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+
+:host { --background: #{$crema}; }
+
+//fondo con aura dinamica
+ion-content {
+  --background: transparent;
+  &::before {
+    content: ''; position: fixed; inset: 0; z-index: -1; background: $crema;
+  }
+}
+
+.city-background {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden;
+  &::before, &::after {
+    content: ''; position: absolute; filter: blur(80px); border-radius: 50%;
+    animation: pulseAura 10s infinite alternate ease-in-out;
+  }
+  &::before {
+    top: -10%; right: -5%; width: 450px; height: 450px;
+    background: radial-gradient(circle, $amarillo 0%, rgba(255,255,255,0) 70%);
+    opacity: 0.4;
+  }
+  &::after {
+    bottom: -10%; left: -5%; width: 400px; height: 400px;
+    background: radial-gradient(circle, $naranja 0%, rgba(255,255,255,0) 70%);
+    opacity: 0.2; animation-delay: -5s;
+  }
+}
+//heder del historial del chofer
+ion-toolbar {
+  --background: transparent;
+  --border-style: none;
+  padding: 0.5rem;
+
+  ion-title {
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: $negro;
+    span { color: $amarillo; }
+  }
+  
+  ion-back-button {
+    --color: #{$negro};
+    font-weight: 700;
+  }
+}
+
+//tarjetas del historial del chofer
+ion-card {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px);
+  border-radius: 32px !important; // Bordes muy redondeados tipo login
+  margin: 1.2rem 1rem !important;
+  box-shadow: $shadow-xl !important;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  ion-item {
+    --background: transparent;
+    padding-top: 10px;
+    
+    ion-icon[name="navigate-circle-outline"] {
+      font-size: 2.2rem;
+      margin-right: 12px;
+    }
+
+    h2 {
+      font-weight: 800 !important;
+      font-size: 1.15rem !important;
+      color: $negro;
+    }
+
+    p {
+      color: $gris-texto;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+}
+
+//estados de los viajes
+ion-badge {
+  padding: 8px 14px;
+  border-radius: 100px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.7rem;
+}
+
+/*detalles de los contenidos*/
+ion-card-content {
+  padding: 1.2rem 1.5rem !important;
+
+  .info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    
+    ion-icon {
+      font-size: 1.3rem;
+      color: $amarillo; // Color amarillo para los íconos de información
+    }
+
+    strong {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #a0aec0;
+    }
+
+    span {
+      font-weight: 700;
+      color: $negro;
+      font-size: 0.95rem;
+    }
+  }
+
+  .divider {
+    height: 1.5px !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+    margin: 15px 0 !important;
+  }
+}
+
+/*precio*/
+.price-section {
+  .payment-method {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: $gris-texto;
+    display: flex;
+    align-items: center;
+  }
+
+  .total-amount {
+    font-size: 1.4rem !important;
+    font-weight: 900 !important;
+    color: $negro !important; // Negro sólido para el precio
+    background: linear-gradient(120deg, $amarillo, $naranja);
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+//estados de carga
+.empty-container {
+  padding: 3rem;
+  text-align: center;
+  
+  ion-icon {
+    font-size: 80px;
+    color: rgba($negro, 0.1);
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-weight: 700;
+    color: $gris-texto;
+    font-size: 1.1rem;
+  }
+
+  ion-button {
+    --border-radius: 20px;
+    font-weight: 800;
+    margin-top: 20px;
+    --border-width: 2px;
+  }
+}
+
+/* animaconcillas*/
+@keyframes pulseAura {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.15) translate(20px, 20px); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

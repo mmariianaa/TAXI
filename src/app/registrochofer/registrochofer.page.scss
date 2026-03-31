@@ -1,429 +1,282 @@
+// 1. VARIABLES (Sincronizadas con Login)
+$naranja: #EB8107;
+$amarillo: #FFC31F;
+$negro: #1F1F1F;
+$crema: #E6E1DB;
+$blanco: #FFFFFF;
+
+$shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.06);
+$transition-bounce: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+$transition-smooth: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+
+:host {
+  --background: #{$crema};
+}
+
 .register-chofer-content {
-  --background: #1F1F1F; /* Negro de la paleta */
+  --background: #{$crema};
+  --padding-bottom: 30px;
+}
 
-  .city-background {
+/* --- FONDO DINÁMICO --- */
+.city-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+
+  &::before, &::after {
+    content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #1F1F1F 0%, #4B4847 50%, #4B4847 100%);
-    /* Degradado usando negro y gris oscuro */
-    
-    .city-skyline {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 150px;
-      background: linear-gradient(transparent 0%, rgba(255, 195, 31, 0.1) 100%);
-      /* Brillo sutil amarillo en la base */
-      
-      &::before {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        height: 100%;
-        background-image: 
-          linear-gradient(90deg, #FFC31F 2px, transparent 2px),
-          linear-gradient(0deg, #FFC31F 1px, transparent 1px);
-        background-size: 50px 50px;
-        opacity: 0.15;
-      }
-    }
+    filter: blur(80px);
+    border-radius: 50%;
+    animation: pulseAura 10s infinite alternate ease-in-out;
   }
 
-  .register-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100%;
-    padding: 20px;
-    z-index: 1;
+  &::before {
+    top: -5%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, $amarillo 0%, rgba(255,255,255,0) 70%);
+    opacity: 0.35;
   }
 
-  .logo-section {
-    text-align: center;
-    margin-bottom: 20px;
-    animation: fadeInDown 0.8s ease;
-
-    .logo-wrapper {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 10px;
-      background: rgba(255, 195, 31, 0.1); /* Amarillo con opacidad */
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid #FFC31F; /* Amarillo principal */
-      box-shadow: 0 0 30px rgba(255, 195, 31, 0.3); /* Sombra amarilla */
-
-      .taxi-icon {
-        font-size: 40px;
-        color: #FFC31F; /* Amarillo */
-      }
-    }
-
-    .app-title {
-      font-size: 28px;
-      font-weight: 700;
-      color: #E6E1DB; /* Beige claro */
-      margin: 0;
-      
-      .yellow-text {
-        color: #FFC31F; /* Amarillo */
-      }
-    }
-
-    .subtitle {
-      color: rgba(230, 225, 219, 0.7); /* Beige con opacidad */
-      margin: 5px 0 0;
-      font-size: 14px;
-    }
+  &::after {
+    bottom: -5%;
+    left: -10%;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, $naranja 0%, rgba(255,255,255,0) 70%);
+    opacity: 0.15;
+    animation-delay: -5s;
   }
+}
 
-  .register-card {
-    width: 100%;
-    max-width: 450px;
-    background: #E6E1DB; /* Beige claro como fondo de tarjeta */
-    backdrop-filter: blur(10px);
-    border-radius: 30px;
-    padding: 25px;
-    box-shadow: 0 20px 40px rgba(31, 31, 31, 0.4); /* Sombra en negro */
-    animation: fadeInUp 0.8s ease;
-    max-height: 85vh;
-    overflow-y: auto;
+/* --- CONTENEDOR REGISTRO --- */
+.register-container {
+  position: relative;
+  z-index: 2;
+  padding: 3rem 1.5rem;
+  max-width: 550px; // Un poco más ancho para formularios complejos
+  margin: 0 auto;
+  animation: fadeIn 0.8s ease-out;
+}
 
-    &::-webkit-scrollbar {
-      width: 5px;
-    }
+/* --- LOGO SECTION (Premium 88px) --- */
+.logo-section {
+  text-align: center;
+  margin-bottom: 2rem;
 
-    &::-webkit-scrollbar-track {
-      background: rgba(75, 72, 71, 0.1); /* Gris con opacidad */
-      border-radius: 10px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #FFC31F; /* Amarillo */
-      border-radius: 10px;
-    }
-  }
-
-  .form-title {
-    text-align: center;
-    margin-bottom: 20px;
-    
-    h2 {
-      color: #1F1F1F; /* Negro */
-      font-size: 24px;
-      font-weight: 700;
-      margin: 0 0 5px;
-    }
-    
-    p {
-      color: #4B4847; /* Gris oscuro */
-      font-size: 14px;
-      margin: 0;
-    }
-  }
-
-  /* Badge de chofer */
-  .driver-badge {
-    background: rgba(255, 195, 31, 0.1); /* Amarillo con opacidad */
-    border-radius: 25px;
-    padding: 8px 15px;
+  .logo-wrapper {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    margin: 0 auto 20px;
-    border: 1px dashed #FFC31F; /* Amarillo */
+    justify-content: center;
+    width: 88px;
+    height: 88px;
+    background: $blanco;
+    border-radius: 28px;
+    margin-bottom: 1rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
     
-    ion-icon {
-      color: #FFC31F; /* Amarillo */
-      font-size: 18px;
-    }
-    
-    span {
-      color: #FFC31F; /* Amarillo */
-      font-size: 13px;
-      font-weight: 600;
+    .taxi-icon {
+      font-size: 48px;
+      color: $negro;
     }
   }
 
-  .input-group {
-    display: flex;
-    align-items: center;
-    background: #FFFFFF; /* Blanco puro */
-    border-radius: 15px;
-    padding: 5px 15px;
-    margin-bottom: 15px;
-    border: 1px solid transparent;
-    transition: all 0.3s ease;
-
-    &:focus-within {
-      border-color: #FFC31F; /* Amarillo */
-      background: white;
-      box-shadow: 0 5px 15px rgba(255, 195, 31, 0.2); /* Sombra amarilla */
-    }
-
-    .input-icon {
-      font-size: 20px;
-      color: #4B4847; /* Gris oscuro */
-      margin-right: 10px;
-      min-width: 24px;
-    }
-
-    ion-input {
-      --padding-start: 0;
-      --padding-end: 0;
-      --background: transparent;
-      --color: #1F1F1F; /* Negro */
-      --placeholder-color: #4B4847; /* Gris oscuro */
-      --placeholder-opacity: 0.7;
-    }
-
-    .password-toggle {
-      font-size: 20px;
-      color: #4B4847; /* Gris oscuro */
-      cursor: pointer;
-      transition: color 0.3s ease;
-      
-      &:hover {
-        color: #FFC31F; /* Amarillo */
-      }
-    }
+  .app-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: $negro;
+    margin: 0;
+    .yellow-text { color: $amarillo; }
   }
 
-  /* Grupo para inputs en fila */
-  .input-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    
-    .input-group {
-      flex: 1;
-      margin-bottom: 0;
-    }
-  }
-
-  /* Select personalizado */
-  .custom-select {
-    display: flex;
-    align-items: center;
-    background: #FFFFFF; /* Blanco */
-    border-radius: 15px;
-    padding: 5px 15px;
-    margin-bottom: 15px;
-    border: 1px solid transparent;
-    
-    ion-icon {
-      font-size: 20px;
-      color: #4B4847; /* Gris oscuro */
-      margin-right: 10px;
-    }
-    
-    ion-select {
-      --padding-start: 0;
-      --padding-end: 0;
-      width: 100%;
-      --color: #1F1F1F; /* Negro */
-      --placeholder-color: #4B4847; /* Gris oscuro */
-      --placeholder-opacity: 0.7;
-    }
-  }
-
-  /* Sección de documentos */
-  .documents-section {
-    background: rgba(255, 195, 31, 0.05); /* Amarillo muy suave */
-    border-radius: 15px;
-    padding: 15px;
-    margin: 20px 0;
-    border: 1px solid rgba(255, 195, 31, 0.2); /* Borde amarillo sutil */
-    
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 15px;
-      
-      ion-icon {
-        color: #FFC31F; /* Amarillo */
-        font-size: 20px;
-      }
-      
-      span {
-        color: #1F1F1F; /* Negro */
-        font-weight: 600;
-        font-size: 14px;
-      }
-    }
-  }
-
-  /* Upload de archivos */
-  .file-upload {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #FFFFFF; /* Blanco */
-    border-radius: 12px;
-    padding: 10px 15px;
-    margin-bottom: 10px;
-    border: 1px solid #4B4847; /* Gris oscuro */
-    
-    ion-icon {
-      font-size: 24px;
-      color: #FFC31F; /* Amarillo */
-    }
-    
-    .file-info {
-      flex: 1;
-      
-      .file-name {
-        font-size: 13px;
-        font-weight: 600;
-        color: #1F1F1F; /* Negro */
-        margin-bottom: 2px;
-      }
-      
-      .file-size {
-        font-size: 11px;
-        color: #4B4847; /* Gris oscuro */
-      }
-    }
-    
-    .upload-btn {
-      --padding-start: 10px;
-      --padding-end: 10px;
-      --color: #FFC31F; /* Amarillo */
-      font-size: 12px;
-      --background-hover: rgba(255, 195, 31, 0.1);
-    }
-  }
-
-  /* Términos y condiciones */
-  .terms-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin: 20px 0;
-    padding: 10px;
-    background: rgba(255, 195, 31, 0.05); /* Fondo amarillo muy suave */
-    border-radius: 12px;
-
-    ion-checkbox {
-      --size: 20px;
-      --checkbox-background-checked: #FFC31F; /* Amarillo */
-      --border-color-checked: #FFC31F; /* Amarillo */
-      --border-color: #4B4847; /* Gris oscuro */
-      --checkmark-color: #1F1F1F; /* Negro para el checkmark */
-      margin-top: 2px;
-    }
-
-    .terms-text {
-      font-size: 13px;
-      color: #4B4847; /* Gris oscuro */
-      line-height: 1.4;
-      
-      a {
-        color: #FFC31F; /* Amarillo */
-        text-decoration: none;
-        font-weight: 600;
-        
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-  }
-
-  /* Botón de registro */
-  .register-button {
-    --background: #FFC31F; /* Amarillo */
-    --background-hover: #EB8107; /* Naranja para hover */
-    --color: #1F1F1F; /* Negro */
-    --border-radius: 15px;
-    --padding-top: 18px;
-    --padding-bottom: 18px;
+  .subtitle {
+    color: #718096;
     font-weight: 600;
-    font-size: 16px;
-    margin: 10px 0 15px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    
-    &::part(native) {
-      box-shadow: 0 10px 20px rgba(255, 195, 31, 0.3); /* Sombra amarilla */
-    }
-    
-    &:active {
-      transform: translateY(2px);
-    }
+    font-size: 0.75rem;
   }
+}
 
-  /* Enlace para iniciar sesión */
-  .login-link {
-    text-align: center;
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #4B4847; /* Gris oscuro */
-    
-    p {
-      color: #4B4847; /* Gris oscuro */
-      font-size: 14px;
+/* --- TARJETA DE REGISTRO (Premium 48px) --- */
+.register-card {
+  background: linear-gradient(165deg, $blanco 0%, #f8fafc 100%);
+  backdrop-filter: blur(20px);
+  border-radius: 48px;
+  padding: 2.5rem 2rem;
+  box-shadow: $shadow-xl;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  .form-title {
+    margin-bottom: 1.5rem;
+    h2 {
+      font-weight: 800;
+      color: $negro;
+      font-size: 1.6rem;
       margin: 0;
-      
-      a {
-        color: #FFC31F; /* Amarillo */
-        text-decoration: none;
-        font-weight: 600;
-        margin-left: 5px;
-        
-        &:hover {
-          text-decoration: underline;
-        }
-      }
     }
+    p { color: #718096; font-size: 0.9rem; margin: 4px 0 0; }
   }
+}
 
-  /* Mensajes de error */
-  .error-message {
-    color: #EB8107; /* Naranja de la paleta para errores */
-    font-size: 12px;
-    margin-top: -10px;
-    margin-bottom: 10px;
-    padding-left: 15px;
+/* --- BADGE DE CONDUCTOR --- */
+.driver-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba($amarillo, 0.1);
+  padding: 10px 15px;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  border: 1px dashed $amarillo;
+  
+  ion-icon { color: $naranja; font-size: 1.2rem; }
+  span { color: $negro; font-size: 0.8rem; font-weight: 700; }
+}
+
+/* --- SECCIONES DEL FORMULARIO --- */
+.form-section {
+  margin-bottom: 2rem;
+
+  .section-subtitle {
     display: flex;
     align-items: center;
-    gap: 5px;
-    
-    ion-icon {
-      font-size: 14px;
-      color: #EB8107; /* Naranja */
-    }
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #4a5568;
+    margin-bottom: 1.25rem;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #edf2f7;
+
+    ion-icon { color: $naranja; }
   }
 }
 
-/* Animaciones */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
+/* --- FILAS Y GRUPOS DE INPUTS --- */
+.input-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1.25rem;
+  
+  .input-group, .custom-select { margin-bottom: 0; flex: 1; }
+}
+
+.input-group, .custom-select {
+  background: $blanco;
+  border-radius: 18px;
+  margin-bottom: 1.25rem;
+  padding: 0.4rem 1rem;
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #edf2f7;
+  transition: $transition-smooth;
+
+  &:focus-within {
+    border-color: $amarillo;
+    box-shadow: 0 4px 15px rgba($amarillo, 0.1);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .input-icon, ion-icon { color: #cbd5e0; font-size: 1.2rem; margin-right: 10px; }
+  
+  ion-input, ion-select {
+    --color: #{$negro};
+    --placeholder-color: #a0aec0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+
+  ion-select { --padding-start: 0; }
+}
+
+/* --- MENSAJES DE ERROR --- */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #e53e3e;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  padding-left: 10px;
+}
+
+/* --- TÉRMINOS Y CONDICIONES --- */
+.terms-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 1.5rem 0;
+  
+  ion-checkbox {
+    --size: 20px;
+    --border-radius: 6px;
+    --checkbox-background-checked: #{$negro};
+    --border-color-checked: #{$negro};
+    margin-top: 2px;
+  }
+
+  .terms-text {
+    font-size: 0.8rem;
+    color: #718096;
+    line-height: 1.4;
+    a { color: $naranja; font-weight: 700; text-decoration: none; }
   }
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+/* --- BOTÓN REGISTRO (Premium 60px) --- */
+.register-button {
+  --background: #{$negro};
+  --color: #{$blanco};
+  --border-radius: 20px;
+  height: 60px;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-top: 1rem;
+  --box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+
+  &[disabled] { opacity: 0.5; }
+
+  &::part(native) {
+    background: linear-gradient(135deg, $negro 0%, #3d3d3d 100%);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+}
+
+/* --- LOGIN LINK --- */
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #718096;
+  
+  a {
+    color: $negro;
+    font-weight: 800;
+    text-decoration: none;
+    margin-left: 5px;
+    &:hover { color: $naranja; }
   }
+}
+
+/* --- ANIMACIONES --- */
+@keyframes pulseAura {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1) translate(10px, 10px); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

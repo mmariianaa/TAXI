@@ -8,10 +8,11 @@ import {
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { pencilSharp, person, shieldCheckmark, lockClosed, helpCircle, checkmarkCircle,starOutline, arrowBackOutline } from 'ionicons/icons';
+import { pencilSharp, person, shieldCheckmark, lockClosed, helpCircle, checkmarkCircle,starOutline, arrowBackOutline, trashOutline, timeOutline } from 'ionicons/icons';
 import { AuthService } from '../services/auth'; // <-- IMPORTAR AuthService
 import { HttpClient } from '@angular/common/http'; // <-- Para llamadas API
 import { lastValueFrom } from 'rxjs';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 @Component({
   selector: 'app-perfilusuario',
@@ -53,9 +54,13 @@ export class PerfilusuarioPage implements OnInit {
     calificacion: '★★★★☆ 4.5',
   };
 
+  avatarUrl: string = 'assets/avatar.png';   // 👈 foto por defecto
+  selectedFile: File | null = null;          // 👈 archivo seleccionado
+
+
   constructor() {
     // Registrar iconos
-    addIcons({pencilSharp,person,shieldCheckmark,lockClosed,helpCircle,checkmarkCircle, starOutline, arrowBackOutline});
+    addIcons({pencilSharp,trashOutline,person,shieldCheckmark,timeOutline,starOutline,lockClosed,helpCircle,checkmarkCircle,arrowBackOutline});
   }
 
   ngOnInit() {
@@ -67,16 +72,14 @@ export class PerfilusuarioPage implements OnInit {
     this.cargarDatosUsuario();
   }
 
-  // ============================================
-  // CARGAR DATOS DEL USUARIO (OPCIÓN 1)
-  // ============================================
+
   cargarDatosUsuario() {
     try {
       // Obtener datos del AuthService
       const authData = this.authService.getUserData();
       
       if (authData) {
-        console.log('✅ Datos desde AuthService:', authData);
+        console.log(' Datos desde AuthService:', authData);
         
         // Mapear los datos del AuthService a la estructura de la vista
         this.user = {
@@ -87,18 +90,18 @@ export class PerfilusuarioPage implements OnInit {
           numero: authData.telefono || '',
           edad: authData.edad ? authData.edad + ' años' : '',
           genero: authData.genero || '',
-          foto: authData.foto || 'assets/default-avatar.png',
+          foto: authData.foto || 'assets/avatar.png',
           password: '',
           calificacion: authData.calificacion || '★★★★☆ 4.5',
         };
-        
-        console.log('✅ Usuario mapeado:', this.user);
+         this.avatarUrl = this.user.foto;
+        console.log(' Usuario mapeado:', this.user);
       } else {
         // Fallback a localStorage si AuthService no tiene datos
         const localData = localStorage.getItem('user_session');
         if (localData) {
           const parsed = JSON.parse(localData);
-          console.log('📦 Datos desde localStorage:', parsed);
+          console.log(' Datos desde localStorage:', parsed);
           
           this.user = {
             id: parsed.id_usuario || parsed.id || null,
@@ -108,24 +111,99 @@ export class PerfilusuarioPage implements OnInit {
             numero: parsed.telefono || '',
             edad: parsed.edad ? parsed.edad + ' años' : '',
             genero: parsed.genero || '',
-            foto: parsed.foto || 'assets/default-avatar.png',
+            foto: parsed.foto || 'assets/avatar.png',
             password: '',
             calificacion: parsed.calificacion || '★★★★☆ 4.5',
           };
+          this.avatarUrl = this.user.foto;
         } else {
           // Si no hay sesión, redirigir al login
-          console.warn('⚠️ No hay sesión activa');
+          console.warn(' No hay sesión activa');
           this.router.navigate(['/home']);
         }
       }
     } catch (error) {
-      console.error('❌ Error cargando datos:', error);
+      console.error('Error cargando datos:', error);
     }
   }
 
-  // ============================================
-  // MÉTODOS DE EDICIÓN
-  // ============================================
+  
+  // FOTO DE PERFIL
+  
+  async cambiarFoto() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Photos
+      });
+
+      if (image && image.webPath) {
+        const response = await fetch(image.webPath);
+        const blob = await response.blob();
+        this.avatarUrl = image.webPath;
+        this.selectedFile = new File([blob], "foto.jpg", { type: blob.type });
+      }
+    } catch (error) {
+      console.log('Usuario canceló');
+    }
+  }
+
+
+  quitarFoto() {
+    this.avatarUrl = 'assets/avatar.png';
+    this.selectedFile = null;
+  }
+
+  async guardarCambios() {
+    if (!this.user?.id) return;
+
+    const formData = new FormData();
+    formData.append('nombre', this.user.name);
+    formData.append('apellido', this.user.apellido);
+    formData.append('telefono', this.user.numero);
+    formData.append('correo', this.user.email);
+
+    if (this.selectedFile) {
+      formData.append('foto', this.selectedFile);
+    } else if (this.avatarUrl === 'assets/avatar.png') {
+      formData.append('quitarFoto', 'true');
+    }
+
+    try {
+      const res: any = await lastValueFrom(
+        this.http.put(`http://localhost:3000/api/perfil/actualizar-completo/${this.user.id}`, formData)
+      );
+
+      this.user.foto = res.foto || 'assets/avatar.png';
+      this.avatarUrl = this.user.foto;
+
+      const localData = localStorage.getItem('user_session');
+      if (localData) {
+        const parsed = JSON.parse(localData);
+        parsed.foto = res.foto || null;
+        localStorage.setItem('user_session', JSON.stringify(parsed));
+      }
+       const alert = await this.alertController.create({
+        header: ' Éxito',
+        message: 'Perfil actualizado con éxito',
+        buttons: ['OK']
+      });
+      await alert.present();
+
+    } catch (error) {
+      console.error(' Error al actualizar perfil:', error);
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'No se pudo actualizar el perfil',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
+  }
+  
+// metodos de edicion 
   setSection(section: string) {
     this.activeSection = section;
   }
@@ -145,12 +223,11 @@ export class PerfilusuarioPage implements OnInit {
     this.editingField = '';
   }
 
-  // ============================================
   // ACTUALIZAR TELÉFONO
-  // ============================================
+
   async actualizarTelefono() {
     if (!this.user.id) {
-      console.error('❌ No hay ID de usuario');
+      console.error(' No hay ID de usuario');
       return;
     }
 
@@ -161,7 +238,7 @@ export class PerfilusuarioPage implements OnInit {
         })
       );
       
-      console.log('✅ Teléfono actualizado:', response);
+      console.log(' Teléfono actualizado:', response);
       
       // Actualizar en AuthService/localStorage
       this.actualizarStorageLocal({ telefono: this.user.numero });
@@ -175,7 +252,7 @@ export class PerfilusuarioPage implements OnInit {
       await alert.present();
       
     } catch (error) {
-      console.error('❌ Error al actualizar teléfono:', error);
+      console.error(' Error al actualizar teléfono:', error);
       
       const alert = await this.alertController.create({
         header: 'Error',
@@ -186,23 +263,13 @@ export class PerfilusuarioPage implements OnInit {
     }
   }
 
-  // ============================================
-  // ACTUALIZAR NOMBRE Y APELLIDO
-  // ============================================
+//actualizar el nombre y el apellido 
   async actualizarNombre() {
     if (!this.user.id) return;
 
     try {
-      // Aquí implementarías la llamada a tu API para actualizar nombre/apellido
+    
       console.log('Actualizando nombre:', this.user.name, this.user.apellido);
-      
-      // Ejemplo de llamada (ajusta según tu API)
-      // const response = await lastValueFrom(
-      //   this.http.put(`http://localhost:3000/api/usuarios/${this.user.id}/nombre`, {
-      //     nombre: this.user.name,
-      //     apellido: this.user.apellido
-      //   })
-      // );
       
       this.actualizarStorageLocal({ 
         nombre: this.user.name,
@@ -214,9 +281,9 @@ export class PerfilusuarioPage implements OnInit {
     }
   }
 
-  // ============================================
+
   // ACTUALIZAR EMAIL
-  // ============================================
+
   async actualizarEmail() {
     if (!this.user.id) return;
     
@@ -233,7 +300,7 @@ export class PerfilusuarioPage implements OnInit {
     }
 
     try {
-      // Aquí implementarías la llamada a tu API
+      
       console.log('Actualizando email:', this.user.email);
       
       this.actualizarStorageLocal({ correo: this.user.email });
@@ -243,9 +310,7 @@ export class PerfilusuarioPage implements OnInit {
     }
   }
 
-  // ============================================
-  // ACTUALIZAR STORAGE LOCAL
-  // ============================================
+
   actualizarStorageLocal(campos: any) {
     // Actualizar en localStorage
     const localData = localStorage.getItem('user_session');
@@ -255,13 +320,10 @@ export class PerfilusuarioPage implements OnInit {
       localStorage.setItem('user_session', JSON.stringify(updated));
     }
     
-    // Si AuthService tiene método para actualizar, lo llamamos
-    // this.authService.updateUserData(campos);
+
   }
 
-  // ============================================
-  // CAMBIAR FOTO DE PERFIL
-  // ============================================
+//cambiar foto del perfil 
   async changePhoto(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -275,17 +337,9 @@ export class PerfilusuarioPage implements OnInit {
       // Aquí implementarías la subida al servidor
       console.log('📸 Foto seleccionada:', file.name);
       
-      // Ejemplo de subida (ajusta según tu API)
-      // const formData = new FormData();
-      // formData.append('foto', file);
-      // formData.append('userId', this.user.id);
-      // await lastValueFrom(this.http.post('http://localhost:3000/api/usuarios/foto', formData));
     }
   }
 
-  // ============================================
-  // CAMBIAR CONTRASEÑA
-  // ============================================
   toggleEditPassword() {
     this.editingPassword = !this.editingPassword;
     this.newPassword = '';
@@ -323,7 +377,7 @@ export class PerfilusuarioPage implements OnInit {
         })
       );
       
-      console.log('✅ Contraseña actualizada:', response);
+      console.log(' Contraseña actualizada:', response);
       
       this.editingPassword = false;
       this.newPassword = '';
@@ -337,7 +391,7 @@ export class PerfilusuarioPage implements OnInit {
       await alert.present();
       
     } catch (error) {
-      console.error('❌ Error al actualizar contraseña:', error);
+      console.error(' Error al actualizar contraseña:', error);
       
       const alert = await this.alertController.create({
         header: 'Error',
@@ -348,9 +402,7 @@ export class PerfilusuarioPage implements OnInit {
     }
   }
 
-  // ============================================
-  // MÉTODOS DE NAVEGACIÓN
-  // ============================================
+
   irAConfiguracionUsuario(event: Event) {
     event.preventDefault();
     this.router.navigate(['/configuracionusuario']);

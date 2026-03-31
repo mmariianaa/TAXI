@@ -9,7 +9,6 @@
         Atrás
       </ion-button>
 
-      <!-- 👉 Botón EDITAR -->
       @if (!modoEdicion) {
       <ion-button fill="clear" class="edit-btn" (click)="activarEdicion()">
         <ion-icon name="pencil" slot="start"></ion-icon>
@@ -17,7 +16,7 @@
       </ion-button>
       }
 
-      <!-- 👉 Botones GUARDAR/CANCELAR -->
+      <!-- Botones GUARDAR/CANCELAR -->
       @if (modoEdicion) {
       <div class="acciones-edicion">
         <ion-button fill="clear" class="guardar-btn" (click)="guardarCambios()">
@@ -33,9 +32,8 @@
     </div>
 
     @if (choferInfo) {
-    <!-- =========================================== -->
-    <!-- FOTO DE PERFIL -->
-    <!-- =========================================== -->
+
+    <!-- SECCIÓN DE PERFIL -->
     <div class="foto-section">
       <div class="foto-wrapper">
         <ion-avatar class="foto-perfil">
@@ -59,13 +57,11 @@
       }
 
       <h1 class="nombre-chofer">{{ choferInfo.nombre + ' ' + choferInfo.apellido | uppercase }}</h1>
-      <p class="estadisticas">⭐ 4.8 · 0 viajes</p>
+      <p class="estadisticas">⭐ 4.8</p>
     </div>
 
     <div class="perfil-card">
-      <!-- =========================================== -->
       <!-- MIS DATOS -->
-      <!-- =========================================== -->
       <div class="seccion-perfil">
         <h2 class="seccion-titulo">📋 MIS DATOS</h2>
 
@@ -93,10 +89,10 @@
             <ion-input class="campo-input" [(ngModel)]="editData.correo" type="email" placeholder="ejemplo@gmail.com">
             </ion-input>
             @if (editData.correo && !editData.correo.includes('@')) {
-            <div class="campo-error">❌ El correo debe contener @</div>
+            <div class="campo-error"> El correo debe contener @</div>
             }
             @if (editData.correo && editData.correo.includes('@') && !editData.correo.includes('.com')) {
-            <div class="campo-error">❌ El correo debe terminar en .com</div>
+            <div class="campo-error"> El correo debe terminar en .com</div>
             }
           </div>
           }
@@ -117,7 +113,7 @@
               placeholder="10 dígitos" (keypress)="soloNumeros($event)"> <!-- 👈 ESTA LÍNEA NUEVA -->
             </ion-input>
             @if (editData.telefono && editData.telefono.length !== 10) {
-            <div class="campo-error">❌ El teléfono debe tener 10 dígitos</div>
+            <div class="campo-error"> El teléfono debe tener 10 dígitos</div>
             }
           </div>
           }
@@ -131,10 +127,7 @@
         </div>
         }
       </div>
-
-      <!-- =========================================== -->
       <!-- MI VEHÍCULO -->
-      <!-- =========================================== -->
       @if (choferInfo.vehiculo) {
       <div class="seccion-perfil">
         <h2 class="seccion-titulo">🚖 MI VEHÍCULO</h2>
@@ -157,9 +150,9 @@
       </div>
       }
 
-      <!-- =========================================== -->
+
       <!-- CAMBIAR CONTRASEÑA -->
-      <!-- =========================================== -->
+
       @if (modoEdicion) {
       <div class="seccion-perfil">
         <h2 class="seccion-titulo">🔒 CAMBIAR CONTRASEÑA</h2>
@@ -200,16 +193,14 @@
           </div>
           @if (editData.passwordNueva && editData.confirmarPassword && editData.passwordNueva !==
           editData.confirmarPassword) {
-          <div class="campo-error">❌ Las contraseñas no coinciden</div>
+          <div class="campo-error"> Las contraseñas no coinciden</div>
           }
         </div>
       </div>
     </div>
     }
-
-    <!-- =========================================== -->
     <!-- BOTÓN CERRAR SESIÓN -->
-    <!-- =========================================== -->
+
     <div class="cerrar-sesion">
       <ion-button expand="block" class="cerrar-sesion-btn" (click)="confirmarCerrarSesion()">
         <ion-icon name="log-out-outline" slot="start"></ion-icon>

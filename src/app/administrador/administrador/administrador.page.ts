@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { AlertController, LoadingController, IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-// Se agregó logOutOutline a las importaciones
+// Agregar importaciones 
 import { 
   personOutline, carOutline, documentTextOutline, mapOutline, 
   cashOutline, peopleOutline, checkmarkCircleOutline, star, 
@@ -36,7 +36,7 @@ export class AdministradorPage implements OnInit {
     private router: Router,
     private authService: AuthService
   ) {
-    // Se agregó logOutOutline al registro de iconos
+    // registro de iconos personalizados
     addIcons({ 
       personOutline, carOutline, documentTextOutline, mapOutline, 
       cashOutline, peopleOutline, checkmarkCircleOutline, star, 
@@ -158,12 +158,12 @@ export class AdministradorPage implements OnInit {
     this.cargarResumen(event.detail.value);
   }
 
-  // --- LOGOUT REFORZADO (ANTI-CACHÉ) ---
+  // metodos que se utilizan para quitar el cache 
   async salir() {
     const alert = await this.alertCtrl.create({
       header: 'Cerrar Sesión',
       message: '¿Estás seguro de que quieres salir del sistema?',
-      mode: 'ios', // Estilo iOS para que se vea más limpio
+      mode: 'ios', // Estilos de ios para que se vea más elegante
       buttons: [
         {
           text: 'Cancelar',
@@ -183,19 +183,23 @@ export class AdministradorPage implements OnInit {
   }
 
   private ejecutarLogout() {
-    // 1. Limpiamos TODA la memoria local
+    // limpia toda la memoria local 
     localStorage.clear();
     sessionStorage.clear();
 
-    // 2. Si tu authService tiene logout, lo llamamos (opcional si ya limpiaste arriba)
+    //llamamos el auth 
     if (this.authService.logout) {
       this.authService.logout();
     }
 
-    // 3. Redirección forzada al home (login)
-    // replaceUrl: true evita que el usuario pueda darle "atrás" y volver al panel
+    // redireccion hacia el home que es el login 
     this.router.navigate(['/home'], { replaceUrl: true });
 
     console.log('Sesión destruida y caché limpiada.');
+  }
+  // redirigimos a la ruta de tu pantalla de comentarios
+  ircomentarios() {
+    
+    this.router.navigate(['/comentarios']);
   }
 }

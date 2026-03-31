@@ -1,9 +1,6 @@
-// 1. IMPORTANTE: El @use SIEMPRE debe ir en la primera línea
 @use 'sass:color';
 
-/* ==========================================================================
-   VARIABLES DE MARCA - SMARTTAXI
-   ========================================================================== */
+
 $taxi-black:      #1F1F1F;
 $taxi-dark-gray:  #4B4847;
 $taxi-light-gray: #F5F3F0; 
@@ -12,9 +9,7 @@ $taxi-orange:     #EB8107;
 $taxi-success:    #2dd36f;
 $border-soft:     rgba(0, 0, 0, 0.08);
 
-/* ==========================================================================
-   ESTILOS BASE / LAYOUT
-   ========================================================================== */
+
 ion-content {
     --background: white;
 }
@@ -44,11 +39,8 @@ ion-header {
     }
 }
 
-/* ==========================================================================
-   COMPONENTES
-   ========================================================================== */
 
-/* 1. Sistema de Pestañas (Estilo Uber) */
+/* Sistema de Pestañas (Estilo Uber) */
 .uber-tabs-container {
     display: flex;
     overflow-x: auto;
@@ -87,52 +79,74 @@ ion-header {
     }
 }
 
-/* 2. Perfil y Avatar */
+/*  Perfil y Avatar */
 .profile-header {
     padding: 25px 20px;
     text-align: center;
     background: linear-gradient(to bottom, #ffffff, #fafafa);
 
     .avatar-wrapper {
-        position: relative;
-        width: 110px; 
-        height: 110px;
-        margin: 0 auto 15px;
-        border: 3px solid white;
-        border-radius: 50%;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  position: relative;
+  width: 110px; 
+  height: 110px;
+  margin: 0 auto 15px;
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 
-        img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            background: $taxi-light-gray;
-        }
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: $taxi-light-gray;
+  }
 
-        .edit-icon {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            background: $taxi-black;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            border: 2px solid white;
-            cursor: pointer;
+  /* Botón de editar (cambiar foto) */
+  .edit-icon {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: $taxi-black;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border: 2px solid white;
+    cursor: pointer;
 
-            ion-icon {
-                font-size: 16px;
-                color: $taxi-yellow;
-            }
-            
-            &:active { transform: scale(0.9); }
-        }
+    ion-icon {
+      font-size: 16px;
+      color: $taxi-yellow;
     }
+  }
+
+  /* Botón de quitar foto */
+  .remove-icon {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: $taxi-orange;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    border: 2px solid white;
+    cursor: pointer;
+
+    ion-icon {
+      font-size: 14px;
+      color: white;
+    }
+  }
+}
+
 
     h2 {
         font-size: 22px;
@@ -150,7 +164,7 @@ ion-header {
     }
 }
 
-/* 3. Grid de Tarjetas */
+/* Grid de Tarjetas */
 .uber-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -211,7 +225,7 @@ ion-header {
     }
 }
 
-/* 4. Formularios y Edición */
+/* Formularios y Edición */
 .edit-block {
     ion-item {
         --padding-start: 20px;
@@ -250,7 +264,7 @@ ion-header {
     }
 }
 
-/* 5. Inputs y Botones Globales */
+/* Inputs y Botones Globales */
 .uber-input {
     --background: #{$taxi-light-gray};
     --border-radius: 10px;
@@ -282,9 +296,7 @@ ion-header {
     margin: 0;
 }
 
-/* ==========================================================================
-   ANIMACIONES
-   ========================================================================== */
+
 @keyframes fadeIn {
     from { 
         opacity: 0; 

@@ -1,35 +1,127 @@
-.modal-content {
-  text-align: center;
-  padding: 20px;
+// Variables de color personalizadas para los estados
+.modal-wrapper {
+  --background: #ffffff;
+  
+  // Contenedor principal
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    height: 100%;
+    position: relative;
+  }
+
+  // Botón cerrar en la esquina
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    --color: #999;
+    font-size: 1.5rem;
+    z-index: 10;
+  }
+
+  // Sección del Icono
+  .icon-section {
+    position: relative;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .icon-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 50px;
+      color: white;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      z-index: 2;
+    }
+
+    .ripple-bg {
+      position: absolute;
+      width: 130px;
+      height: 130px;
+      background: rgba(0,0,0,0.03);
+      border-radius: 50%;
+      z-index: 1;
+      animation: pulse 2s infinite;
+    }
+  }
+
+  // Tipografía
+  .text-section {
+    text-align: center;
+    margin-bottom: 30px;
+
+    .modal-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #333;
+      margin: 0 0 12px 0;
+      letter-spacing: -0.5px;
+    }
+
+    .modal-message {
+      font-size: 1.05rem;
+      color: #666;
+      line-height: 1.5;
+      
+      b, strong {
+        color: #333;
+        font-weight: 700;
+      }
+    }
+  }
+
+  // Botón inferior
+  .action-section {
+    width: 100%;
+    
+    .confirm-button {
+      --border-radius: 15px;
+      --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      font-weight: 700;
+      height: 52px;
+      font-size: 1rem;
+      margin: 0;
+    }
+  }
+
+  // VARIACIONES DE COLOR SEGÚN EL TIPO
+  &.success {
+    .icon-circle { background: linear-gradient(135deg, #2dd36f, #24a156); }
+    .ripple-bg { background: rgba(45, 211, 111, 0.1); }
+    .modal-title { color: #1e824c; }
+  }
+
+  &.error {
+    .icon-circle { background: linear-gradient(135deg, #eb445a, #b72a3b); }
+    .ripple-bg { background: rgba(235, 68, 90, 0.1); }
+    .modal-title { color: #a52a3a; }
+  }
+
+  &.warning {
+    .icon-circle { background: linear-gradient(135deg, #ffc409, #e0ac08); }
+    .ripple-bg { background: rgba(255, 196, 9, 0.1); }
+    .modal-title { color: #8a6d05; }
+  }
+
+  &.primary {
+    .icon-circle { background: linear-gradient(135deg, #3880ff, #2a60bf); }
+    .ripple-bg { background: rgba(56, 128, 255, 0.1); }
+    .modal-title { color: #2a60bf; }
+  }
 }
-.icon-container {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-}
-.icon-container.success {
-  background-color: #2dd36f20;
-  color: #2dd36f;
-}
-.icon-container.error {
-  background-color: #eb445a20;
-  color: #eb445a;
-}
-.icon-container.warning {
-  background-color: #ffc40920;
-  color: #ffc409;
-}
-.icon-container.info {
-  background-color: #3880ff20;
-  color: #3880ff;
-}
-.mensaje {
-  font-size: 16px;
-  line-height: 1.5;
-  text-align: left;
-  white-space: pre-line;
+
+// Animación de pulso para el fondo del ícono
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.5; }
+  100% { transform: scale(0.95); opacity: 1; }
 }

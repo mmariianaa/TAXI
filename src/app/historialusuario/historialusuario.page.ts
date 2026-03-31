@@ -29,7 +29,7 @@ import {
     IonTitle, 
     IonContent, 
     IonBackButton, 
-    IonIcon, // ← AGREGADO: Faltaba importar IonIcon
+    IonIcon,
     IonButton, IonButtons, IonBackButton, 
     FormsModule, IonContent, IonTitle, 
     IonToolbar,IonItem, IonLabel, IonBadge, 
@@ -75,14 +75,14 @@ export class HistorialusuarioPage implements OnInit {
     this.errorMsg = '';
 
     try {
-      // 1. OBTENER ID REAL (Siguiendo la lógica de tu PerfilusuarioPage)
+      //id del usuario logeado 
       const authData = this.authService.getUserData();
       let idFinal = null;
 
       if (authData) {
         idFinal = authData.id_usuario || authData.id;
       } else {
-        // Fallback al localStorage si el servicio está vacío
+
         const localData = localStorage.getItem('user_data');
         if (localData) {
           const parsed = JSON.parse(localData);
@@ -90,37 +90,35 @@ export class HistorialusuarioPage implements OnInit {
         }
       }
 
-      // 2. VALIDAR SI TENEMOS UN ID
+      //validar si realmente tenemos un id 
       if (!idFinal) {
-        console.warn('⚠️ No se encontró ID de usuario logueado');
+        console.warn(' No se encontró ID de usuario logueado');
         this.errorMsg = 'Debes iniciar sesión para ver tu historial.';
         this.cargando = false;
-        // Opcional: Redirigir al login
-        // this.router.navigate(['/home']); 
+        this.router.navigate(['/home']); 
         return;
       }
 
       this.userId = idFinal;
-      console.log('🔍 Cargando historial para el ID:', this.userId);
+      console.log('Cargando historial para el ID:', this.userId);
 
-      // 3. LLAMADA A LA API
-      // Usamos el ID dinámico y tipo 'usuario'
+      // llamamos a la api 
       this.http.get<any[]>(`http://localhost:3000/api/historialusuario/${this.userId}?tipo=usuario`)
         .subscribe({
           next: (data) => {
             this.viajes = data;
             this.cargando = false;
-            console.log('✅ Viajes recuperados:', this.viajes.length);
+            console.log(' Viajes recuperados:', this.viajes.length);
           },
           error: (err) => {
-            console.error('❌ Error al conectar con el servidor', err);
+            console.error(' Error al conectar con el servidor', err);
             this.errorMsg = 'No pudimos conectar con el servidor.';
             this.cargando = false;
           }
         });
 
     } catch (error) {
-      console.error('❌ Error crítico en obtenerHistorial:', error);
+      console.error(' Error crítico en obtenerHistorial:', error);
       this.cargando = false;
     }
   }
@@ -130,7 +128,7 @@ export class HistorialusuarioPage implements OnInit {
     this.router.navigate(['/pantallausuario']);
   }
 
-  // Refrescar manualmente con el scroll (si lo añades al HTML)
+  // Refrescar manualmente con el scroll
   doRefresh(event: any) {
     this.obtenerHistorial();
     event.target.complete();

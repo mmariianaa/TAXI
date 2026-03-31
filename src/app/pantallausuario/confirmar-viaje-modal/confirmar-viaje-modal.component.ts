@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
-// IMPORTANTE: Importamos desde /standalone
 import { 
   ModalController, 
   IonHeader, 
@@ -28,11 +27,9 @@ import {
   imports: [
     CommonModule, 
     IonHeader, IonToolbar, IonTitle, IonButtons, 
-    IonButton, IonIcon, IonContent, IonList, 
-    IonItem, IonLabel
-    // NOTA: Aquí NO va IonicModule
+    IonButton, IonIcon, IonContent,
   ],
-  providers: [ModalController] // Proveedor local si no está en el main.ts
+  providers: [ModalController] // Inyectamos el ModalController para poder usarlo
 })
 export class ConfirmarViajeComponent {
   @Input() taxi: any = {};

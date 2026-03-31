@@ -8,7 +8,24 @@ const conexion = DB.connDB;
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+//configuracion para cloudinary/ guardar las fotos 
+require('dotenv').config();
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+console.log(" Cloudinary conectado con:", cloudinary.config().cloud_name);
+
+const storage = multer.memoryStorage(); // Usar memoria evita cortes de conexión
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 } // Límite de 10MB por si acaso
+});
 app.use(express.json());
 app.use(cors({
     origin: 'http://localhost:8100',
@@ -205,7 +222,7 @@ app.post('/api/login', (req, res) => {
     const query = `
         SELECT 
             u.id_usuario, u.nombre, u.apellido, u.correo, u.contrasena, u.id_chofer,
-            u.tipo_documento, u.numero_documento, u.telefono,
+            u.tipo_documento, u.numero_documento, u.foto, u.telefono,
             t.marca, t.modelo, t.placa, t.color
         FROM Usuario u
         LEFT JOIN Chofer c ON u.id_chofer = c.id_chofer
@@ -244,6 +261,7 @@ app.post('/api/login', (req, res) => {
                 telefono: user.telefono,
                 documento: user.numero_documento,
                 id_chofer: user.id_chofer,
+                foto:user.foto,
                 vehiculo: user.id_chofer ? {
                     marca: user.marca,
                     modelo: user.modelo,
@@ -285,6 +303,7 @@ app.get('/api/taxis/disponibles', (req, res) => {
 });
 
 app.post('/api/registrochofer', async (req, res) => {
+    console.log("Datos recibidos:", req.body);
     const {
         nombre, apellido, edad, tipo_documento, numero_documento,
         correo, telefono, contrasena,
@@ -321,6 +340,12 @@ app.post('/api/registrochofer', async (req, res) => {
         // Si algo falla, deshacemos todo lo anterior (Rollback)
         await db.rollback();
         console.error('Error en el registro:', error);
+
+
+    if (error.code === 'ER_DUP_ENTRY') {
+        return res.status(400).json({ error: 'El correo o número de documento ya está registrado' });
+    }
+
         res.status(500).json({
             error: 'Hubo un problema al registrar el chofer',
             detalle: error.message
@@ -378,7 +403,7 @@ app.post('/api/registrousuario', async (req, res) => {
 
 app.get('/getTodosChoferes', (req, res) => {
     const query = `
-        SELECT c.*, u.nombre, u.apellido, u.correo, t.marca, t.placa
+        SELECT c.*, u.nombre, u.apellido, u.correo,u.foto, t.marca, t.placa
         FROM Chofer c
         LEFT JOIN Usuario u ON c.id_chofer = u.id_chofer
         LEFT JOIN Taxi t ON c.id_taxi = t.id_taxi`;
@@ -717,33 +742,72 @@ app.put('/api/admin/actualizar-chofer/:id', (req, res) => {
 });
 //SOLO AGREGUE ESTOS DOS PARA LAS VALIDACIONES 
 // RUTA PARA ACTUALIZAR PERFIL DE ADMINISTRADOR
-app.put('/api/perfil/actualizar-completo/:id', (req, res) => {
+app.put('/api/perfil/actualizar-completo/:id', upload.single('foto'), async (req, res) => {
     const id_usuario = req.params.id;
-    
-    // Extraemos SOLO lo que tu HTML y tu TS están enviando realmente
-    const { nombre, apellido, telefono, foto } = req.body;
+    const { nombre, apellido, telefono, correo, quitarFoto } = req.body;
 
-    // Solo actualizamos estos 4 campos para que no dé error por falta de datos
-    const query = `
-        UPDATE Usuario 
-        SET nombre = ?, 
-            apellido = ?, 
-            telefono = ?, 
-            foto = ? 
-        WHERE id_usuario = ?
-    `;
+    try {
+        let fotoUrl = undefined; // Usamos undefined para saber si no hay cambios en la foto
 
-    conexion.query(query, [nombre, apellido, telefono, foto, id_usuario], (err, result) => {
-        if (err) {
-            console.error('❌ Error detallado en MySQL:', err); 
-            return res.status(500).json({ error: err.message });
+        // 1. Si viene un archivo nuevo
+        if (req.file) {
+            const resultado = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: "usuarios", public_id: `usuario_${id_usuario}`, overwrite: true },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                );
+                stream.end(req.file.buffer);
+            });
+            fotoUrl = resultado.secure_url;
+        } 
+        // 2. Si el usuario explícitamente quiere quitar la foto
+        else if (quitarFoto === 'true') {
+            fotoUrl = null;
         }
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'No se encontró el usuario' });
+        // 3. Construcción dinámica de la Query para no borrar la foto actual por error
+        let query = `
+            UPDATE Usuario 
+            SET nombre = ?, 
+                apellido = ?, 
+                telefono = ?, 
+                correo = ?
+        `;
+        const params = [nombre, apellido, telefono, correo];
+
+        // Solo añadimos la foto al UPDATE si se subió una nueva o se quitó
+        if (fotoUrl !== undefined) {
+            query += `, foto = ?`;
+            params.push(fotoUrl);
         }
 
-        console.log('✅ Perfil actualizado con éxito para el ID:', id_usuario);
-        res.json({ message: 'Perfil actualizado con éxito' });
-    });
+        query += ` WHERE id_usuario = ?`;
+        params.push(id_usuario);
+
+        conexion.query(query, params, (err, result) => {
+            if (err) {
+                console.error('❌ Error detallado en MySQL:', err); 
+                return res.status(500).json({ error: err.message });
+            }
+
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ error: 'No se encontró el usuario' });
+            }
+
+            console.log('✅ Perfil actualizado con éxito para el ID:', id_usuario);
+            
+            // Enviamos la fotoUrl (si es undefined, enviamos la que ya tenía el objeto choferInfo)
+            res.json({ 
+                message: 'Perfil actualizado con éxito', 
+                foto: fotoUrl === undefined ? req.body.fotoActual : fotoUrl 
+            });
+        });
+
+    } catch (error) {
+        console.error("❌ Error al procesar la petición:", error);
+        res.status(500).json({ error: "Error al procesar la imagen o los datos" });
+    }
 });

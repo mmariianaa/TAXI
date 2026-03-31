@@ -49,16 +49,14 @@
     }
   }
 }
-
-/* ========== ESTILOS PARA LEAFLET ========== */
-/* Ocultar panel de rutas de texto */
+//estilos para el modal de notificaciones
 .leaflet-routing-container, 
 .leaflet-routing-error,
 .leaflet-routing-alternatives-container {
   display: none !important;
 }
 
-/* Estilizar controles de zoom */
+//controles del zoom
 .leaflet-control-zoom {
   border: none !important;
   margin-left: 15px !important;
@@ -89,7 +87,7 @@
   }
 }
 
-/* Estilizar marcadores de taxis */
+//marcdores de los taxis 
 .taxi-marker {
   display: flex;
   align-items: center;
@@ -104,7 +102,7 @@
   }
 }
 
-/* Estilizar marcador de ubicación del usuario */
+//ubicacion de usuario
 .ubicacion-usuario {
   display: flex;
   align-items: center;
@@ -133,17 +131,16 @@
   }
 }
 
-/* Estilo para la línea de ruta */
+//linea de la ruta
 .leaflet-routing-container {
   display: none !important;
 }
 
-/* Hacer que la línea de ruta sea más visible */
 .leaflet-routing-alternatives-container {
   display: none !important;
 }
 
-/* ========== ESTILOS PARA TAXIS ========== */
+//taxis 
 ion-list-header {
   font-weight: bold;
   font-size: 1.1rem;
@@ -212,7 +209,7 @@ ion-list-header {
   }
 }
 
-/* ========== ESTADOS DE CARGA Y VACÍO ========== */
+//estados de caga 
 .loading-state,
 .ion-text-center.ion-padding {
   text-align: center;
@@ -287,7 +284,7 @@ ion-list-header {
   }
 }
 
-/* ========== MENÚ LATERAL ========== */
+//menu lateral
 .logout-item {
   margin-top: 30px;
   border-radius: 10px;
@@ -298,7 +295,6 @@ ion-list-header {
   }
 }
 
-/* ========== UTILIDADES ========== */
 .badge-spinner {
   width: 16px;
   height: 16px;
@@ -329,7 +325,7 @@ ion-list-header {
   }
 }
 
-/* ========== ANIMACIONES ========== */
+//animaciones
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -352,7 +348,7 @@ ion-list-header {
   }
 }
 
-/* Aplicar animaciones a los elementos */
+//animaciones a los elementos 
 .taxi-item {
   animation: slideIn 0.3s ease;
 }
@@ -361,7 +357,7 @@ ion-list-header {
   animation: fadeIn 0.3s ease;
 }
 
-/* ========== RESPONSIVE ========== */
+//resposivo
 @media (max-width: 768px) {
   .map-box {
     height: 280px;
@@ -412,7 +408,7 @@ ion-list-header {
   }
 }
 
-/* ========== ESTILOS PARA MODALES ========== */
+//estilos para los modales 
 .modal-content {
   text-align: center;
   padding: 20px;
@@ -455,7 +451,7 @@ ion-list-header {
   white-space: pre-line;
 }
 
-/* ========== ESTILOS PARA MODAL DE CONFIRMACIÓN ========== */
+//el modal de confirmacion
 .taxi-info {
   text-align: center;
   margin-bottom: 20px;
@@ -498,7 +494,7 @@ ion-list-header {
   gap: 10px;
 }
 
-/* ========== ESTILOS PARA MARCADORES DEL MAPA ========== */
+//marcadores del mapa 
 .taxi-marker-content {
   background-color: #FFC31F;
   width: 32px;
@@ -540,7 +536,6 @@ ion-list-header {
   background: #ffb300;
 }
 
-/* ========== MEJORAS RESPONSIVE ========== */
 @media (max-width: 768px) {
   .icon-container {
     width: 60px;
@@ -564,7 +559,6 @@ ion-list-header {
   }
 }
 
-/* Estilos para el botón sugerir ruta */
 .suggest-button {
   margin-top: 12px;
   --border-radius: 25px;
@@ -572,7 +566,6 @@ ion-list-header {
   font-weight: 500;
 }
 
-/* Estilos para el badge de solicitud */
 .solicitud-badge {
   background-color: var(--ion-color-warning);
   color: var(--ion-color-warning-contrast);
@@ -582,7 +575,7 @@ ion-list-header {
   animation: pulse 1.5s infinite;
 }
 
-/* Estilos para información de precio */
+// Estilos para información de precio
 .price-info {
   margin-top: 16px;
   animation: fadeInUp 0.5s ease;
@@ -631,7 +624,7 @@ ion-list-header {
   }
 }
 
-/* Animaciones */
+// Estilos para animaciones
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -643,7 +636,7 @@ ion-list-header {
   }
 }
 
-/* Estilos para lista vacía */
+//listas vacias 
 .empty-list-item {
   --padding-top: 30px;
   --padding-bottom: 30px;
@@ -662,7 +655,7 @@ ion-list-header {
   }
 }
 
-/* Estilos responsivos */
+// Estilos responsivos
 @media (max-width: 768px) {
   .price-info ion-card-content ion-col strong {
     font-size: 14px;
@@ -691,9 +684,7 @@ ion-list-header {
   }
 }
 
-/* ================================= */
-/* MODAL DE CALIFICACIÓN - ESTILOS   */
-/* ================================= */
+//modal de alificaciones 
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -764,7 +755,7 @@ ion-list-header {
   transform: none;
 }
 
-/* Animaciones específicas del Modal */
+// Animaciones
 @keyframes fadeInOverlay {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -778,5 +769,208 @@ ion-list-header {
   to { 
     opacity: 1; 
     transform: translateY(0) scale(1);
+  }
+}
+//vriables sincronizadas 
+$naranja: #EB8107;
+$amarillo: #FFC31F;
+$negro: #1F1F1F;
+$crema: #E6E1DB;
+$blanco: #FFFFFF;
+$gris-texto: #718096;
+
+$shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.06);
+$transition-bounce: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+
+:host {
+  --background: #{$crema};
+}
+
+ion-toolbar {
+  --background: #{$blanco};
+  --color: #{$negro};
+  font-weight: 800;
+}
+
+
+.rating-wrapper {
+  animation: fadeIn 0.8s ease-out;
+  padding-bottom: 40px;
+}
+
+//tarjetas de los viajes
+.driver-card {
+  background: linear-gradient(160deg, $blanco 0%, #f9fafb 100%);
+  border-radius: 40px; // Radio Premium
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  box-shadow: $shadow-xl;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  ion-avatar {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1.5rem;
+    border: 4px solid $amarillo;
+    box-shadow: 0 8px 20px rgba($amarillo, 0.2);
+  }
+
+  h2 {
+    color: $negro;
+    font-weight: 800;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: $gris-texto;
+    font-size: 0.95rem;
+  }
+}
+
+//control de las estrellas para calificar
+.stars-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 2.5rem;
+
+  ion-icon {
+    font-size: 3.2rem;
+    color: #cbd5e0;
+    transition: $transition-bounce;
+    cursor: pointer;
+
+    &.filled {
+      color: $amarillo;
+      filter: drop-shadow(0 0 8px rgba($amarillo, 0.4));
+      transform: scale(1.1);
+    }
+    
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+}
+
+//títulos de secciones
+.section-title {
+  color: $negro;
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
+  padding-left: 5px;
+}
+
+.chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 2rem;
+
+  ion-chip {
+    --background: #{$blanco};
+    --color: #{$gris-texto};
+    border: 1px solid rgba(0,0,0,0.05);
+    padding: 12px 16px;
+    height: 45px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+
+    &.active-chip {
+      --background: #{$negro};
+      --color: #{$amarillo};
+      box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    }
+
+    ion-icon {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+//cajas de coentrios 
+.comment-box {
+  .input-container {
+    background: $blanco;
+    border-radius: 24px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    border: 1.5px solid rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+
+    &:focus-within {
+      border-color: $amarillo;
+    }
+
+    ion-textarea {
+      --color: #{$negro};
+      --placeholder-color: #a0aec0;
+      font-weight: 500;
+    }
+
+    .counter {
+      text-align: right;
+      font-size: 0.75rem;
+      color: #cbd5e0;
+      margin-top: 5px;
+    }
+  }
+}
+
+//boton de enviar la calificacion
+ion-footer {
+  --background: #{$crema};
+  
+  .submit-btn {
+    --background: #{$negro};
+    --color: #{$blanco};
+    --border-radius: 24px;
+    height: 60px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    --box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    margin: 0;
+
+    &::part(native) {
+      background: linear-gradient(135deg, $negro 0%, #3d3d3d 100%);
+    }
+
+    &[disabled] {
+      opacity: 0.5;
+    }
+  }
+}
+
+// Animaciones
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+//botones de regreso
+ion-back-button {
+  --color: #{$negro} !important;
+  font-weight: 800; 
+  font-size: 0.9rem;
+  
+  &::part(native) {
+    --ripple-color: rgba(0, 0, 0, 0.1);
+  }
+
+  ion-icon {
+    font-weight: 800;
+    stroke-width: 48; 
+  }
+}
+ion-buttons[slot="start"] {
+  ion-back-button {
+    color: $negro;
   }
 }

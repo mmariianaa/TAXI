@@ -33,7 +33,7 @@
       <ion-buttons slot="start">
         <ion-menu-button menu="menu-chofer" color="dark"></ion-menu-button>
       </ion-buttons>
-      <ion-title>Panel Chofer</ion-title>
+      <ion-title>BIENVENIDO DE NUEVO!!</ion-title>
     </ion-toolbar>
 
     <div class="custom-tabs">
@@ -46,7 +46,7 @@
   <ion-content class="ion-padding" [className]="'tab-' + activeTab">
     <div class="main-container">
 
-      <!-- ALERTA DE NUEVA SOLICITUD -->
+      <!--aqui se muestra la alerta de que tiene una nueva solicitu de viaje-->
       @if (mostrarAlertaSolicitud) {
       <div class="alerta-solicitud" (click)="verSolicitudes()">
         <ion-icon name="car-outline"></ion-icon>
@@ -55,7 +55,7 @@
       </div>
       }
 
-      <!-- SECCIÓN PERFIL -->
+      <!-- esta seccion es del perfil -->
       <section class="perfil-section">
         <div class="status-card-elegant">
           <div class="status-info">
@@ -91,10 +91,10 @@
         </div>
       </section>
 
-      <!-- SECCIÓN VIAJES -->
+      <!--esta es la seccion de los viajes-->
       <section class="viajes-section">
 
-        <!-- SOLICITUDES PENDIENTES -->
+        <!-- solicitudes pendientes por responder -->
         @for (solicitud of solicitudesPendientes; track solicitud) {
         <div class="trip-request-card">
           <div class="req-header">NUEVA SOLICITUD</div>
@@ -124,10 +124,6 @@
         @if (viajeAceptado) {
         <div class="trip-active">
           <div id="map" class="map-container"></div>
-          <div class="leyenda-rutas">
-            <span class="ruta-chofer">🟡 Ruta del chofer</span>
-            <span class="ruta-usuario">🔵 Ruta del usuario</span>
-          </div>
           <button class="btn-finish-trip" (click)="finalizarViaje()">FINALIZAR SERVICIO</button>
         </div>
         }
@@ -141,7 +137,7 @@
         }
       </section>
 
-      <!-- SECCIÓN HISTORIAL (RECHAZADOS) -->
+      <!-- viajes rechazados -->
       <section class="historial-section">
         <h3>Viajes Rechazados</h3>
 
@@ -165,7 +161,7 @@
     </div>
   </ion-content>
 
-  <!-- MODAL DE CALIFICACIÓN -->
+  <!-- este es el modal de calificacion -->
   <div class="modal-overlay" [style.display]="mostrarModalCalificar ? 'flex' : 'none'">
     <div class="rating-modal">
       <div class="modal-header">

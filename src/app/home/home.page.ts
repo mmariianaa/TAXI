@@ -40,7 +40,7 @@ import {
   ]
 })
 export class HomePage {
-  // Inyecciones de dependencia modernas
+  // Inyecciones 
   private authService = inject(AuthService);
   private router = inject(Router);
 
@@ -61,7 +61,7 @@ export class HomePage {
     });
   }
 
-  // --- LÓGICA DE NEGOCIO ---
+  //logica de nuestro negocio 
 
   setUserType(type: string) {
     this.userType = type;
@@ -78,11 +78,10 @@ export class HomePage {
       next: (res) => {
         console.log('¡Login exitoso!', res);
 
-        // 1. Guardamos la información esencial en el navegador
+        // Guardamos la información esencial en el navegador
         localStorage.setItem('token', res.token);
         localStorage.setItem('user_data', JSON.stringify(res.user));
 
-        // 2. SISTEMA DE REDIRECCIÓN POR ROLES
         // Aquí decidimos a qué página va el usuario según su rol en la BD
         switch (res.user.rol) {
           case 'admin':
@@ -104,8 +103,6 @@ export class HomePage {
     });
   }
 
-  // --- LÓGICA DE INTERFAZ (UI) ---
-
   togglePassword(inputId: string, iconId: string) {
     const input = document.querySelector(`#${inputId}`) as any;
     const icon = document.querySelector(`#${iconId}`) as any;
@@ -119,7 +116,7 @@ export class HomePage {
     }
   }
 
-  // --- NAVEGACIÓN ---
+  // navegacion 
 
   irARegistroCliente(event: Event) {
     event.preventDefault();

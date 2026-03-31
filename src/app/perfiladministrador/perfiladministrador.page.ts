@@ -17,6 +17,7 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 export class PerfiladministradorPage implements OnInit {
   perfilForm: FormGroup;
   avatarUrl: string = 'assets/avatar.png'; 
+  selectedFile: File | null=null;
   adminId: any = null; // Cambiado a any por si el ID viene como número o string
 
   constructor(
@@ -31,13 +32,12 @@ export class PerfiladministradorPage implements OnInit {
       nombre: ['', [Validators.required]],
       apellido: ['', [Validators.required]],
       telefono: ['', [Validators.required, Validators.minLength(10)]], 
-      departamento: ['', [Validators.required]] // Se queda aquí para el HTML, pero lo filtramos al enviar
+      departamento: ['', [Validators.required]] 
     });
   }
 
   ngOnInit() {
-    // IMPORTANTE: Verifica si en tu localStorage es 'id' o 'id_usuario'
-    const adminData = JSON.parse(localStorage.getItem('user_data') || '{}');
+    const adminData = JSON.parse(localStorage.getItem('user_session') || '{}');
     this.adminId = adminData.id_usuario || adminData.id;
 
     if (this.adminId) {
@@ -56,22 +56,26 @@ export class PerfiladministradorPage implements OnInit {
   async cambiarFoto() {
     try {
       const image = await Camera.getPhoto({
-        quality: 60, // Bajamos un poco la calidad para que el string no sea tan pesado para la BD
-        allowEditing: false,
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Photos 
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Photos
       });
 
-      if (image && image.dataUrl) {
-        this.avatarUrl = image.dataUrl;
+      if (image && image.webPath) {
+        const response = await fetch(image.webPath);
+        const blob = await response.blob();
+        this.avatarUrl = image.webPath;
+        this.selectedFile = new File([blob], "foto.jpg", { type: blob.type });
       }
     } catch (error) {
-      console.log('Usuario canceló la selección');
+      console.log('Usuario canceló');
     }
   }
 
   quitarFoto() {
     this.avatarUrl = 'assets/avatar.png';
+      this.selectedFile = null;
   }
 
   esInvalido(campo: string) {
@@ -99,25 +103,29 @@ export class PerfiladministradorPage implements OnInit {
     });
     await loading.present();
 
-    // --- EL TRUCO PARA EVITAR EL ERROR 500 ---
-    // Solo enviamos los campos que EXISTEN en tu tabla Usuario de MySQL
-    const datosParaBaseDeDatos = {
-      nombre: this.perfilForm.value.nombre,
-      apellido: this.perfilForm.value.apellido,
-      telefono: this.perfilForm.value.telefono,
-      foto: this.avatarUrl
-    };
+
+    const formData = new FormData();
+    formData.append('nombre', this.perfilForm.value.nombre);
+    formData.append('apellido', this.perfilForm.value.apellido);
+    formData.append('telefono', this.perfilForm.value.telefono);
+    formData.append('departamento', this.perfilForm.value.departamento);
+
+    if (this.selectedFile) {
+      formData.append('foto', this.selectedFile);
+    } else if (this.avatarUrl === 'assets/avatar.png') {
+      formData.append('quitarFoto', 'true');
+    }
 
     const url = `http://localhost:3000/api/perfil/actualizar-completo/${this.adminId}`;
     
-    this.http.put(url, datosParaBaseDeDatos).subscribe({
-      next: async (res) => {
+    this.http.put(url, formData).subscribe({
+      next: async (res: any) => {
         await loading.dismiss();
 
         // Actualizamos el LocalStorage para que los cambios se vean sin recargar
-        const currentData = JSON.parse(localStorage.getItem('user_data') || '{}');
-        const newData = { ...currentData, ...this.perfilForm.value, foto: this.avatarUrl };
-        localStorage.setItem('user_data', JSON.stringify(newData));
+        const currentData = JSON.parse(localStorage.getItem('user_session') || '{}');
+        const newData = { ...currentData, ...this.perfilForm.value, foto: res.foto || null};
+        localStorage.setItem('user_session', JSON.stringify(newData));
 
         const alert = await this.alertCtrl.create({
           header: '¡Éxito!',

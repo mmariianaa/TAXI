@@ -1,210 +1,192 @@
-@use 'sass:color';
-
-// ============================================
-// VARIABLES DE PALETA (Limpias y Unificadas)
-// ============================================
-$negro-puro: #1F1F1F;
-$gris-carbon: #4B4847;
-$gris-fondo: #E6E1DB;
-$amarillo-taxi: #FFC31F;
-$naranja-accent: #EB8107;
+// variables globales de los colores 
+$naranja: #EB8107;
+$amarillo: #FFC31F;
+$negro: #1F1F1F;
+$crema: #E6E1DB;
 $blanco: #FFFFFF;
+$gris-texto: #718096;
 
-// ============================================
-// ESTILOS GENERALES Y HEADER
-// ============================================
+$shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.06);
+$transition-smooth: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+
 :host {
-    ion-content {
-        --background: #{$gris-fondo}; 
-    }
+  --background: #{$crema};
 }
 
-ion-header {
-    &.ion-no-border {
-        ion-toolbar {
-            --background: #{$blanco};
-            --color: #{$negro-puro};
-            --border-width: 0;
-            padding-top: 8px;
-            padding-bottom: 8px;
-        }
-    }
-
-    ion-title {
-        font-weight: 800 !important;
-        font-size: 1.2rem;
-        letter-spacing: -0.5px;
-
-        span {
-            color: $naranja-accent;
-        }
-    }
-
-    ion-back-button {
-        --color: #{$negro-puro};
-        font-weight: 600;
-    }
+ion-content {
+  --background: #{$crema};
 }
 
-// ============================================
-// TARJETAS DE VIAJE (CARDS)
-// ============================================
+/*heder */
+ion-toolbar {
+  --background: #{$blanco};
+  --border-style: none;
+  
+  ion-title {
+    font-weight: 800;
+    color: $negro;
+    span { color: $amarillo; }
+  }
+}
+
+/*tarjetas de ls viajes */
 ion-card {
-    margin: 16px;
-    border-radius: 20px;
-    background: $blanco;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-    border: none;
-    overflow: hidden;
-    transition: all 0.2s ease;
+  background: $blanco;
+  border-radius: 28px; // Redondeado pa mas bonito 
+  margin: 18px 16px;
+  box-shadow: $shadow-xl;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  animation: slideUp 0.6s ease-out both;
 
-    &:active {
-        transform: scale(0.98); 
-        background: color.adjust($blanco, $lightness: -3%); // Efecto visual al presionar
-    }
-
-    &::before {
-        content: '';
-        display: block;
-        height: 4px;
-        background: linear-gradient(90deg, $amarillo-taxi, $naranja-accent);
-    }
-}
-
-ion-item {
+  ion-item {
     --background: transparent;
     --padding-start: 16px;
-    margin-top: 8px;
+    padding-top: 10px;
 
-    ion-label {
-        h2 {
-            font-weight: 800;
-            color: $negro-puro;
-            font-size: 1.15rem;
-            margin-bottom: 4px;
-        }
-
-        p {
-            color: $gris-carbon;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-weight: 500;
-        }
-    }
-}
-
-// ============================================
-// COMPONENTES INTERNOS
-// ============================================
-ion-badge {
-    padding: 6px 12px;
-    border-radius: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.7rem;
-    letter-spacing: 0.5px;
-
-    &[color="success"] {
-        --background: #{$amarillo-taxi};
-        --color: #{$negro-puro};
-    }
-
-    &[color="warning"] {
-        --background: #{$gris-fondo};
-        --color: #{$gris-carbon};
-    }
-}
-
-ion-card-content {
-    padding: 16px;
-
-    .info-row {
-        margin-bottom: 10px;
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-
-        ion-icon {
-            color: $gris-carbon;
-            font-size: 1.2rem;
-            margin-top: 2px;
-        }
-
-        .text-container {
-            strong {
-                display: block;
-                color: $negro-puro;
-                font-size: 0.85rem;
-                text-transform: uppercase;
-                margin-bottom: 2px;
-            }
-
-            span {
-                color: $gris-carbon;
-                font-size: 0.95rem;
-            }
-        }
-    }
-
-    .divider {
-        height: 1px;
-        background: rgba(0, 0, 0, 0.05);
-        margin: 16px 0;
-    }
-
-    .price-section {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        .payment-method {
-            font-size: 0.8rem;
-            color: $gris-carbon;
-            font-weight: 500;
-        }
-
-        .total-amount {
-            color: $negro-puro;
-            font-weight: 900;
-            font-size: 1.5rem;
-
-            &::before {
-                content: '$';
-                font-size: 1rem;
-                margin-right: 2px;
-                color: $naranja-accent;
-            }
-        }
-    }
-}
-
-// ============================================
-// ESTADOS VACÍOS O CARGA
-// ============================================
-.loading-container,
-.empty-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 70vh;
-    color: $gris-carbon;
-
-    ion-icon {
-        font-size: 4rem;
-        color: $amarillo-taxi;
-        margin-bottom: 16px;
+    h2 {
+      font-weight: 800;
+      color: $negro;
+      font-size: 1.1rem;
     }
 
     p {
-        font-weight: 600;
-        font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.85rem;
+      color: $gris-texto;
+      font-weight: 500;
     }
+  }
 }
 
-ion-spinner {
-    --color: #{$naranja-accent};
-    width: 50px;
-    height: 50px;
+/*estado */
+ion-badge {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 6px;
+  --padding-bottom: 6px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.5px;
+}
+
+//para los detalles de los viajes
+ion-card-content {
+  padding-top: 0;
+
+  .info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    ion-icon {
+      font-size: 1.4rem;
+      color: $amarillo;
+      background: rgba($amarillo, 0.1);
+      padding: 8px;
+      border-radius: 12px;
+    }
+
+    .text-container {
+      strong {
+        display: block;
+        font-size: 0.75rem;
+        color: $gris-texto;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      span {
+        font-size: 0.95rem;
+        color: $negro;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+//para los detalles de los viajes
+.divider {
+  height: 1px;
+  background: rgba(0,0,0,0.05);
+  margin: 15px 0;
+}
+
+.price-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .payment-method {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: $gris-texto;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .total-amount {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #2dd36f; // Verde éxito
+  }
+}
+
+// estados vacios 
+.empty-container {
+  padding: 40px;
+  text-align: center;
+  
+  ion-icon {
+    font-size: 80px;
+    color: rgba($negro, 0.1);
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-weight: 700;
+    color: $gris-texto;
+    font-size: 1.1rem;
+  }
+
+  ion-button {
+    --border-radius: 18px;
+    --border-width: 2px;
+    margin-top: 20px;
+    font-weight: 800;
+  }
+}
+
+//animaciones
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+//para las tarjetaas 
+@for $i from 1 through 10 {
+  ion-card:nth-child(#{$i}) {
+    animation-delay: #{$i * 0.1}s;
+  }
+}
+:host {
+  display: block;
+  --background: #{$crema} !important; // Esto fuerza el fondo crema
+}
+
+ion-content {
+  --background: #{$crema} !important;
+  
+  //para las tarjetas de los viajes y resalten
+  ion-card {
+    --background: #{$blanco};
+    margin: 15px !important;
+    border-radius: 28px !important;
+    box-shadow: $shadow-xl !important;
+  }
 }

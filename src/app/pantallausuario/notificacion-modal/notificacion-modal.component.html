@@ -1,21 +1,29 @@
-<ion-header>
-  <ion-toolbar [color]="tipo === 'success' ? 'success' : tipo === 'error' ? 'danger' : tipo === 'warning' ? 'warning' : 'primary'">
-    <ion-title>{{ titulo }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="cerrar()">
-        <ion-icon name="close-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-<ion-content class="ion-padding">
-  <div class="modal-content">
-    <div class="icon-container" [class]="tipo">
-      <ion-icon [name]="icono" size="large"></ion-icon>
-    </div>
-    <div class="mensaje" [innerHTML]="mensajeFormateado"></div>
-    <ion-button expand="block" (click)="cerrar()" class="ion-margin-top" [color]="tipo === 'success' ? 'success' : tipo === 'error' ? 'danger' : tipo === 'warning' ? 'warning' : 'primary'">
-      Entendido
+<ion-content class="modal-wrapper" [class]="tipo">
+  <div class="main-container">
+    <ion-button fill="clear" class="close-btn" (click)="cerrar()">
+      <ion-icon name="close-outline"></ion-icon>
     </ion-button>
+
+    <div class="icon-section">
+      <div class="ripple-bg"></div>
+      <div class="icon-circle">
+        <ion-icon [name]="icono"></ion-icon>
+      </div>
+    </div>
+
+    <div class="text-section">
+      <h1 class="modal-title">{{ titulo }}</h1>
+      <div class="modal-message" [innerHTML]="mensajeFormateado"></div>
+    </div>
+
+    <div class="action-section">
+      <ion-button 
+        expand="block" 
+        (click)="cerrar()" 
+        class="confirm-button"
+        [color]="tipo === 'error' ? 'danger' : tipo">
+        Entendido
+      </ion-button>
+    </div>
   </div>
 </ion-content>

@@ -1,13 +1,13 @@
 import {
   menuController
-} from "./chunk-K7NQWNEK.js";
+} from "./chunk-SMHS5BAP.js";
 import {
   getTimeGivenProgression
 } from "./chunk-34QX6F67.js";
 import {
   IonicSafeString,
   setupConfig
-} from "./chunk-ZWH2LLLS.js";
+} from "./chunk-Q542G2TB.js";
 import {
   actionSheetController,
   alertController,
@@ -16,38 +16,38 @@ import {
   pickerController,
   popoverController,
   toastController
-} from "./chunk-VXL4ND5U.js";
-import "./chunk-KUBNZZ35.js";
+} from "./chunk-LNXGVV2P.js";
+import "./chunk-WYZJBALO.js";
 import {
   openURL
 } from "./chunk-V2RXVE47.js";
 import {
+  createGesture
+} from "./chunk-Z3OEOVFM.js";
+import "./chunk-QA2SYHF5.js";
+import "./chunk-TR4FPYWS.js";
+import {
   iosTransitionAnimation
-} from "./chunk-B7XOCL75.js";
+} from "./chunk-IVZEAREL.js";
 import {
   mdTransitionAnimation
-} from "./chunk-XKSNCHMP.js";
+} from "./chunk-JOZMNAVO.js";
 import {
   getIonPageElement
-} from "./chunk-B7P4IFQ5.js";
+} from "./chunk-6RXIWLC4.js";
 import {
   createAnimation
-} from "./chunk-F6PJQSYS.js";
+} from "./chunk-GDLMT5GW.js";
+import "./chunk-LCMILTBF.js";
 import {
   getPlatforms,
   initialize,
   isPlatform
-} from "./chunk-PDXH2IME.js";
-import "./chunk-BUHPAWTF.js";
-import {
-  createGesture
-} from "./chunk-Z3OEOVFM.js";
-import "./chunk-QA2SYHF5.js";
-import "./chunk-WW5JJW6X.js";
-import "./chunk-LCMILTBF.js";
+} from "./chunk-64ZD6UHQ.js";
+import "./chunk-IAIW5OFA.js";
 import {
   bootstrapLazy
-} from "./chunk-HGXH34TV.js";
+} from "./chunk-MKEXY72Z.js";
 import {
   AngularDelegate,
   Config,
@@ -72,26 +72,26 @@ import {
   provideComponentInputBinding,
   raf,
   setIonicClasses
-} from "./chunk-LMLX3YSH.js";
+} from "./chunk-GQHSWG2U.js";
 import "./chunk-5GPJNYMU.js";
 import "./chunk-ZJFSA3WZ.js";
 import "./chunk-PAPWYQZR.js";
 import "./chunk-XUXNI4T2.js";
-import "./chunk-VYRO5QLB.js";
 import "./chunk-4554YRK6.js";
 import "./chunk-6U2AQA2C.js";
+import "./chunk-VYRO5QLB.js";
 import "./chunk-2H3NLAAY.js";
 import "./chunk-QEE7QVES.js";
+import {
+  ActivatedRoute,
+  Router
+} from "./chunk-XT4WEHOZ.js";
 import {
   MaxValidator,
   MinValidator,
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR
 } from "./chunk-N56GCOTY.js";
-import {
-  ActivatedRoute,
-  Router
-} from "./chunk-XT4WEHOZ.js";
 import "./chunk-7XPNVI5H.js";
 import "./chunk-PCG7JBQ6.js";
 import {
