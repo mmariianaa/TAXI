@@ -57,7 +57,7 @@ export class AdministradorPage implements OnInit {
     this.cargarResumen('dia');
     this.cargarChoferes();
 
-    const data = localStorage.getItem('user_data');
+    const data = localStorage.getItem('user_session');
     if (data) {
       const admin = JSON.parse(data);
       this.nombreAdmin = admin.nombre;

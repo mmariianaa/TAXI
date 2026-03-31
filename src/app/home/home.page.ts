@@ -40,11 +40,9 @@ import {
   ]
 })
 export class HomePage {
-  // Inyecciones 
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  // Propiedades del componente
   userType: string = 'cliente';
   loginData = {
     email: '',
@@ -53,7 +51,6 @@ export class HomePage {
   };
 
   constructor() {
-    // Registro de iconos para que se vean en el HTML
     addIcons({
       addOutline, mailOutline, lockClosedOutline,
       eyeOffOutline, eyeOutline, personOutline,
@@ -61,62 +58,65 @@ export class HomePage {
     });
   }
 
-  //logica de nuestro negocio 
-
   setUserType(type: string) {
     this.userType = type;
   }
 
   iniciarSesion() {
-    // Validación básica de campos vacíos
-    if (!this.loginData.email || !this.loginData.password) {
+    // 1. Limpieza de espacios en blanco (evita el error de "correo no registrado")
+    const correoLimpio = this.loginData.email.trim().toLowerCase();
+    const passLimpia = this.loginData.password.trim();
+
+    if (!correoLimpio || !passLimpia) {
       alert('Por favor completa todos los campos');
       return;
     }
 
-    this.authService.login(this.loginData.email, this.loginData.password).subscribe({
+    // 2. Llamada al servicio con datos limpios
+    this.authService.login(correoLimpio, passLimpia).subscribe({
       next: (res) => {
         console.log('¡Login exitoso!', res);
 
-        // Guardamos la información esencial en el navegador
+        // Guardamos token y datos del usuario
         localStorage.setItem('token', res.token);
         localStorage.setItem('user_data', JSON.stringify(res.user));
 
-        // Aquí decidimos a qué página va el usuario según su rol en la BD
-        switch (res.user.rol) {
-          case 'admin':
-            this.router.navigate(['/administrador']);
-            break;
-          case 'chofer':
-            this.router.navigate(['/chofer']);
-            break;
-          default:
-            this.router.navigate(['/pantallausuario']);
-            break;
+        // 3. REDIRECCIÓN BASADA EN EL ROL DE LA API
+        // Asegúrate de que los strings coincidan con tu backend
+        const rol = res.user.rol.toLowerCase(); 
+
+        if (rol === 'admin') {
+          this.router.navigate(['/administrador']);
+        } else if (rol === 'chofer') {
+          this.router.navigate(['/chofer']);
+        } else {
+          this.router.navigate(['/pantallausuario']);
         }
       },
       error: (err) => {
         console.error('Error en login:', err);
-        const mensaje = err.error?.error || 'Credenciales incorrectas o error de conexión';
+        // Si el error es 401, mostramos el mensaje de la API o uno genérico
+        const mensaje = err.error?.error || 'Error de conexión con el servidor';
         alert(mensaje);
       }
     });
   }
 
+  // Lógica para mostrar/ocultar contraseña
   togglePassword(inputId: string, iconId: string) {
-    const input = document.querySelector(`#${inputId}`) as any;
-    const icon = document.querySelector(`#${iconId}`) as any;
+    const input = document.getElementById(inputId) as any;
+    const icon = document.getElementById(iconId) as any;
 
-    if (input.type === 'password') {
-      input.type = 'text';
-      icon.name = 'eye-outline';
-    } else {
-      input.type = 'password';
-      icon.name = 'eye-off-outline';
+    if (input && icon) {
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.name = 'eye-outline';
+      } else {
+        input.type = 'password';
+        icon.name = 'eye-off-outline';
+      }
     }
   }
-
-  // navegacion 
 
   irARegistroCliente(event: Event) {
     event.preventDefault();
@@ -130,6 +130,6 @@ export class HomePage {
 
   olvidePassword(event: Event) {
     event.preventDefault();
-    alert('Hemos enviado instrucciones a tu correo para recuperar tu acceso.');
+    alert('Hemos enviado instrucciones a tu correo.');
   }
 }

@@ -14,18 +14,18 @@ const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 require('dotenv').config();
 
-cloudinary.config({ 
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-  api_key: process.env.CLOUDINARY_API_KEY, 
-  api_secret: process.env.CLOUDINARY_API_SECRET 
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 console.log(" Cloudinary conectado con:", cloudinary.config().cloud_name);
 
 const storage = multer.memoryStorage(); // Usar memoria evita cortes de conexión
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 } // Límite de 10MB por si acaso
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 10 * 1024 * 1024 } // Límite de 10MB por si acaso
 });
 app.use(express.json());
 app.use(cors({
@@ -110,7 +110,7 @@ io.on('connection', (socket) => {
     });
 
     // EVENTOS DE RESPUESTA DEL CHOFER
-  
+
 
     socket.on('aceptar_viaje', (data) => {
         const { id_viaje, id_chofer, id_cliente } = data;
@@ -169,16 +169,16 @@ io.on('connection', (socket) => {
         });
     });
 
-    
+
 
     socket.on('finalizar_viaje', (data) => {
-        const {  id_usuario } = data;
+        const { id_usuario } = data;
         io.to(`usuario_${id_usuario}`).emit('solicitar_metodo_pago', data);
     });
 
     socket.on('usuario_elige_efectivo', (data) => {
         const { id_chofer } = data;
-        io.to(`usuario_${id_chofer}`).emit('chofer_confirma_efectivo', data); 
+        io.to(`usuario_${id_chofer}`).emit('chofer_confirma_efectivo', data);
     });
 
     socket.on('usuario_paga_tarjeta', (data) => {
@@ -189,7 +189,7 @@ io.on('connection', (socket) => {
     socket.on('chofer_confirma_pago', (data) => {
         const { id_viaje, id_usuario } = data;
         io.to(`usuario_${id_usuario}`).emit('viaje_completado_exito', data);
-        
+
         conexion.query('UPDATE Viajes SET estado = "completado" WHERE id_viaje = ?', [id_viaje]);
     });
 
@@ -223,7 +223,7 @@ app.post('/api/login', (req, res) => {
     const query = `
         SELECT 
             u.id_usuario, u.nombre, u.apellido, u.correo, u.contrasena, u.id_chofer,
-            u.tipo_documento, u.numero_documento, u.foto, u.telefono,
+            u.tipo_documento, u.numero_documento, u.telefono,
             t.marca, t.modelo, t.placa, t.color
         FROM Usuario u
         LEFT JOIN Chofer c ON u.id_chofer = c.id_chofer
@@ -262,7 +262,6 @@ app.post('/api/login', (req, res) => {
                 telefono: user.telefono,
                 documento: user.numero_documento,
                 id_chofer: user.id_chofer,
-                foto:user.foto,
                 vehiculo: user.id_chofer ? {
                     marca: user.marca,
                     modelo: user.modelo,
@@ -343,9 +342,9 @@ app.post('/api/registrochofer', async (req, res) => {
         console.error('Error en el registro:', error);
 
 
-    if (error.code === 'ER_DUP_ENTRY') {
-        return res.status(400).json({ error: 'El correo o número de documento ya está registrado' });
-    }
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ error: 'El correo o número de documento ya está registrado' });
+        }
 
         res.status(500).json({
             error: 'Hubo un problema al registrar el chofer',
@@ -473,14 +472,14 @@ server.listen(port, () => {
     console.log(` REST API disponible en http://localhost:${port}`);
     console.log(` WebSocket Server disponible en ws://localhost:${port}`);
 
-   // OBTENER HISTORIAL
-app.get('/api/historialusuario/:id', (req, res) => {
-    const { id } = req.params;
-    const { tipo } = req.query;
+    // OBTENER HISTORIAL
+    app.get('/api/historialusuario/:id', (req, res) => {
+        const { id } = req.params;
+        const { tipo } = req.query;
 
-    const columnaFiltro = (tipo === 'chofer') ? 'v.id_chofer' : 'v.id_usuario';
+        const columnaFiltro = (tipo === 'chofer') ? 'v.id_chofer' : 'v.id_usuario';
 
-    const query = `
+        const query = `
     SELECT 
         v.id_viaje,
         v.id_usuario,
@@ -503,22 +502,22 @@ app.get('/api/historialusuario/:id', (req, res) => {
     LEFT JOIN TiposPago tp ON v.id_pago = tp.id_pago
     LEFT JOIN Costos co ON v.id_viaje = co.id_viaje 
     WHERE ${columnaFiltro} = ?
-    ORDER BY v.fecha_viaje DESC`; 
+    ORDER BY v.fecha_viaje DESC`;
 
-    conexion.query(query, [id], (err, results) => {
-        if (err) {
-            console.error('ERROR SQL DETALLADO:', err.message);
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(results);
+        conexion.query(query, [id], (err, results) => {
+            if (err) {
+                console.error('ERROR SQL DETALLADO:', err.message);
+                return res.status(500).json({ error: err.message });
+            }
+            res.json(results);
+        });
     });
-});
-app.get('/api/historialchofer/:id', (req, res) => {
-    // Sacamos el ID del chofer que viene en la URL
-    const { id } = req.params;
+    app.get('/api/historialchofer/:id', (req, res) => {
+        // Sacamos el ID del chofer que viene en la URL
+        const { id } = req.params;
 
-    // Consulta SQL filtrando específicamente por v.id_chofer
-    const query = `
+        // Consulta SQL filtrando específicamente por v.id_chofer
+        const query = `
     SELECT 
         v.id_viaje,
         v.id_usuario,
@@ -541,17 +540,17 @@ app.get('/api/historialchofer/:id', (req, res) => {
     LEFT JOIN TiposPago tp ON v.id_pago = tp.id_pago
     LEFT JOIN Costos co ON v.id_viaje = co.id_viaje 
     WHERE v.id_chofer = ? 
-    ORDER BY v.fecha_viaje DESC`; 
+    ORDER BY v.fecha_viaje DESC`;
 
-    // Ejecutamos la consulta pasando el ID
-    conexion.query(query, [id], (err, results) => {
-        if (err) {
-            console.error('ERROR SQL DETALLADO:', err.message);
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(results);
+        // Ejecutamos la consulta pasando el ID
+        conexion.query(query, [id], (err, results) => {
+            if (err) {
+                console.error('ERROR SQL DETALLADO:', err.message);
+                return res.status(500).json({ error: err.message });
+            }
+            res.json(results);
+        });
     });
-});
     //CREAR NUEVO VIAJE (POST)
     app.post('/api/historialusuario', (req, res) => {
         // CAMBIO: Asegúrate de que el body use 'fecha_inicio' si lo envías desde el front
@@ -570,20 +569,20 @@ app.get('/api/historialchofer/:id', (req, res) => {
     });
 });
 
-    
-    // REGISTRAR VIAJE EN DB
+
+// REGISTRAR VIAJE EN DB
 app.post('/api/registrar-viaje', (req, res) => {
-    const { 
-        id_usuario, 
-        id_chofer, 
+    const {
+        id_usuario,
+        id_chofer,
         origen,      // <- Agregado aquí
-        destino, 
-        precio, 
-        id_pago, 
-        id_ruta, 
-        estado 
+        destino,
+        precio,
+        id_pago,
+        id_ruta,
+        estado
     } = req.body;
-    
+
     console.log("Datos recibidos:", req.body);
 
     // 1. Insertar en la tabla Viajes
@@ -602,20 +601,20 @@ app.post('/api/registrar-viaje', (req, res) => {
 
         // 2. Insertar el monto en la tabla Costos vinculándolo al id_viaje recién creado
         const queryCosto = `INSERT INTO Costos (id_viaje, monto) VALUES (?, ?)`;
-        
+
         conexion.query(queryCosto, [nuevoIdViaje, precio], (errCosto) => {
             if (errCosto) {
                 console.error('Error al insertar costo:', errCosto.message);
                 return res.status(500).json({ error: 'Viaje creado, pero falló el registro del precio' });
             }
-            
-            res.status(201).json({ 
-                success: true, 
+
+            res.status(201).json({
+                success: true,
                 message: 'Viaje registrado con éxito',
-                id_viaje: nuevoIdViaje 
+                id_viaje: nuevoIdViaje
             });
-        }); 
-    }); 
+        });
+    });
 });
 
 // Endpoint para ver solo USUARIOS NORMALES (no choferes)
@@ -711,14 +710,14 @@ app.get('/api/ver-usuarios-normales', (req, res) => {
         });
     });
 
-    
+
 });
 /// RUTA PARA ACTUALIZAR PERFIL DEl chofer
 
 
 
 app.put('/api/admin/actualizar-chofer/:id', (req, res) => {
-    const id_chofer = req.params.id; 
+    const id_chofer = req.params.id;
     const { marca, modelo, color, placa, capacidad, licencia } = req.body;
     const query = `
         UPDATE Taxi t
@@ -764,7 +763,7 @@ app.put('/api/perfil/actualizar-completo/:id', upload.single('foto'), async (req
                 stream.end(req.file.buffer);
             });
             fotoUrl = resultado.secure_url;
-        } 
+        }
         // 2. Si el usuario marcó que quiere eliminar la foto
         else if (quitarFoto === 'true') {
             fotoUrl = null;
@@ -787,10 +786,10 @@ app.put('/api/perfil/actualizar-completo/:id', upload.single('foto'), async (req
                 console.error('❌ Error SQL:', err.sqlMessage);
                 return res.status(500).json({ error: 'Error en DB', detalle: err.sqlMessage });
             }
-            res.json({ 
-                success: true, 
-                message: 'Perfil actualizado', 
-                foto: fotoUrl !== undefined ? fotoUrl : req.body.fotoActual 
+            res.json({
+                success: true,
+                message: 'Perfil actualizado',
+                foto: fotoUrl !== undefined ? fotoUrl : req.body.fotoActual
             });
         });
 
@@ -803,7 +802,7 @@ app.put('/api/perfil/actualizar-completo/:id', upload.single('foto'), async (req
 app.post('/api/comentarios', (req, res) => {
     const { id_viaje, id_usuario, id_chofer, calificacion, comentario } = req.body;
     const query = `INSERT INTO Comentarios (id_viaje, id_usuario, id_chofer, calificacion, comentario) VALUES (?, ?, ?, ?, ?)`;
-    
+
     conexion.query(query, [id_viaje, id_usuario, id_chofer, calificacion, comentario], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.status(201).json({ success: true, message: 'Comentario guardado' });
