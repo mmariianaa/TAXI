@@ -1,9 +1,358 @@
+// Variables de la paleta SmartTaxi
+$azul-profundo: #121421; 
+$azul-card:     #1c1e2d;
+$amarillo-smart: #FFC31F;
+$blanco:        #ffffff;
+
+ion-menu {
+  // Contenedor principal del menú
+  --width: 280px;
+
+  ion-header {
+    ion-toolbar {
+      --background: #{$azul-profundo} !important;
+      --color: #{$blanco} !important;
+      --border-width: 0;
+      padding: 20px 10px;
+
+      ion-title {
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: $amarillo-smart !important; // Título en amarillo para resaltar
+      }
+    }
+  }
+
+  ion-content {
+    --background: #{$azul-profundo} !important;
+
+    ion-list {
+      background: transparent !important;
+      padding-top: 10px;
+    }
+
+    // Estilo general para los items del menú
+    ion-item {
+      --background: transparent !important;
+      --color: #{$blanco} !important;
+      --padding-start: 20px;
+      --inner-padding-end: 20px;
+      margin: 8px 15px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+
+      ion-icon {
+        color: $amarillo-smart !important; // Iconos siempre amarillos
+        font-size: 1.4rem;
+        margin-right: 15px;
+      }
+
+      // Efecto al presionar o pasar el mouse
+      &.item-native {
+        --background-focused: #{rgba($amarillo-smart, 0.1)} !important;
+      }
+
+      &:hover {
+        --background: #{$azul-card} !important;
+      }
+    }
+
+    // Estilo especial para el botón de Cerrar Sesión
+    ion-item[color="danger"] {
+      margin-top: 30px;
+      --color: #ff4961 !important;
+      border: 1px solid rgba(255, 73, 97, 0.2);
+      
+      ion-icon {
+        color: #ff4961 !important;
+      }
+    }
+  }
+}
+// ===========================================
+// VARIABLES DE MARCA
+// ===========================================
+$azul-profundo: #1111e9; 
+$azul-card:     #818cdd;
+$amarillo-smart: #FFC31F;
+$blanco:        #ffffff;
+$rojo-destino:  #ff4961;
+
+// ===========================================
+// CONTENEDOR DE BÚSQUEDA
+// ===========================================
+.search-container {
+  background: $azul-profundo; // Mantenemos la consistencia con el login
+  padding: 15px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  margin: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  // Estilo de los inputs (Origen y Destino)
+  .custom-input {
+    --background: #{$azul-card} !important; // Fondo tipo "card" como en la gestión
+    --color: #{$blanco} !important;
+    --border-radius: 12px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    
+    ion-icon[slot="start"] {
+      font-size: 1.3rem;
+      margin-inline-end: 15px;
+      
+      // Colores específicos para origen/destino
+      &[name="location-outline"] { color: $amarillo-smart !important; } // Origen Smart
+      &[name="flag-outline"] { color: $rojo-destino !important; }    // Destino Alerta
+    }
+
+    ion-input {
+      --color: #{$blanco};
+      font-weight: 500;
+      
+      // Color de los labels (Stacked)
+      &::part(label) {
+        color: rgba($blanco, 0.5) !important;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    // Botón de búsqueda interno
+    ion-button {
+      --color: #{$amarillo-smart};
+      margin: 0;
+      
+      &[disabled] {
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+// ===========================================
+// BOTÓN DE SUGERENCIA
+// ===========================================
+.suggest-button {
+  --color: #{$amarillo-smart} !important;
+  --border-color: #{$amarillo-smart} !important;
+  --border-radius: 12px;
+  --border-width: 1.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  margin-top: 5px;
+  letter-spacing: 1px;
+  
+  &::part(native) {
+    background: rgba($amarillo-smart, 0.05);
+  }
+
+  ion-icon {
+    margin-right: 8px;
+  }
+}
+$azul-profundo: #121421; 
+$amarillo-smart: #FFC31F;
+$blanco: #0f0d0d;
+
+.taxis-header {
+  --background: transparent;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  padding-inline-start: 20px;
+
+  ion-label {
+    margin: 0;
+  }
+
+  .title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    ion-icon {
+      color: $amarillo-smart; // Icono en amarillo SmartTaxi
+      font-size: 1.5rem;
+      filter: drop-shadow(0 0 5px rgba(255, 195, 31, 0.3));
+    }
+
+    h2 {
+      color: $blanco !important;
+      font-size: 1.2rem !important;
+      font-weight: 800 !important;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+  }
+
+  // Línea decorativa debajo del título
+  .subtitle-line {
+    width: 40px;
+    height: 3px;
+    background: $amarillo-smart;
+    border-radius: 2px;
+    margin-top: 6px;
+    box-shadow: 0 0 10px rgba(255, 195, 31, 0.4);
+  }
+}
+
+// Clase específica que tenías en el HTML
+.item-menu-perfil {
+  --background: #{$azul-card} !important; // Un poco más claro que el fondo
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+// Variables SmartTaxi
+$azul-profundo: #091774; 
+$amarillo-smart: #daad31;
+$blanco: hsl(180, 9%, 98%);
+
+ion-title {
+  // 1. Tipografía y Peso
+  font-size: 1.4rem !important;
+  font-weight: 800 !important;
+  color: $blanco !important;
+  letter-spacing: -0.5px;
+  
+  // 2. Efecto de degradado sutil
+  display: flex;
+  align-items: center;
+  
+  // Estilo específico para el nombre (si quieres resaltar el nombre en amarillo)
+  &::first-letter {
+    color: $amarillo-smart; // Opcional: hace que la 'H' sea amarilla
+  }
+
+  // 3. Animación de entrada (opcional para que se vea más pro)
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Contenedor del toolbar para asegurar que el fondo sea el correcto
+ion-toolbar {
+  --background: #{$azul-profundo} !important; // Fondo azul profundo
+  --border-width: 0;
+  padding: 10px 5px;
+}
+$azul-profundo: #41445c; 
+$azul-card:     #9fa8e9;
+$amarillo-smart: #FFC31F;
+$blanco:        #131111;
+
+.taxis-list {
+  background: transparent !important;
+  padding: 10px 15px;
+
+  .taxi-item {
+    --background: #{$azul-card} !important; // Fondo oscuro tipo card
+    --color: #{$blanco} !important;
+    --border-radius: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(167, 82, 82, 0.05);
+
+    &::part(native) {
+      padding: 12px;
+    }
+
+    // El icono del carrito
+    .icon-badge {
+      background: rgba($amarillo-smart, 0.1);
+      padding: 10px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      ion-icon {
+        color: $amarillo-smart !important; // Amarillo SmartTaxi
+        font-size: 1.6rem;
+      }
+    }
+
+    h2 {
+      font-weight: 800 !important;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    .taxi-info {
+      color: rgba($blanco, 0.6) !important;
+      font-size: 0.85rem;
+      .placa {
+        color: $amarillo-smart;
+        font-weight: 600;
+      }
+    }
+
+    .arrival-time {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #2dd36f !important; // Verde éxito para el tiempo
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    // Contenedor del precio
+    .price-container {
+      text-align: right;
+      color: $amarillo-smart; // El precio brilla en amarillo
+      
+      .currency {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-right: 2px;
+      }
+      .amount {
+        font-size: 1.3rem;
+        font-weight: 900;
+      }
+    }
+  }
+}
+
+// Estilo para cuando no hay nada
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: rgba($blanco, 0.5);
+
+  ion-icon {
+    font-size: 4rem;
+    color: rgba($blanco, 0.2);
+    margin-bottom: 15px;
+  }
+
+  .btn-retry {
+    --color: #{$amarillo-smart};
+    --border-color: #{$amarillo-smart};
+    margin-top: 15px;
+  }
+}
+
 .search-container {
   background: #f4f4f4;
   border-radius: 15px;
   padding: 10px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(240, 239, 239, 0.05);
 }
 
 .custom-input {

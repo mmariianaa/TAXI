@@ -1,6 +1,6 @@
 <ion-menu contentId="main-content" type="overlay">
   <ion-header>
-    <ion-toolbar color="primary">
+    <ion-toolbar color="dark">
       <ion-title>Menú Taxi</ion-title>
     </ion-toolbar>
   </ion-header>
@@ -33,15 +33,12 @@
 
 <div class="ion-page" id="main-content">
   <ion-header [translucent]="true">
-    <ion-toolbar color="primary">
+    <ion-toolbar color="">
       <ion-buttons slot="start">
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
       <ion-title>Hola, {{ usuarioLogueado?.nombre || 'Usuario' }}</ion-title>
       <ion-buttons slot="end">
-        <ion-button (click)="irANotificaciones()">
-          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
-        </ion-button>
       </ion-buttons>
     </ion-toolbar>
   </ion-header>
@@ -120,38 +117,48 @@
 
     @if (mostrarTaxis && !cargandoTaxis && !viajeSolicitado) {
     <div>
-      <ion-list-header>
+      <ion-list-header class="taxis-header">
         <ion-label>
-          <h2 style="font-weight: bold;">Taxis disponibles</h2>
+          <div class="title-wrapper">
+            <ion-icon name="car-sport"></ion-icon>
+            <h2>Taxis disponibles</h2>
+          </div>
+          <div class="subtitle-line"></div>
         </ion-label>
       </ion-list-header>
 
-      <ion-list lines="full">
+      <ion-list lines="none" class="taxis-list">
         @for (taxi of listaTaxis; track taxi.placa) {
-        <ion-item button (click)="seleccionarTaxi(taxi)">
-          <ion-icon name="car-sport" slot="start" color="primary"></ion-icon>
+        <ion-item button (click)="seleccionarTaxi(taxi)" mode="ios" class="taxi-item">
+          <div slot="start" class="icon-badge">
+            <ion-icon name="car-sport"></ion-icon>
+          </div>
+
           <ion-label>
             <h2>{{ taxi.nombre }} {{ taxi.apellido || '' }}</h2>
-            <p>{{ taxi.marca || 'Taxi' }} • {{ taxi.placa }}</p>
+            <p class="taxi-info">{{ taxi.marca || 'Taxi' }} • <span class="placa">{{ taxi.placa }}</span></p>
+
             @if (taxi.tiempoEstimadoLlegada) {
-            <p style="color: var(--ion-color-warning-shade);">
-              ⏱️ Llega en {{ taxi.tiempoEstimadoLlegada }} min
+            <p class="arrival-time">
+              <ion-icon name="time-outline"></ion-icon>
+              Llega en {{ taxi.tiempoEstimadoLlegada }} min
             </p>
             }
           </ion-label>
-          <ion-note slot="end" color="success" style="font-weight: bold; font-size: 1.1rem;">
-            ${{ taxi.precio }}
-          </ion-note>
+
+          <div slot="end" class="price-container">
+            <span class="currency">$</span>
+            <span class="amount">{{ taxi.precio }}</span>
+          </div>
         </ion-item>
         } @empty {
-        <ion-item class="ion-text-center">
-          <ion-label>
-            <p>No hay taxis disponibles en este momento.</p>
-            <ion-button fill="clear" (click)="obtenerTaxis()">
-              <ion-icon name="refresh-outline" slot="start"></ion-icon> Reintentar
-            </ion-button>
-          </ion-label>
-        </ion-item>
+        <div class="empty-state">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <p>No hay taxis disponibles en este momento.</p>
+          <ion-button fill="outline" (click)="obtenerTaxis()" class="btn-retry">
+            <ion-icon name="refresh-outline" slot="start"></ion-icon> Reintentar
+          </ion-button>
+        </div>
         }
       </ion-list>
     </div>
