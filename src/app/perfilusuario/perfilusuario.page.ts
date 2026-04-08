@@ -412,11 +412,6 @@ export class PerfilusuarioPage implements OnInit {
     event.preventDefault();
     this.router.navigate(['/historialusuario']);
   }
-
-  irACalificarUsuario(event: Event){
-    event.preventDefault();
-    this.router.navigate(['/calificarusuario']);
-  }
   irARegresar(event: Event){
     event.preventDefault();
     this.router.navigate(['/pantallausuario']);

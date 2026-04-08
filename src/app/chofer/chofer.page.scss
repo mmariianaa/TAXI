@@ -3,7 +3,268 @@ $naranja: #EB8107;
 $amarillo: #FFC31F;
 $negro: #1F1F1F;
 $crema: #E6E1DB;
+// Variables de paleta SmartTaxi
+$azul-profundo: #121421; 
+$azul-card:     #1c1e2d;
+$amarillo-smart: #FFC31F; // Tu naranja/amarillo característico
+$blanco:        #ffffff;
 
+ion-header {
+  background-color: $azul-profundo;
+  padding-top: 10px;
+
+  ion-toolbar {
+    --background: transparent; // Para que luzca el fondo del header
+    --color: #{$blanco};
+    --border-width: 0;
+    padding: 0 10px;
+
+    ion-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba($blanco, 0.9);
+      text-align: center;
+    }
+
+    ion-menu-button {
+      // Cambiamos el color "dark" por el amarillo para que resalte
+      --color: #{$amarillo-smart};
+      background: rgba($amarillo-smart, 0.1);
+      border-radius: 12px;
+    }
+  }
+}
+
+.custom-tabs {
+  display: flex;
+  background: $azul-card;
+  margin: 15px;
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid rgba($blanco, 0.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+  .tab-btn {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: rgba($blanco, 0.5);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+
+    // Estado cuando el tab no está seleccionado pero pasas el mouse
+    &:hover {
+      color: rgba($blanco, 0.8);
+    }
+
+    // Estilo para el Tab Activo (El naranja/amarillo resaltado)
+    &.active {
+      background: $amarillo-smart;
+      color: $azul-profundo; // Texto oscuro para contraste
+      box-shadow: 0 4px 12px rgba($amarillo-smart, 0.3);
+      transform: scale(1.02);
+    }
+  }
+}
+// Paleta de colores ajustada
+$fondo-negro: #121421;
+$tarjeta-azul: #1c1e2d;
+$naranja-smart: #FFC31F;
+$blanco: #ffffff;
+$verde-ok: #34C759;
+$rojo-no: #FF3B30;
+
+.perfil-section {
+  padding: 10px 5px;
+
+  // 1. Tarjeta de Estado (Conectado/Desconectado)
+  .status-card-elegant {
+    background: $tarjeta-azul;
+    border-radius: 20px;
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border: 1px solid rgba($naranja-smart, 0.1); // Borde sutil naranja
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+
+    .status-info {
+      .label {
+        display: block;
+        color: rgba($blanco, 0.5);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+      }
+
+      .status-text {
+        font-size: 1.1rem;
+        font-weight: 800;
+        // El color se maneja por el [style.color] del HTML, pero aquí aseguramos grosor
+      }
+    }
+  }
+
+  // 2. Tarjeta Principal del Conductor
+  .driver-card-dark {
+    background: linear-gradient(145deg, $tarjeta-azul, #252839);
+    border-radius: 25px;
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+      ion-icon {
+        font-size: 55px;
+        color: $naranja-smart;
+        filter: drop-shadow(0 0 8px rgba($naranja-smart, 0.3));
+      }
+
+      .header-text {
+        h3 {
+          margin: 0;
+          color: $blanco;
+          font-size: 1.3rem;
+          font-weight: 700;
+        }
+        p {
+          margin: 2px 0 0;
+          color: $naranja-smart;
+          font-size: 0.85rem;
+          font-weight: 500;
+          opacity: 0.9;
+        }
+      }
+    }
+
+    // 3. Rejilla de Información (Placas y Vehículo)
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+
+      .info-item {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 15px;
+        border-radius: 18px;
+        border: 1px solid rgba($naranja-smart, 0.05);
+
+        .info-label {
+          display: block;
+          color: $naranja-smart;
+          font-size: 0.65rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          margin-bottom: 6px;
+        }
+
+        p {
+          margin: 0;
+          color: $blanco;
+          font-size: 0.95rem;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+// 4. Estilo del Switch (Estilo iOS pero con tus colores)
+.ios-switch {
+  .slider {
+    background-color: #3a3e52; // Color cuando está apagado
+    &::before {
+      background-color: $blanco;
+    }
+  }
+  
+  input:checked + .slider {
+    background-color: $verde-ok; // Verde cuando se conecta
+  }
+}
+// Variables de coherencia
+$azul-profundo: #121421;
+$azul-item: #1c1e2d;
+$naranja-smart: #FFC31F;
+$blanco: #ffffff;
+
+ion-content {
+  --background: #{$azul-profundo};
+  padding: 10px;
+}
+
+ion-list {
+  background: transparent !important;
+  margin-top: 20px;
+  padding: 0 15px;
+}
+
+ion-item {
+  // Fondo base de cada ítem
+  --background: #{$azul-item};
+  --background-activated: rgba(161, 131, 39, 0.1); // Destello naranja al tocar
+  --border-radius: 16px;
+  --color: #{rgba($blanco, 0.8)};
+  --padding-start: 15px;
+  --inner-padding-end: 15px;
+  
+  margin-bottom: 12px; // Espacio entre botones
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+
+  // Iconos del menú
+  ion-icon {
+    color: $naranja-smart;
+    font-size: 1.4rem;
+    margin-right: 15px;
+    filter: drop-shadow(0 0 5px rgba($naranja-smart, 0.2));
+  }
+
+  // Texto del menú
+  ion-label {
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.3px;
+  }
+
+  // Efecto al pasar el mouse o presionar
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// Estilo especial para "Cerrar Sesión"
+.logout-item {
+  --background: rgba(41, 53, 214, 0.05) !important; // Fondo rojizo sutil
+  border: 1px solid rgba(255, 59, 48, 0.2) !important;
+  margin-top: 40px !important;
+
+  ion-icon {
+    color: #FF3B30 !important; // Rojo brillante
+    filter: none;
+  }
+
+  ion-label {
+    color: #FF3B30 !important;
+  }
+}
+//aqui ando poniendo los nuevos 
 // Estilos principales
 .main-container {
   padding: 15px;

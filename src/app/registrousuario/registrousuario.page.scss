@@ -1,297 +1,158 @@
-// 1. VARIABLES (Sincronizadas)
-$naranja: #EB8107;
-$amarillo: #FFC31F;
-$negro: #1F1F1F;
-$crema: #E6E1DB;
-$blanco: #FFFFFF;
-$gris-texto: #718096;
-
-$shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.06);
-$transition-bounce: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
-$transition-smooth: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+// 1. VARIABLES (Navy Night Palette)
+$bg-fondo: #121421;
+$azul-tarjeta: #1c1e2d;
+$amarillo-smart: #ffc425;
+$blanco-puro: #FFFFFF;
+$gris-input: #f4f7f9;
+$texto-gris: #718096;
 
 :host {
-  --background: #{$crema};
+  --background: #{$bg-fondo};
 }
 
 .register-usuario-content {
-  --background: #{$crema};
-}
-
-/* --- FONDO CON AURA DINÁMICA --- */
-.city-background {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-
-  &::before, &::after {
-    content: '';
-    position: absolute;
-    filter: blur(80px);
-    border-radius: 50%;
-    animation: pulseAura 10s infinite alternate ease-in-out;
-  }
-
-  &::before {
-    top: -10%;
-    right: -5%;
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, $amarillo 0%, rgba(255,255,255,0) 70%);
-    opacity: 0.4;
-  }
-
-  &::after {
-    bottom: -10%;
-    left: -5%;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, $naranja 0%, rgba(255,255,255,0) 70%);
-    opacity: 0.2;
-    animation-delay: -5s;
-  }
-}
-
-/* --- CONTENEDOR PRINCIPAL --- */
-.register-container {
-  position: relative;
-  z-index: 2;
-  padding: 3rem 1.5rem;
-  max-width: 500px;
-  margin: 0 auto;
-  width: 100%;
-  animation: fadeIn 0.8s ease-out;
-}
-
-/* --- SECCIÓN LOGO --- */
-.logo-section {
-  text-align: center;
-  margin-bottom: 2rem;
-
-  .logo-wrapper {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 70px;
-    height: 70px;
-    background: $blanco;
-    border-radius: 24px;
-    margin-bottom: 1rem;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.08);
-    
-    .taxi-icon {
-      font-size: 38px;
-      color: $negro;
-    }
-  }
-
-  .app-title {
-    font-size: 2rem;
-    font-weight: 800;
-    color: $negro;
-    margin: 0;
-    letter-spacing: -0.02em;
-    
-    .yellow-text { color: $amarillo; }
-  }
-
-  .subtitle {
-    color: $gris-texto;
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-}
-
-/* --- TARJETA DE REGISTRO (48px Radius) --- */
-.register-card {
-  background: linear-gradient(160deg, $blanco 0%, #f8fafc 100%);
-  backdrop-filter: blur(20px);
-  border-radius: 48px;
-  padding: 2.2rem;
-  box-shadow: $shadow-xl;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-
-  .form-title {
-    margin-bottom: 1.5rem;
-    h2 {
-      color: $negro;
-      font-weight: 800;
-      font-size: 1.6rem;
-      margin: 0;
-    }
-    p {
-      color: $gris-texto;
-      font-size: 0.9rem;
-      margin-top: 4px;
-    }
-  }
-}
-
-/* --- BADGE DE USUARIO --- */
-.user-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba($amarillo, 0.15);
-  color: darken($naranja, 10%);
-  padding: 6px 16px;
-  border-radius: 100px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-
-  ion-icon { font-size: 1.1rem; }
-}
-
-/* --- FILAS DE INPUTS (Nombre/Apellido y Documento) --- */
-.input-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 0.25rem;
-
-  @media (max-width: 400px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* --- ESTILO DE INPUTS Y SELECTS --- */
-.input-group, .custom-select {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 20px;
-  margin-bottom: 1rem;
-  padding: 0.4rem 1rem;
+  --background: #{$bg-fondo};
+  min-height: 100%;
   display: flex;
-  align-items: center;
-  border: 1.5px solid rgba(0, 0, 0, 0.04);
-  transition: $transition-smooth;
+  flex-direction: column;
 
-  &:focus-within {
-    border-color: $amarillo;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba($amarillo, 0.1);
+  /* --- FONDO --- */
+  .city-background {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: $bg-fondo;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: -10%;
+      right: -5%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba($amarillo-smart, 0.05) 0%, transparent 70%);
+      filter: blur(80px);
+    }
   }
 
-  .input-icon, ion-icon {
-    color: #cbd5e0;
-    font-size: 1.2rem;
-    margin-right: 10px;
-  }
-
-  ion-input, ion-select {
-    --color: #{$negro};
-    --placeholder-color: #a0aec0;
-    --padding-start: 0;
-    font-weight: 500;
-    font-size: 0.95rem;
+  /* --- CONTENEDOR --- */
+  .register-container {
+    position: relative;
+    z-index: 2;
+    padding: 2rem 1.5rem;
+    max-width: 450px;
+    margin: 0 auto;
     width: 100%;
+    animation: fadeIn 0.8s ease-out;
   }
 
-  ion-select {
-    --placeholder-opacity: 1;
-    &::part(placeholder), &::part(text) {
+  /* --- LOGO --- */
+  .logo-section {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    .logo-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 70px;
+      height: 70px;
+      background: $azul-tarjeta;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      
+      .taxi-icon {
+        font-size: 40px;
+        color: $amarillo-smart;
+      }
+    }
+
+    .app-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: $blanco-puro;
+      margin: 0;
+      text-transform: uppercase;
+      
+      .yellow-text { color: $amarillo-smart; }
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+  }
+
+  /* --- TARJETA --- */
+  .register-card {
+    background: $blanco-puro;
+    border-radius: 40px; // Súper redondeado como la imagen
+    padding: 2.5rem 2rem;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+
+    .form-title {
+      margin-bottom: 1.5rem;
+      h2 {
+        color: #1a1c29;
+        font-weight: 800;
+        font-size: 1.7rem;
+        margin: 0;
+      }
+      p {
+        color: $texto-gris;
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  /* --- INPUTS --- */
+  .input-group, .custom-select {
+    background: $gris-input;
+    border-radius: 15px;
+    margin-bottom: 0.8rem;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+
+    ion-icon {
+      color: #94a3b8;
+      font-size: 1.2rem;
+      margin-right: 10px;
+    }
+
+    ion-input, ion-select {
+      --color: #1a1c29;
+      --placeholder-color: #94a3b8;
       font-weight: 500;
     }
   }
-}
 
-/* --- MENSAJES DE ERROR --- */
-.error-message {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #e53e3e;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin: -0.5rem 0 1rem 0.5rem;
-  animation: fadeIn 0.3s ease;
-  
-  ion-icon { font-size: 1rem; }
-}
-
-/* --- TÉRMINOS Y CONDICIONES --- */
-.terms-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin: 1.5rem 0;
-  padding: 0 0.5rem;
-
-  ion-checkbox {
-    --size: 20px;
-    --border-radius: 6px;
-    --checkbox-background-checked: #{$negro};
-    --border-color-checked: #{$negro};
-    margin-top: 2px;
+  /* --- BOTÓN --- */
+  .register-button {
+    --background: #{$amarillo-smart};
+    --color: #1a1c29;
+    --border-radius: 15px;
+    height: 55px;
+    margin-top: 1.5rem;
+    font-weight: 800;
+    font-size: 1rem;
+    --box-shadow: 0 8px 20px rgba(255, 196, 37, 0.3);
   }
 
-  .terms-text {
-    font-size: 0.8rem;
-    color: $gris-texto;
-    line-height: 1.4;
+  .login-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: $texto-gris;
 
     a {
-      color: $negro;
-      font-weight: 700;
+      color: #1a1c29;
+      font-weight: 800;
       text-decoration: none;
-      border-bottom: 1.5px solid $amarillo;
     }
   }
 }
 
-/* --- BOTÓN DE REGISTRO (60px) --- */
-.register-button {
-  --background: #{$negro};
-  --color: #{$blanco};
-  --border-radius: 20px;
-  height: 60px;
-  margin-top: 1rem;
-  font-weight: 700;
-  font-size: 1.1rem;
-  --box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-  transition: $transition-bounce;
-
-  &::part(native) {
-    background: linear-gradient(135deg, $negro 0%, #3d3d3d 100%);
-  }
-
-  &[disabled] {
-    opacity: 0.5;
-  }
-}
-
-/* --- LINK LOGIN --- */
-.login-link {
-  text-align: center;
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-  color: $gris-texto;
-
-  a {
-    color: $negro;
-    font-weight: 800;
-    text-decoration: none;
-    margin-left: 4px;
-    &:hover { color: $naranja; }
-  }
-}
-
-/* --- ANIMACIONES --- */
-@keyframes pulseAura {
-  0% { transform: scale(1) translate(0, 0); }
-  100% { transform: scale(1.1) translate(15px, 15px); }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+// Reutiliza las animaciones de fadeIn y slideUp que ya tenías abajo

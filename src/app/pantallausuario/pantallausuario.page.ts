@@ -443,4 +443,7 @@ async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tip
     this.viajeEnCurso = false;
     this.destino = '';
   }
+  historialusuario() {
+    this.router.navigate(['/historialusuario']);
+  }
 }

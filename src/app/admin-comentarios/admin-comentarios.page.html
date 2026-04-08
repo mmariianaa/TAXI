@@ -1,18 +1,10 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="taxi-header">
-    
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    
-    <ion-buttons slot="end">
 
-    </ion-buttons>
-    <ion-button (click)="volverPanel()" color="dark" style="font-weight: bold;">
-        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
-        Volver al Panel
-      </ion-button>
-
+    <ion-title>Comentarios</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -23,6 +15,12 @@
     <div class="ion-padding ion-text-center">
       <ion-icon name="chatbubble-ellipses-outline" style="font-size: 64px; color: #ccc;"></ion-icon>
       <p style="color: #666;">No hay comentarios registrados todavía.</p>
+      <div class="header-center-container">
+      <ion-button (click)="volverPanel()" class="btn-panel-admin">
+        <ion-icon name="grid-outline"></ion-icon>
+        PANEL DE CONTROL
+      </ion-button>
+    </div>
     </div>
   }
 
@@ -57,6 +55,15 @@
           </ion-button>
         </div>
       </ion-card>
+      <div class="header-center-container">
+      <ion-button (click)="volverPanel()" class="btn-panel-admin">
+        <ion-icon name="grid-outline"></ion-icon>
+        PANEL DE CONTROL
+      </ion-button>
+    </div>
     }
   </ion-list>
+  
+  
 </ion-content>
+

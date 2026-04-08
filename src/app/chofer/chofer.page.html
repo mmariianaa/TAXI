@@ -31,7 +31,7 @@
   <ion-header class="ion-no-border">
     <ion-toolbar>
       <ion-buttons slot="start">
-        <ion-menu-button menu="menu-chofer" color="dark"></ion-menu-button>
+        <ion-menu-button menu="menu-chofer" ></ion-menu-button>
       </ion-buttons>
       <ion-title>BIENVENIDO DE NUEVO!!</ion-title>
     </ion-toolbar>
@@ -133,28 +133,6 @@
         <div class="searching-box">
           <div class="radar-pulse"></div>
           <p>Buscando pasajeros cerca...</p>
-        </div>
-        }
-      </section>
-
-      <!-- viajes rechazados -->
-      <section class="historial-section">
-        <h3>Viajes Rechazados</h3>
-
-        @if (viajesRechazados.length === 0) {
-        <div class="empty-state">
-          <ion-icon name="time-outline"></ion-icon>
-          <p>No tienes viajes rechazados</p>
-        </div>
-        }
-
-        @for (v of viajesRechazados; track v) {
-        <div class="rejected-card">
-          <div>
-            <h4>{{ v.ganancia }}</h4>
-            <p>{{ v.destino }}</p>
-          </div>
-          <p class="rejected-time">{{ v.hora }}</p>
         </div>
         }
       </section>
