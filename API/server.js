@@ -744,13 +744,12 @@ app.put('/api/admin/actualizar-chofer/:id', (req, res) => {
 // RUTA PARA ACTUALIZAR PERFIL DE ADMINISTRADOR
 app.put('/api/perfil/actualizar-completo/:id', upload.single('foto'), async (req, res) => {
     const id_usuario = req.params.id;
-    // Extraemos los datos y ponemos strings vacíos por defecto para evitar errores de MySQL
-    const { nombre = '', apellido = '', telefono = '', correo = '', quitarFoto } = req.body;
+    const { nombre, apellido, telefono, correo, quitarFoto } = req.body; // Quitamos los = ''
 
     try {
         let fotoUrl = undefined;
 
-        // 1. Si el usuario subió una nueva foto
+        // 1. Subida a Cloudinary (Esto ya te funciona si el .env está bien)
         if (req.file) {
             const resultado = await new Promise((resolve, reject) => {
                 const stream = cloudinary.uploader.upload_stream(
@@ -763,19 +762,27 @@ app.put('/api/perfil/actualizar-completo/:id', upload.single('foto'), async (req
                 stream.end(req.file.buffer);
             });
             fotoUrl = resultado.secure_url;
-        }
-        // 2. Si el usuario marcó que quiere eliminar la foto
-        else if (quitarFoto === 'true') {
+        } else if (quitarFoto === 'true') {
             fotoUrl = null;
         }
 
-        // 3. Construimos la Query dinámicamente
-        let campos = ["nombre = ?", "apellido = ?", "telefono = ?", "correo = ?"];
-        let valores = [nombre, apellido, telefono, correo];
+        // 2. Construcción DINÁMICA real
+        let campos = [];
+        let valores = [];
+
+        // Solo agregamos al UPDATE los campos que NO sean undefined o null
+        if (nombre) { campos.push("nombre = ?"); valores.push(nombre); }
+        if (apellido) { campos.push("apellido = ?"); valores.push(apellido); }
+        if (telefono) { campos.push("telefono = ?"); valores.push(telefono); }
+        if (correo) { campos.push("correo = ?"); valores.push(correo); } // ¡VITAL!
 
         if (fotoUrl !== undefined) {
             campos.push("foto = ?");
             valores.push(fotoUrl);
+        }
+
+        if (campos.length === 0) {
+            return res.status(400).json({ error: 'No hay campos para actualizar' });
         }
 
         const sql = `UPDATE Usuario SET ${campos.join(', ')} WHERE id_usuario = ?`;
@@ -784,6 +791,10 @@ app.put('/api/perfil/actualizar-completo/:id', upload.single('foto'), async (req
         conexion.query(sql, valores, (err, result) => {
             if (err) {
                 console.error('❌ Error SQL:', err.sqlMessage);
+                // Si el error es por duplicado, damos un mensaje más claro
+                if (err.code === 'ER_DUP_ENTRY') {
+                    return res.status(400).json({ error: 'El correo o teléfono ya están registrados' });
+                }
                 return res.status(500).json({ error: 'Error en DB', detalle: err.sqlMessage });
             }
             res.json({
@@ -795,7 +806,7 @@ app.put('/api/perfil/actualizar-completo/:id', upload.single('foto'), async (req
 
     } catch (error) {
         console.error("❌ Error en el proceso:", error);
-        res.status(500).json({ error: "Error al procesar la imagen" });
+        res.status(500).json({ error: "Error al procesar la imagen o Cloudinary" });
     }
 });
 // 1. Endpoint para que el USUARIO envíe su calificación real
