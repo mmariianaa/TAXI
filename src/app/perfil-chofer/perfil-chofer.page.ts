@@ -11,7 +11,7 @@ import { addIcons } from 'ionicons';
 import {
   pencil, checkmark, close, camera, imageOutline,
   trashOutline, logOutOutline, arrowBackOutline,
-  eyeOutline, eyeOffOutline
+  eyeOutline, eyeOffOutline, star
 } from 'ionicons/icons';
 import {
   IonContent, IonIcon, IonButton, IonAvatar,
@@ -50,11 +50,15 @@ export class PerfilChoferPage implements OnInit {
   avatarUrl: string = 'assets/avatar.png';
   selectedFile: File | null = null;
 
+  promedioCalificacion: number = 0;
+  totalEvaluaciones: number = 0;
+  mensajeCalificacion: string = '';
+
   constructor() {
     addIcons({
       pencil, checkmark, close, camera, imageOutline,
       trashOutline, logOutOutline, arrowBackOutline,
-      eyeOutline, eyeOffOutline
+      eyeOutline, eyeOffOutline, star
     });
   }
 
@@ -67,6 +71,10 @@ export class PerfilChoferPage implements OnInit {
     if (datosSesion) {
       this.choferInfo = datosSesion;
       this.avatarUrl = this.choferInfo.foto || 'assets/avatar.png';
+      const userId = this.choferInfo.id || this.choferInfo.id_usuario;
+      if (userId) {
+        this.obtenerCalificacion(userId);
+      }
     } else {
       this.router.navigate(['/home']);
     }
@@ -198,6 +206,28 @@ export class PerfilChoferPage implements OnInit {
       },
       error: () => this.mostrarMensaje('Error al cambiar contraseña', 'error')
     });
+  }
+
+  obtenerCalificacion(userId: number) { 
+    console.log('Solicitando calificación para el ID:', userId); // 👈 Agrega este log
+    this.http.get<any>(`http://localhost:3000/api/usuarios/${userId}/calificacion`) 
+      .subscribe({
+        next: (res) => {
+          console.log('Respuesta del servidor:', res); // 👈 Mira qué responde el servidor
+          this.promedioCalificacion = res.promedio;
+          
+          // Tu backend devuelve "total" cuando es cero, o "total_resenas" cuando sí hay.
+          this.totalEvaluaciones = res.total_resenas || res.total || 0; 
+          
+          // Guardamos el mensaje por si es un chofer nuevo
+          if (res.mensaje) {
+            this.mensajeCalificacion = res.mensaje; 
+          }
+        },
+        error: (err) => {
+          console.error('No se pudo obtener la calificación', err); 
+        }
+      });
   }
 
   mostrarMensaje(texto: string, tipo: 'success' | 'error') {

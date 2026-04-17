@@ -1,26 +1,63 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { io } from 'socket.io-client';
 import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import * as L from 'leaflet';
+import 'leaflet-routing-machine';
+
+// 1. Agregamos ModalController y IonButton
 import {
   IonContent, IonIcon, IonButtons, IonHeader, IonTitle,
   IonToolbar, IonMenuButton, IonList, IonItem, IonLabel,
-  IonMenu, IonTextarea, AlertController
+  IonMenu, IonTextarea, AlertController, ModalController, IonButton
 } from '@ionic/angular/standalone';
+
+// 2. Agregamos los íconos para el modal (checkmarkCircle, closeCircle, warningOutline)
 import { addIcons } from 'ionicons';
 import {
   menuOutline, notificationsOutline, personCircle,
   personCircleOutline, saveOutline, carOutline,
   logOutOutline, timeOutline, checkmarkOutline,
   personOutline, homeOutline, radioButtonOn, location, mapOutline,
-  star, starOutline,
+  star, starOutline, checkmarkCircle, closeCircle, warningOutline
 } from 'ionicons/icons';
-import { CommonModule } from '@angular/common';
-import * as L from 'leaflet';
-import 'leaflet-routing-machine';
 
+// ==========================================
+// COMPONENTE DEL MODAL DE NOTIFICACIÓN
+// ==========================================
+@Component({
+  selector: 'app-notificacion-modal-chofer',
+  template: `
+    <ion-header>
+      <ion-toolbar [color]="tipo === 'success' ? 'success' : tipo === 'error' ? 'danger' : 'primary'">
+        <ion-title>{{ titulo }}</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding ion-text-center">
+      <ion-icon [name]="icono" size="large" [color]="tipo === 'success' ? 'success' : 'primary'"></ion-icon>
+      <p [innerHTML]="mensaje.replace('\\n', '<br>')"></p>
+      <ion-button expand="block" (click)="cerrar()">Entendido</ion-button>
+    </ion-content>
+  `,
+  standalone: true, 
+  imports: [CommonModule, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButton]
+})
+export class NotificacionModalChoferComponent {
+  @Input() titulo: string = ''; 
+  @Input() mensaje: string = ''; 
+  @Input() icono: string = ''; 
+  @Input() tipo: string = '';
+  
+  private modalCtrl = inject(ModalController);
+  cerrar() { this.modalCtrl.dismiss(); }
+}
+
+// ==========================================
+// COMPONENTE PRINCIPAL: CHOFER PAGE
+// ==========================================
 @Component({
   selector: 'app-chofer',
   templateUrl: './chofer.page.html',
@@ -38,6 +75,7 @@ export class ChoferPage implements OnInit {
   private router = inject(Router);
   private http = inject(HttpClient);
   private alertCtrl = inject(AlertController);
+  private modalCtrl = inject(ModalController); // Inyectamos el ModalController
 
   activeTab: string = 'perfil';
   isActive: boolean = true;
@@ -71,7 +109,7 @@ export class ChoferPage implements OnInit {
       personCircleOutline, saveOutline, carOutline,
       logOutOutline, timeOutline, checkmarkOutline,
       personOutline, homeOutline, radioButtonOn, location,
-      mapOutline, star, starOutline
+      mapOutline, star, starOutline, checkmarkCircle, closeCircle, warningOutline
     });
   }
 
@@ -152,7 +190,6 @@ export class ChoferPage implements OnInit {
     this.viajeAceptado = true;
     this.mostrarAlertaSolicitud = false;
 
-    // Inicializar el mapa después de un pequeño delay para asegurar que el DOM cargó
     setTimeout(() => { this.initMap(); }, 500);
   }
 
@@ -163,15 +200,13 @@ export class ChoferPage implements OnInit {
       this.map.remove();
     }
 
-    // Centrar en la ubicación del usuario (Punto de recogida)
     this.map = L.map('map').setView([this.viajePendiente.origenLat, this.viajePendiente.origenLng], 14);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap'
     }).addTo(this.map);
 
-    // Ubicaciones
-    const ubicacionChofer = L.latLng(21.8468, -102.7188); // Simulado, aquí iría GPS real
+    const ubicacionChofer = L.latLng(21.8468, -102.7188);
     const ubicacionUsuario = L.latLng(this.viajePendiente.origenLat, this.viajePendiente.origenLng);
     const destinoUsuario = L.latLng(this.viajePendiente.destinoLat, this.viajePendiente.destinoLng);
     
@@ -183,7 +218,6 @@ export class ChoferPage implements OnInit {
   dibujarAmbasRutas(origenChofer: L.LatLng, origenUsuario: L.LatLng, destinoUsuario: L.LatLng) {
     if (!this.map) return;
     
-    // 1. Ruta Chofer -> Usuario (Amarilla)
     this.routingControlChofer = (L as any).Routing.control({
       waypoints: [origenChofer, origenUsuario],
       show: false,
@@ -199,7 +233,6 @@ export class ChoferPage implements OnInit {
       createMarker: () => null
     }).addTo(this.map);
 
-    // 2. Ruta Usuario -> Destino (Azul)
     this.routingControlUsuario = (L as any).Routing.control({
       waypoints: [origenUsuario, destinoUsuario],
       show: false,
@@ -215,7 +248,6 @@ export class ChoferPage implements OnInit {
       createMarker: () => null
     }).addTo(this.map);
 
-    // Marcadores Personalizados
     this.crearMarcador(origenChofer, '🚕', 'Tu ubicación', '#FFC31F');
     this.crearMarcador(origenUsuario, '📍', 'Recoger a ' + this.viajePendiente.pasajero, '#34C759');
     this.crearMarcador(destinoUsuario, '🏁', 'Destino final', '#FF3B30');
@@ -263,18 +295,83 @@ export class ChoferPage implements OnInit {
       });
   }
 
-  // --- Helpers y Navegación ---
   rechazarViajeSocket(solicitud: any) {
     this.socket.emit('rechazar_viaje', { id_viaje: solicitud.id_viaje, id_cliente: solicitud.id_cliente });
     this.viajesRechazados.unshift({ solicitud, ganancia: solicitud.precio, destino: solicitud.destino?.direccion, hora: new Date().toLocaleTimeString() });
     this.solicitudesPendientes = this.solicitudesPendientes.filter(s => s.id_viaje !== solicitud.id_viaje);
   }
 
-  enviarCalificacion() {
+  // FUNCIÓN PARA ABRIR EL MODAL DE NOTIFICACIÓN
+  async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tipo: string) {
+    const modal = await this.modalCtrl.create({
+      component: NotificacionModalChoferComponent,
+      componentProps: { titulo, mensaje, icono, tipo }
+    });
+    await modal.present();
+    return modal.onDidDismiss();
+  }
+
+  // FUNCIÓN ACTUALIZADA DE CALIFICACIÓN (CORREGIDA)
+  async enviarCalificacion() {
+    if (this.ratingActual === 0) {
+      await this.abrirModalNotificacion('Aviso', 'Por favor, selecciona una puntuación antes de enviar.', 'warning-outline', 'primary');
+      return;
+    }
+
+    // 1. Construir los datos (Corregimos 'rol_evaluador' por 'rol' y quitamos 'id_viaje' de aquí)
+    const dataCalificacion = {
+      id_emisor: this.driverInfo.id_chofer || this.driverInfo.id, 
+      id_receptor: this.viajePendiente.id_usuario,              
+      rol: 'chofer',  // <-- CORREGIDO: el backend espera 'rol'                                        
+      estrellas: this.ratingActual,
+      comentario: this.comentarioUsuario
+    };
+
+    // 2. Construir la URL correcta inyectando el ID del viaje
+    const urlCalificacion = `http://localhost:3000/api/viajes/${this.viajePendiente.id}/calificar`;
+
+    // 3. Hacer la petición POST
+    this.http.post(urlCalificacion, dataCalificacion)
+      .subscribe({
+        next: async (res) => {
+          console.log('✅ Calificación guardada:', res);
+          
+          await this.abrirModalNotificacion(
+            '¡Viaje Finalizado! 🚕',
+            'Tu calificación hacia el pasajero ha sido guardada.',
+            'checkmark-circle',
+            'success'
+          );
+          
+          this.resetearEstadoViaje();
+        },
+        error: async (err) => {
+          console.error('❌ Error al guardar calificación:', err);
+          
+          // Mostrar mensaje específico si ya había calificado
+          const mensajeError = err.error?.error || 'Hubo un problema al guardar tu calificación.';
+          
+          await this.abrirModalNotificacion(
+            'Error',
+            mensajeError,
+            'close-circle',
+            'error'
+          );
+          
+          this.resetearEstadoViaje();
+        }
+      });
+  }
+
+  private resetearEstadoViaje() {
     this.mostrarModalCalificar = false;
     this.viajeAceptado = false;
     this.viajePendiente = null;
-    if (this.map) this.map.remove();
+    this.ratingActual = 0;
+    this.comentarioUsuario = '';
+    if (this.map) {
+      this.map.remove();
+    }
   }
 
   logout() {
@@ -287,24 +384,19 @@ export class ChoferPage implements OnInit {
   irAHistorial() { this.router.navigate(['/historial-chofer']); }
   irAPerfil() { this.router.navigate(['/perfil-chofer']); }
   setRating(e: number) { this.ratingActual = e; }
-  // --- Métodos para manejar la alerta de nueva solicitud ---
+  
   verSolicitudes() {
     this.mostrarAlertaSolicitud = false;
     this.activeTab = 'viajes';
-    // Si tienes un ion-segment o similar, esto cambiará la vista a la lista de viajes
   }
 
   cerrarAlerta() {
     this.mostrarAlertaSolicitud = false;
   }
 
-  // --- Método para el switch de Activo/Inactivo ---
   toggleStatus() {
-    // Si isActive es true, pasará a false y viceversa
     console.log('Disponibilidad cambiada a:', this.isActive ? 'ACTIVO' : 'INACTIVO');
-    
     if (!this.isActive) {
-      // Si el chofer se pone inactivo, limpiamos el viaje actual por seguridad
       this.viajePendiente = null;
       this.viajeAceptado = false;
       if (this.map) {

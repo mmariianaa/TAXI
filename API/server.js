@@ -837,3 +837,49 @@ app.delete('/api/admin/comentarios/:id', (req, res) => {
         res.json({ success: true });
     });
 });
+
+//Manda las calificaciones y comentario
+app.post('/api/viajes/:id/calificar', async (req, res) => {
+    const id_viaje = req.params.id;
+    const { id_emisor, id_receptor, rol, estrellas, comentario } = req.body;
+
+    try {
+        await conexion.promise().query(
+            "INSERT INTO Calificaciones (id_viaje, id_emisor, id_receptor, rol_evaluador, estrellas, comentario) VALUES (?, ?, ?, ?, ?, ?)",
+            [id_viaje, id_emisor, id_receptor, rol, estrellas, comentario]
+        );
+        res.status(201).send({ mensaje: "Calificación guardada con éxito" });
+    } catch (error) {
+        // 👇 AGREGA ESTA LÍNEA EXACTAMENTE 👇
+        console.log("🔥🔥🔥 ERROR REAL DE MYSQL:", error); 
+        
+        res.status(500).send({ error: "Error en el servidor" });
+    }
+});
+//Obtener promedio de calificacion 
+app.get('/api/usuarios/:id/calificacion', async (req, res) => {
+    const idUsuario = req.params.id;
+    
+    const query = `
+        SELECT 
+            ROUND(AVG(estrellas), 1) AS promedio, 
+            COUNT(*) AS total 
+        FROM Calificaciones 
+        WHERE id_receptor = ?
+    `;
+
+    try {
+        const [rows] = await conexion.promise().query(query, [idUsuario]);
+        
+        if (rows[0].promedio === null) {
+            return res.json({ promedio: 0, total: 0, mensaje: "Aún no tiene calificaciones" });
+        }
+
+        res.json({
+            promedio: rows[0].promedio,
+            total_resenas: rows[0].total
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Error al consultar la reputación" });
+    }
+});

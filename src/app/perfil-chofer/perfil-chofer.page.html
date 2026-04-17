@@ -6,6 +6,7 @@
   <div class="perfil-container">
     <div class="header-perfil">
       <ion-button fill="clear" class="back-btn" (click)="regresar()">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
         Atrás
       </ion-button>
 
@@ -16,7 +17,6 @@
       </ion-button>
       }
 
-      <!-- Botones GUARDAR/CANCELAR -->
       @if (modoEdicion) {
       <div class="acciones-edicion">
         <ion-button fill="clear" class="guardar-btn" (click)="guardarCambios()">
@@ -33,7 +33,6 @@
 
     @if (choferInfo) {
 
-    <!-- SECCIÓN DE PERFIL -->
     <div class="foto-section">
       <div class="foto-wrapper">
         <ion-avatar class="foto-perfil">
@@ -57,11 +56,22 @@
       }
 
       <h1 class="nombre-chofer">{{ choferInfo.nombre + ' ' + choferInfo.apellido | uppercase }}</h1>
-      <p class="estadisticas">⭐ 4.8</p>
-    </div>
+      
+      @if (mensajeCalificacion) {
+        <p class="estadisticas" style="font-size: 14px; color: #666;">
+          {{ mensajeCalificacion }}
+        </p>
+      } @else {
+        <p class="estadisticas">
+          {{ promedioCalificacion }} ⭐
+          <span style="font-size: 14px; color: #666; font-weight: normal;">
+            ({{ totalEvaluaciones }} {{ totalEvaluaciones === 1 ? 'viaje' : 'viajes' }})
+          </span>
+        </p>
+      }
+      </div>
 
     <div class="perfil-card">
-      <!-- MIS DATOS -->
       <div class="seccion-perfil">
         <h2 class="seccion-titulo">📋 MIS DATOS</h2>
 
@@ -76,7 +86,6 @@
           <span class="campo-valor">{{ choferInfo.nombre }} {{ choferInfo.apellido }}</span>
         </div>
 
-        <!-- CORREO EDITABLE -->
         <div class="campo-dato">
           <span class="campo-etiqueta">Correo:</span>
 
@@ -98,7 +107,6 @@
           }
         </div>
 
-        <!-- TELÉFONO EDITABLE -->
         @if (choferInfo.telefono) {
         <div class="campo-dato">
           <span class="campo-etiqueta">Teléfono:</span>
@@ -110,7 +118,7 @@
           @if (modoEdicion) {
           <div style="flex: 1;">
             <ion-input class="campo-input" [(ngModel)]="editData.telefono" type="tel" maxlength="10"
-              placeholder="10 dígitos" (keypress)="soloNumeros($event)"> <!-- 👈 ESTA LÍNEA NUEVA -->
+              placeholder="10 dígitos" (keypress)="soloNumeros($event)"> 
             </ion-input>
             @if (editData.telefono && editData.telefono.length !== 10) {
             <div class="campo-error"> El teléfono debe tener 10 dígitos</div>
@@ -127,7 +135,6 @@
         </div>
         }
       </div>
-      <!-- MI VEHÍCULO -->
       @if (choferInfo.vehiculo) {
       <div class="seccion-perfil">
         <h2 class="seccion-titulo">🚖 MI VEHÍCULO</h2>
@@ -151,8 +158,6 @@
       }
 
 
-      <!-- CAMBIAR CONTRASEÑA -->
-
       @if (modoEdicion) {
       <div class="seccion-perfil">
         <h2 class="seccion-titulo">🔒 CAMBIAR CONTRASEÑA</h2>
@@ -163,7 +168,6 @@
         </div>
         }
 
-        <!-- NUEVA CONTRASEÑA -->
         <div class="campo-dato">
           <span class="campo-etiqueta">Nueva contraseña:</span>
           <div style="flex: 1;">
@@ -177,42 +181,39 @@
             </div>
             @if (editData.passwordNueva && editData.passwordNueva.length < 8) { <div class="campo-error">❌ Mínimo 8
               caracteres
+            </div>
+            }
           </div>
-          }
         </div>
-      </div>
 
-      <!-- CONFIRMAR CONTRASEÑA -->
-      <div class="campo-dato">
-        <span class="campo-etiqueta">Confirmar:</span>
-        <div style="flex: 1;">
-          <div class="campo-input-wrapper">
-            <ion-input class="campo-input" [type]="mostrarPasswordNueva ? 'text' : 'password'"
-              [(ngModel)]="editData.confirmarPassword" placeholder="Repite tu contraseña">
-            </ion-input>
+        <div class="campo-dato">
+          <span class="campo-etiqueta">Confirmar:</span>
+          <div style="flex: 1;">
+            <div class="campo-input-wrapper">
+              <ion-input class="campo-input" [type]="mostrarPasswordNueva ? 'text' : 'password'"
+                [(ngModel)]="editData.confirmarPassword" placeholder="Repite tu contraseña">
+              </ion-input>
+            </div>
+            @if (editData.passwordNueva && editData.confirmarPassword && editData.passwordNueva !==
+            editData.confirmarPassword) {
+            <div class="campo-error"> Las contraseñas no coinciden</div>
+            }
           </div>
-          @if (editData.passwordNueva && editData.confirmarPassword && editData.passwordNueva !==
-          editData.confirmarPassword) {
-          <div class="campo-error"> Las contraseñas no coinciden</div>
-          }
         </div>
       </div>
+      }
+      <div class="cerrar-sesion">
+        <ion-button expand="block" class="cerrar-sesion-btn" (click)="confirmarCerrarSesion()">
+          <ion-icon name="log-out-outline" slot="start"></ion-icon>
+          CERRAR SESIÓN
+        </ion-button>
+      </div>
+    </div>
+    } @else {
+    <div class="cargando-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando perfil...</p>
     </div>
     }
-    <!-- BOTÓN CERRAR SESIÓN -->
-
-    <div class="cerrar-sesion">
-      <ion-button expand="block" class="cerrar-sesion-btn" (click)="confirmarCerrarSesion()">
-        <ion-icon name="log-out-outline" slot="start"></ion-icon>
-        CERRAR SESIÓN
-      </ion-button>
-    </div>
-  </div>
-  } @else {
-  <div class="cargando-container">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>Cargando perfil...</p>
-  </div>
-  }
   </div>
 </ion-content>

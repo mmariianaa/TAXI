@@ -9,8 +9,8 @@ import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { pencilSharp, person, shieldCheckmark, lockClosed, helpCircle, checkmarkCircle,starOutline, arrowBackOutline, trashOutline, timeOutline } from 'ionicons/icons';
-import { AuthService } from '../services/auth'; // <-- IMPORTAR AuthService
-import { HttpClient } from '@angular/common/http'; // <-- Para llamadas API
+import { AuthService } from '../services/auth'; 
+import { HttpClient } from '@angular/common/http'; 
 import { lastValueFrom } from 'rxjs';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
@@ -26,13 +26,11 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
   ]
 })
 export class PerfilusuarioPage implements OnInit {
-  // Inyectar servicios
   private authService = inject(AuthService);
   private http = inject(HttpClient);
   private alertController = inject(AlertController);
   private router = inject(Router);
 
-  // Variables para edición
   editingField: string = '';
   activeSection: string = 'inicio';
   editingPersonal = false;
@@ -40,8 +38,7 @@ export class PerfilusuarioPage implements OnInit {
   newPassword = '';
   confirmPassword = '';
 
-  // Datos del usuario
-  user = {
+  user: any = {
     id: null,
     name: '',
     apellido: '',
@@ -50,16 +47,18 @@ export class PerfilusuarioPage implements OnInit {
     numero: '',
     email: '',
     password: '',
-    foto: 'assets/default-avatar.png',
-    calificacion: '★★★★☆ 4.5',
+    foto: 'assets/default-avatar.png'
   };
 
-  avatarUrl: string = 'assets/avatar.png';   // 👈 foto por defecto
-  selectedFile: File | null = null;          // 👈 archivo seleccionado
+  avatarUrl: string = 'assets/avatar.png';   
+  selectedFile: File | null = null;          
 
+  // 👇 NUEVAS VARIABLES DE CALIFICACIÓN 👇
+  promedioCalificacion: number = 0;
+  totalEvaluaciones: number = 0;
+  mensajeCalificacion: string = '';
 
   constructor() {
-    // Registrar iconos
     addIcons({pencilSharp,trashOutline,person,shieldCheckmark,timeOutline,starOutline,lockClosed,helpCircle,checkmarkCircle,arrowBackOutline});
   }
 
@@ -68,20 +67,14 @@ export class PerfilusuarioPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    // Recargar datos cada vez que entra a la página
     this.cargarDatosUsuario();
   }
 
-
   cargarDatosUsuario() {
     try {
-      // Obtener datos del AuthService
       const authData = this.authService.getUserData();
       
       if (authData) {
-        console.log(' Datos desde AuthService:', authData);
-        
-        // Mapear los datos del AuthService a la estructura de la vista
         this.user = {
           id: authData.id_usuario || authData.id || null,
           name: authData.nombre || '',
@@ -91,18 +84,13 @@ export class PerfilusuarioPage implements OnInit {
           edad: authData.edad ? authData.edad + ' años' : '',
           genero: authData.genero || '',
           foto: authData.foto || 'assets/avatar.png',
-          password: '',
-          calificacion: authData.calificacion || '★★★★☆ 4.5',
+          password: ''
         };
-         this.avatarUrl = this.user.foto;
-        console.log(' Usuario mapeado:', this.user);
+        this.avatarUrl = this.user.foto;
       } else {
-        // Fallback a localStorage si AuthService no tiene datos
         const localData = localStorage.getItem('user_session');
         if (localData) {
           const parsed = JSON.parse(localData);
-          console.log(' Datos desde localStorage:', parsed);
-          
           this.user = {
             id: parsed.id_usuario || parsed.id || null,
             name: parsed.nombre || '',
@@ -112,24 +100,47 @@ export class PerfilusuarioPage implements OnInit {
             edad: parsed.edad ? parsed.edad + ' años' : '',
             genero: parsed.genero || '',
             foto: parsed.foto || 'assets/avatar.png',
-            password: '',
-            calificacion: parsed.calificacion || '★★★★☆ 4.5',
+            password: ''
           };
           this.avatarUrl = this.user.foto;
         } else {
-          // Si no hay sesión, redirigir al login
           console.warn(' No hay sesión activa');
           this.router.navigate(['/home']);
+          return; // Salimos si no hay sesión
         }
       }
+
+      // 👇 LLAMADA A LA CALIFICACIÓN 👇
+      if (this.user.id) {
+        this.obtenerCalificacion(this.user.id);
+      }
+
     } catch (error) {
       console.error('Error cargando datos:', error);
     }
   }
 
-  
+  // 👇 NUEVA FUNCIÓN PARA OBTENER CALIFICACIÓN 👇
+  obtenerCalificacion(userId: number) { 
+    console.log('Solicitando calificación para el ID:', userId); 
+    this.http.get<any>(`http://localhost:3000/api/usuarios/${userId}/calificacion`) 
+      .subscribe({
+        next: (res) => {
+          console.log('Respuesta del servidor:', res); 
+          this.promedioCalificacion = res.promedio;
+          this.totalEvaluaciones = res.total_resenas || res.total || 0; 
+          
+          if (res.mensaje) {
+            this.mensajeCalificacion = res.mensaje; 
+          }
+        },
+        error: (err) => {
+          console.error('No se pudo obtener la calificación', err); 
+        }
+      });
+  }
+
   // FOTO DE PERFIL
-  
   async cambiarFoto() {
     try {
       const image = await Camera.getPhoto({
@@ -149,7 +160,6 @@ export class PerfilusuarioPage implements OnInit {
       console.log('Usuario canceló');
     }
   }
-
 
   quitarFoto() {
     this.avatarUrl = 'assets/avatar.png';
@@ -203,7 +213,7 @@ export class PerfilusuarioPage implements OnInit {
     }
   }
   
-// metodos de edicion 
+  // metodos de edicion 
   setSection(section: string) {
     this.activeSection = section;
   }
@@ -211,7 +221,6 @@ export class PerfilusuarioPage implements OnInit {
   saveField(field: string) {
     console.log(`💾 Guardando cambios en: ${field}`, this.user);
     
-    // Llamar al método correspondiente según el campo
     if (field === 'name') {
       this.actualizarNombre();
     } else if (field === 'phone') {
@@ -224,7 +233,6 @@ export class PerfilusuarioPage implements OnInit {
   }
 
   // ACTUALIZAR TELÉFONO
-
   async actualizarTelefono() {
     if (!this.user.id) {
       console.error(' No hay ID de usuario');
@@ -238,12 +246,8 @@ export class PerfilusuarioPage implements OnInit {
         })
       );
       
-      console.log(' Teléfono actualizado:', response);
-      
-      // Actualizar en AuthService/localStorage
       this.actualizarStorageLocal({ telefono: this.user.numero });
       
-      // Mostrar mensaje de éxito
       const alert = await this.alertController.create({
         header: 'Éxito',
         message: 'Número de teléfono actualizado correctamente',
@@ -252,8 +256,6 @@ export class PerfilusuarioPage implements OnInit {
       await alert.present();
       
     } catch (error) {
-      console.error(' Error al actualizar teléfono:', error);
-      
       const alert = await this.alertController.create({
         header: 'Error',
         message: 'No se pudo actualizar el teléfono',
@@ -263,31 +265,23 @@ export class PerfilusuarioPage implements OnInit {
     }
   }
 
-//actualizar el nombre y el apellido 
+  // actualizar el nombre y el apellido 
   async actualizarNombre() {
     if (!this.user.id) return;
-
     try {
-    
-      console.log('Actualizando nombre:', this.user.name, this.user.apellido);
-      
       this.actualizarStorageLocal({ 
         nombre: this.user.name,
         apellido: this.user.apellido 
       });
-      
     } catch (error) {
       console.error('Error:', error);
     }
   }
 
-
   // ACTUALIZAR EMAIL
-
   async actualizarEmail() {
     if (!this.user.id) return;
     
-    // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(this.user.email)) {
       const alert = await this.alertController.create({
@@ -300,43 +294,30 @@ export class PerfilusuarioPage implements OnInit {
     }
 
     try {
-      
-      console.log('Actualizando email:', this.user.email);
-      
       this.actualizarStorageLocal({ correo: this.user.email });
-      
     } catch (error) {
       console.error('Error:', error);
     }
   }
 
-
   actualizarStorageLocal(campos: any) {
-    // Actualizar en localStorage
     const localData = localStorage.getItem('user_session');
     if (localData) {
       const parsed = JSON.parse(localData);
       const updated = { ...parsed, ...campos };
       localStorage.setItem('user_session', JSON.stringify(updated));
     }
-    
-
   }
 
-//cambiar foto del perfil 
+  // cambiar foto del perfil 
   async changePhoto(event: any) {
     const file = event.target.files[0];
     if (file) {
-      // Vista previa local
       const reader = new FileReader();
       reader.onload = () => {
         this.user.foto = reader.result as string;
       };
       reader.readAsDataURL(file);
-      
-      // Aquí implementarías la subida al servidor
-      console.log('📸 Foto seleccionada:', file.name);
-      
     }
   }
 
@@ -347,7 +328,6 @@ export class PerfilusuarioPage implements OnInit {
   }
 
   async savePassword() {
-    // Validaciones
     if (this.newPassword !== this.confirmPassword) {
       const alert = await this.alertController.create({
         header: 'Error',
@@ -377,8 +357,6 @@ export class PerfilusuarioPage implements OnInit {
         })
       );
       
-      console.log(' Contraseña actualizada:', response);
-      
       this.editingPassword = false;
       this.newPassword = '';
       this.confirmPassword = '';
@@ -391,8 +369,6 @@ export class PerfilusuarioPage implements OnInit {
       await alert.present();
       
     } catch (error) {
-      console.error(' Error al actualizar contraseña:', error);
-      
       const alert = await this.alertController.create({
         header: 'Error',
         message: 'No se pudo actualizar la contraseña',
@@ -401,7 +377,6 @@ export class PerfilusuarioPage implements OnInit {
       await alert.present();
     }
   }
-
 
   irAConfiguracionUsuario(event: Event) {
     event.preventDefault();
@@ -417,20 +392,18 @@ export class PerfilusuarioPage implements OnInit {
     event.preventDefault();
     this.router.navigate(['/calificarusuario']);
   }
+  
   irARegresar(event: Event){
     event.preventDefault();
     this.router.navigate(['/pantallausuario']);
   }
 
-  // Mantener por compatibilidad (si se usa en algún lugar)
   toggleEditPersonal() {
     this.editingPersonal = !this.editingPersonal;
   }
 
   async savePersonal() {
     this.editingPersonal = false;
-    console.log('Información personal actualizada:', this.user);
-    
     const alert = await this.alertController.create({
       header: 'Éxito',
       message: 'Tu información personal ha sido actualizada.',

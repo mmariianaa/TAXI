@@ -148,11 +148,9 @@ ion-card-content {
   }
 
   .total-amount {
-    font-size: 1.4rem !important;
-    font-weight: 900 !important;
-    color: $negro !important; // Negro sólido para el precio
-    background: linear-gradient(120deg, $amarillo, $naranja);
-    -webkit-text-fill-color: transparent;
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #2dd36f;// Negro sólido para el precio
   }
 }
 

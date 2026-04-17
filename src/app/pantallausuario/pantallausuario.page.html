@@ -1,6 +1,6 @@
 <ion-menu contentId="main-content" type="overlay">
   <ion-header>
-    <ion-toolbar color="primary">
+    <ion-toolbar >
       <ion-title>Menú Taxi</ion-title>
     </ion-toolbar>
   </ion-header>
@@ -16,16 +16,23 @@
 
       <ion-menu-toggle auto-hide="true">
         <ion-item button (click)="irANotificaciones()">
-          <ion-icon slot="start" name="notifications-outline"></ion-icon>
-          <ion-label>Notificaciones</ion-label>
+          <ion-icon slot="start" name="car-outline"></ion-icon>
+          <ion-label>Viajes</ion-label>
         </ion-item>
       </ion-menu-toggle>
 
       <ion-menu-toggle auto-hide="true">
-        <ion-item button (click)="logout()" color="danger">
-          <ion-icon slot="start" name="log-out-outline"></ion-icon>
-          <ion-label>Cerrar Sesión</ion-label>
+        <ion-item button (click)="irAHistorial()">
+          <ion-icon slot="start" name="time-outline"></ion-icon>
+          <ion-label>Historial</ion-label>
         </ion-item>
+      </ion-menu-toggle>
+
+      <ion-menu-toggle auto-hide="true">
+        <ion-item button (click)="logout()" style="margin-top: 30px;">
+        <ion-icon slot="start" name="log-out-outline" color="danger"></ion-icon>
+        <ion-label color="danger" style="font-weight: bold;">Cerrar Sesión</ion-label>
+      </ion-item>
       </ion-menu-toggle>
     </ion-list>
   </ion-content>
@@ -196,7 +203,7 @@
   <div class="rating-modal">
     <div class="modal-header">
       <h3>Calificar Pasajero</h3>
-      <p>¿Cómo fue tu experiencia con {{ viajeActivo?.nombre_chofer || "tu chofer" }}?</p>
+      <p>¿Cómo fue tu experiencia con {{ nombreChoferActual || "tu chofer" }}?</p>
     </div>
 
     <div class="stars-container">

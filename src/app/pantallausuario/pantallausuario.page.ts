@@ -103,6 +103,7 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
   mostrarModalCalificarChofer: boolean = false;
   ratingActual: number = 0;
   comentarioChofer: string = '';
+  nombreChoferActual: string = '';
 
   viajeActivo: any = null;
   viajeSolicitado = false;
@@ -217,11 +218,11 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
       await alert.onDidDismiss();
       this.mostrarModalCalificarChofer = true; 
       
-      // Limpiamos el mapa y las variables
+      /*  Limpiamos el mapa y las variables
       this.viajeActivo = null;
       this.viajeEnCurso = false;
       this.destino = '';
-      if (this.routingControl) this.map.removeControl(this.routingControl);
+      if (this.routingControl) this.map.removeControl(this.routingControl);*/
     });
 
   }
@@ -325,6 +326,7 @@ export class PantallausuarioPage implements OnInit, OnDestroy {
     const { data } = await modal.onWillDismiss();
 
     if (data?.confirmado) {
+      this.nombreChoferActual= taxi.nombre;
       this.socket.emit('solicitar_taxi', {
         id_chofer_usuario: taxi.id_chofer,
         id_cliente: this.usuarioLogueado?.id,
@@ -417,30 +419,76 @@ async abrirModalNotificacion(titulo: string, mensaje: string, icono: string, tip
 
   ionViewDidEnter() { this.obtenerUbicacionActual(); }
   ngOnDestroy() { if (this.socket) this.socket.disconnect(); }
-  irANotificaciones() { this.router.navigate(['/cambiarrutaanotiusuario']); }
+
+  irANotificaciones() {
+    this.router.navigate(['/pantallausuario']); }
+
+  irAHistorial() {
+    this.router.navigate(['/historialusuario'])}
 
   setRating(estrellas: number) {
     this.ratingActual = estrellas;
   }
 
   enviarCalificacion() {
-    console.log('Calificación enviada:', this.ratingActual, this.comentarioChofer);
-
-    // Aquí mostramos el mensaje de agradecimiento
-    this.abrirModalNotificacion(
-      '¡Gracias por viajar con nosotros! ',
-      'Tu calificación ha sido enviada.',
-      'checkmark-circle',
-      'success'
-    );
-
-    // Reseteamos todo para dejar la pantalla limpia
-    this.mostrarModalCalificarChofer = false;
-    this.ratingActual = 0;
-    this.comentarioChofer = '';
-    
-    this.viajeActivo = null; 
-    this.viajeEnCurso = false;
-    this.destino = '';
+  // 1. Validar que seleccionó al menos una estrella
+  if (this.ratingActual === 0) {
+    this.abrirModalNotificacion('Aviso', 'Por favor, selecciona una puntuación antes de enviar.', 'warning-outline', 'primary');
+    return;
   }
+
+  // 2. Construir los datos para la BD
+  const dataCalificacion = {
+    // Ya no necesitas mandar id_viaje aquí porque irá en la URL
+    id_emisor: this.usuarioLogueado?.id,          // El pasajero califica
+    id_receptor: this.viajeActivo.id_chofer,      // El chofer recibe
+    rol: 'pasajero',                              // CORREGIDO: El backend espera 'rol', no 'rol_evaluador'
+    estrellas: this.ratingActual,
+    comentario: this.comentarioChofer
+  };
+
+  // 3. Enviar al Backend (CORREGIDA LA URL PARA QUE COINCIDA CON EL SERVIDOR)
+  const urlCalificacion = `http://localhost:3000/api/viajes/${this.viajeActivo.id_viaje}/calificar`;
+
+  this.http.post(urlCalificacion, dataCalificacion)
+    .subscribe({
+      next: (res) => {
+        console.log('✅ Calificación guardada:', res);
+        
+        // Mensaje de éxito
+        this.abrirModalNotificacion(
+          '¡Gracias por tu opinión! ⭐',
+          'Tu calificación ha sido enviada con éxito.',
+          'checkmark-circle',
+          'success'
+        );
+
+        // 4. AHORA SÍ, limpiamos el mapa y las variables
+        this.resetearPantallaFinViaje();
+      },
+      error: (err) => {
+        console.error('❌ Error al guardar calificación:', err);
+        
+        // Mostrar mensaje específico si el usuario ya calificó el viaje (manejado por tu backend)
+        const mensajeError = err.error?.error || 'No se pudo guardar la calificación.';
+        this.abrirModalNotificacion('Error', mensajeError, 'close-circle', 'error');
+        
+        this.resetearPantallaFinViaje();
+      }
+    });
+}
+
+// Método auxiliar para mantener tu código ordenado
+private resetearPantallaFinViaje() {
+  this.mostrarModalCalificarChofer = false;
+  this.ratingActual = 0;
+  this.comentarioChofer = '';
+  this.nombreChoferActual = '';
+  this.viajeActivo = null; 
+  this.viajeEnCurso = false;
+  this.destino = '';
+  if (this.routingControl && this.map) {
+    this.map.removeControl(this.routingControl);
+  }
+}
 }

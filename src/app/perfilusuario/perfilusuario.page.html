@@ -1,7 +1,10 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="light" mode="ios">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/perfilusuario" icon="arrow-back-outline" text="Atrás"></ion-back-button>
+      <ion-button fill="clear" class="back-btn" (click)="irARegresar($event)">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+        Atrás
+      </ion-button>
     </ion-buttons>
     <ion-title>Cuenta SmartTaxi</ion-title>
   </ion-toolbar>
@@ -15,17 +18,15 @@
 
 <ion-content>
 
-   @if (activeSection === 'inicio' || !activeSection) {
+  @if (activeSection === 'inicio' || !activeSection) {
     <div class="profile-header">
       <div class="avatar-wrapper">
         <img [src]="avatarUrl" alt="Foto de perfil">
         
-        <!-- Botón para cambiar foto -->
         <div class="edit-icon" (click)="cambiarFoto()">
           <ion-icon name="pencil-sharp"></ion-icon>
         </div>
 
-        <!-- Botón para quitar foto -->
         <div class="remove-icon" (click)="quitarFoto()">
           <ion-icon name="trash-outline"></ion-icon>
         </div>
@@ -34,9 +35,19 @@
       <h2>{{ user.name }} {{ user.apellido }}</h2> 
       <p>{{ user.edad }}</p>
       <p>{{ user.email }}</p>
-      <p>Puntuación: {{ user.calificacion }}</p>
-
-      <!-- Botón para guardar cambios -->
+      
+      @if (mensajeCalificacion) {
+        <p style="font-size: 14px; color: #666; margin-top: 5px;">
+          {{ mensajeCalificacion }}
+        </p>
+      } @else {
+        <p style="font-size: 16px; margin-top: 5px; color: #333;">
+          {{ promedioCalificacion }} ⭐
+          <span style="font-size: 14px; color: #666; font-weight: normal;">
+            ({{ totalEvaluaciones }} {{ totalEvaluaciones === 1 ? 'viaje' : 'viajes' }})
+          </span>
+        </p>
+      }
       <ion-button expand="block" class="btn-black" (click)="guardarCambios()">Guardar cambios</ion-button>
     </div>
 
@@ -52,10 +63,6 @@
       <div class="uber-card full-width" (click)="irAHistorialUsuario($event)">
         <div class="icon-container"><ion-icon name="time-outline"></ion-icon></div>
         <span>Historial de viajes</span>
-      </div>
-      <div class="uber-card full-width" (click)="irACalificarUsuario($event)">
-        <div class="icon-container"><ion-icon name="star-outline"></ion-icon></div>
-        <span>Calificar</span>
       </div>
     </div>
   }
